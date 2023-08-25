@@ -17,7 +17,7 @@ const addCatgory =  async(req, res) => {
         const categoryData = new Category({
             name : req.body.name,
             image : req.file.filename,
-            isListed : req.body.list,
+            isListed : req.body.isListed,
             description : req.body.description
         })
         const category = await categoryData.save()
@@ -61,17 +61,25 @@ const editCategory = async(req, res) => {
             res.redirect('category')
         }
     } catch (error) {
-        
+        console.log(error.message);
     }
 }
 const updateCategory = async(req, res) => {
     try {
-        const category = await Category.findByIdAndUpdate()
-        // const categoryData = await Category.findByIdAndUpdate({_id : req.params.id},{$set: {name:req.body.name, image : req.body.image, isListed: req.body.isListed, description : req.body.description}})
-        res.redirect('edit-category', {message : "Category data updated"})
+        // const category = await Category.findByIdAndUpdate()
+        const categoryData = await Category.findByIdAndUpdate({_id : req.params.id},{$set: {name:req.body.name, image : req.body.image, isListed: req.body.isListed, description : req.body.description}})
+        res.render('edit-category', {category :categoryData ,message : "Category data updated"})
     } catch (error) {
         console.log(error.message);
     }
+}
+
+const deleteCategory = async(req, res) => {
+    const id = req.query.id;
+   await Category.deleteOne({_id : id})
+
+   res.redirect('/admin/category')
+
 }
 
 
@@ -80,5 +88,6 @@ module.exports ={
     addCatgory,
     searchCategory,
     editCategory,
-    updateCategory
+    updateCategory,
+    deleteCategory
 }

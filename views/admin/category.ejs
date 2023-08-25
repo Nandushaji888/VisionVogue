@@ -224,7 +224,7 @@
                             <form action="/admin/category" method="post" enctype="multipart/form-data">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="name" name="name" />
+                                    <input type="text" placeholder="Type here" class="form-control" id="name" name="name" required />
                                 </div>
                                 <div class="mb-4">
                                     <label for="product_image" class="form-label">Uplaod Image</label>
@@ -232,19 +232,19 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">isListed</label>
-                                    <select class="form-select" name="isListed">
-                                        <option>Yes</option>
-                                        <option>No</option>
+                                    <select class="form-select" name="isListed" required>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
                                     </select>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <input type="text" placeholder="Type here" class="form-control" name="description">
+                                    <input type="text" placeholder="Type here" class="form-control" name="description" required>
                                 </div>
                                 <% if (typeof message !== 'undefined') {
                       
                                     %>
-                                    <p style="color: rgba(18, 138, 28, 0.836);"><%= message %><p>
+                                    <p style="color: rgba(38, 64, 41, 0.836);"><%= message %><p>
                                   <% } %> 
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary">Create category</button>
@@ -291,11 +291,7 @@
         </tr>
         <%
     }
-
-
 %>
-
-
                                     </thead>
                                 </table>
                                   

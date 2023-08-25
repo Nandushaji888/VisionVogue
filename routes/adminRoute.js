@@ -1,6 +1,7 @@
 const express = require('express');
 const adminController = require('../controllers/admin/adminController')
 const categoryController = require('../controllers/admin/categoryContoller')
+const productController = require('../controllers/admin/productController')
 const session = require('express-session'); 
 const admin_route = express()
 const config = require('../config/config');
@@ -38,14 +39,15 @@ admin_route.get('/logout',auth.isLogin, adminController.adminLogout)
 
 
 admin_route.get('/category',auth.isLogin,categoryController.categoryLoad)
-admin_route.post('/category',upload.single("image") ,auth.isLogin, categoryController.addCatgory)
-admin_route.post('/category-search',auth.isLogin,categoryController.searchCategory)
+admin_route.post('/category',upload.single("image") , categoryController.addCatgory)
+admin_route.post('/category-search',categoryController.searchCategory)
 admin_route.get('/edit-category',auth.isLogin,categoryController.editCategory)
-admin_route.post('/edit-category',auth.isLogin,categoryController.updateCategory)
+admin_route.post('/edit-category',categoryController.updateCategory)
+admin_route.get('/delete-category',auth.isLogin, categoryController.deleteCategory)
 
 
-// admin_route.get('/products',auth.isLogin,adminController.productList)
-// admin_route.get('/add-product', auth.isLogin, adminController.addProduct)
+admin_route.get('/products',auth.isLogin,productController.productList)
+admin_route.get('/add-product', auth.isLogin, productController.addProduct)
 
 
 module.exports = admin_route;

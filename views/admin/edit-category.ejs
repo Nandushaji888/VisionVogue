@@ -220,14 +220,15 @@
                                     <input type="text" placeholder="Type here" class="form-control" id="name" name="name" value="<%=category.name%>"/>
                                 </div>
                                 <div class="mb-4">
-                                    <label for="product_slug" class="form-label">Uplaod Image</label>
+                                    <img src="/assets2/imgs/category/<%=category.image%>" width="75px" height="75px" alt="<%=category.image%>">
+                                    <label for="product_slug" class="form-label">Change Image</label>
                                     <input type="file" name="image" class="form-control" required value="<%=category.image%>"/>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">isListed</label>
                                     <select class="form-select" name="isListed">
-                                        <option>Yes</option>
-                                        <option>No</option>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
                                     </select>
                                 </div>
                                 <div class="mb-4">
@@ -239,9 +240,10 @@
                                     %>
                                     <p style="color: rgba(18, 138, 28, 0.836);"><%= message %><p>
                                   <% } %> 
-                                <div class="d-grid ">
-                                    <button type="submit" class="btn btn-primary">Update Category</button>
-                                </div>
+                           
+                                    <button type="submit" class="btn btn-primary btn-md m-2">Update Category</button>
+                                    <a class="btn btn-primary btn-md m-2" href="/admin/category" role ="button">Back</a>
+                    
                             </form>
                         </div>
  
