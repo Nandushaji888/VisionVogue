@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
         required : true
     
     },
+    isActive : {
+        type : Boolean,
+        default : true
+    },
     is_admin : {
         type : Number,
         default : 0

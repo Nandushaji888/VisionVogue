@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    desciption : {
+    description : {
         type : String,
         required : true
     },
@@ -14,12 +14,9 @@ const productSchema = new mongoose.Schema({
         default : ''
     }, 
     image : {
-        type : String,
+        type : Array,
         default : ''
     },
-    images : [{
-        type : String
-    }],
     brand : {
         type : String,
         default : ''
@@ -28,12 +25,16 @@ const productSchema = new mongoose.Schema({
         type : Number,
         default : 0
     },
+    size : {
+        type : String,
+        required : true
+    },
     category : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'Category',
         required : true
     },
-    countInStock :{
+    stock :{
         type : Number,
         required : true,
         min : 0,
@@ -46,6 +47,11 @@ const productSchema = new mongoose.Schema({
     numReviews : {
         type : Number,
         default : 0,
+    },
+    isListed : {
+        type : Boolean,
+        required : true,
+        default : false
     },
     isFeatured : {
         type : Boolean,

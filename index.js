@@ -14,7 +14,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/ecommerce")
 app.use(nocache())
 app.use('/assets',express.static(path.resolve(__dirname,'public/assets')))
 app.use('/assets2',express.static(path.resolve(__dirname,'public/assets2')))
-app.use('/js',express.static(path.resolve(__dirname,'public/assests/js')))
+app.use('/js',express.static(path.resolve(__dirname,'public/assets/js')))
+
 
 
  //for user routes

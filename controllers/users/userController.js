@@ -1,4 +1,6 @@
 const User = require('../../models/userModel');
+const Product = require('../../models/productModel')
+const Category = require('../../models/categoryModel')
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const {EMAIL, PASSWORD} = require('../../env.js')
@@ -44,7 +46,7 @@ const sendVerificationMail = async(name,email) => {
             to : email,
             subject :'Verfication Mail',
             // html : '<p>Hi '+name+', click here to <a href="http://localhost:3000/verify?id='+user_id+'">Verify</a> your mail.</p>'
-            text : `Your OTP for email verification is : ${otp}`
+            text : `Your OTP for email verification with VisionVogue is : ${otp}`
         }
         // req.session.otp = otp;
 
@@ -146,7 +148,7 @@ const verifyLogin = async(req, res) => {
 
         req.session.user_id = userData._id;
 
-        res.redirect('/home')
+        res.redirect('/')
       }else{
         res.render('login', {message :'Email or password incorrect'})
 
@@ -161,10 +163,11 @@ const verifyLogin = async(req, res) => {
 
 const loadHome = async(req, res) => {
     try {
-
-        // const userData = await User.findById({_id : req.session.user_id}) 
-        // console.log(userData);
-        res.render('home')
+        const productData = await Product.find().populate('category')
+        const categoryData = await Category.find()
+        const userData = await User.findById(req.session.user_id)
+        console.log(userData);
+        res.render('home',{products : productData, categories : categoryData, user : userData})
     } catch (error) {
         console.log(error.message);
     }
@@ -172,10 +175,46 @@ const loadHome = async(req, res) => {
 const userLogout = async(req, res) => {
     try {
         req.session.destroy()
+        res.redirect('/')
     } catch (error) {
         console.log(error.message);
     }
 }
+
+const loadProductDetails = async(req, res) => {
+    try {
+        const id = req.params.id;
+        const productData = await Product.findById(id).populate('category')
+        console.log(productData);
+        res.render('productDetails',{product : productData})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+const categoryWiseProducts = async (req, res) => {
+    try {
+        const categoryName = decodeURIComponent(req.params.id);
+        console.log(categoryName);
+        const category = await Category.findOne({ name: categoryName });
+
+        if (category) {
+            console.log(category);
+
+            const products = await Product.find({ category: category._id }).populate('category')
+            console.log(products);
+
+            res.render('categoryWiseProducts', { products: products });
+        } else {
+            console.log("Category not found");
+            res.render('categoryWise', { products: [] });
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
 
 
 
@@ -189,6 +228,8 @@ module.exports = {
     loadLogin,
     verifyLogin,
     loadHome,
-    userLogout
+    userLogout,
+    loadProductDetails,
+    categoryWiseProducts
 
 }

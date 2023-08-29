@@ -11,8 +11,9 @@ const categorySchema = mongoose.Schema({
         default : ''
     },
     isListed : {
-        type : Number,
-         default :0
+        type : Boolean,
+        required :true,
+         default :false
     },
     description : {
         type : String,

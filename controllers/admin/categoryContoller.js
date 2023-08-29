@@ -14,6 +14,7 @@ const categoryLoad = async(req,res) => {
 
 const addCatgory =  async(req, res) => {
     try {
+        console.log(req.body);
         const categoryData = new Category({
             name : req.body.name,
             image : req.file.filename,
@@ -54,25 +55,91 @@ const editCategory = async(req, res) => {
     try {
         const id = req.query.id;
         const categoryData = await Category.findById({_id : id});
+        console.log(categoryData);
 
         if(categoryData) {
-            res.render('edit-category',{category : categoryData})
-        }else{
-            res.redirect('category')
+            res.render('edit-category',{data: categoryData})
         }
     } catch (error) {
         console.log(error.message);
     }
 }
-const updateCategory = async(req, res) => {
-    try {
-        // const category = await Category.findByIdAndUpdate()
-        const categoryData = await Category.findByIdAndUpdate({_id : req.params.id},{$set: {name:req.body.name, image : req.body.image, isListed: req.body.isListed, description : req.body.description}})
-        res.render('edit-category', {category :categoryData ,message : "Category data updated"})
+
+
+const updateCategory = async (req,res)=>{
+    try { 
+        console.log(req.body);
+        console.log(req.file);
+        const id = req.params.id;
+        let data; 
+        if(req.file){
+        data = {
+            _id: id,
+            name: req.body.name,
+            image: req.file.filename,
+            isListed: req.body.isListed,
+            description: req.body.description
+        }}else{
+            data = {
+                _id: id,
+            name: req.body.name,
+            isListed: req.body.isListed,
+            description: req.body.description
+            }
+        }
+        console.log(data); 
+       const newData = await Category.findByIdAndUpdate(id,data, {new : true})
+
+
+
+        res.render('edit-category', {message: 'Category Updated', data: newData})
+
     } catch (error) {
         console.log(error.message);
     }
 }
+
+
+// const updateCategory = async (req,res)=>{
+//     try { 
+//         // console.log(req.body);
+//         //  console.log(req.session.id);
+
+//         // console.log(req.file);
+//         const id = req.params.id;
+//         console.log(id);
+//         console.log(req.body.name);
+
+
+//         const category =await Category.findById({_id : id})
+//         console.log(category);
+//         console.log(req.body);
+
+//         let data;
+//         if(req.file){
+//         data = {
+//             _id: id,
+//             name: req.body.name,
+//             image: req.file.filename,
+//             isListed: req.body.isListed,
+//             description: req.body.description
+//         }}else{
+//             data = {
+//                 _id: id,
+//             name: req.body.name,
+//             isListed: req.body.isListed,
+//             description: req.body.description
+//             }
+//         }
+//         console.log(data);
+//         await Category.findByIdAndUpdate(id,data)
+
+//         res.render('edit-category',{category: category, message: 'Data Updated'})
+
+//     } catch (error) {
+//         console.log(error.message);
+// }
+// }
 
 const deleteCategory = async(req, res) => {
     const id = req.query.id;
@@ -88,6 +155,6 @@ module.exports ={
     addCatgory,
     searchCategory,
     editCategory,
-    updateCategory,
-    deleteCategory
+    deleteCategory,
+    updateCategory
 }

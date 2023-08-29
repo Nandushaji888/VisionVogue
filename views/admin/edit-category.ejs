@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:title" content="">
-    <meta property="og:type" content="">   
+    <meta property="og:type" content="">
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
@@ -30,45 +30,32 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
-                        <span class="text">Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
-                        <span class="text">Products</span>
-                    </a>
-                </li>
+                <ul class="menu-aside">
                     <li class="menu-item">
-                        <a class="menu-link" href="/admin/add-product"> <i class="icon material-icons md-add_box"></i>
-                            <span class="text">Add Product</span>
+                        <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+                            <span class="text">Dashboard</span>
                         </a>
                     </li>
-                    <li class="menu-item active">
-                        <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-post_add"></i>
-                            <span class="text">Categories</span>
+                    <li class="menu-item">
+                        <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                            <span class="text">Products</span>
                         </a>
                     </li>
-                    <div class="submenu">
-                        <a href="page-products-list.html">Product List</a>
-                        <a href="page-products-grid.html">Product grid</a>
-                        <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="/admin/category" class="active">Categories</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Orders</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-orders-1.html">Order list 1</a>
-                        <a href="page-orders-2.html">Order list 2</a>
-                        <a href="page-orders-detail.html">Order detail</a>
-                        <a href="page-orders-tracking.html">Order tracking</a>
-<a href="page-invoice.html">Invoice</a>
-                    </div>
-                </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="/admin/add-product"> <i class="icon material-icons md-add_box"></i>
+                                <span class="text">Add Product</span>
+                            </a>
+                        </li>
+                        <li class="menu-item active">
+                            <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-post_add"></i>
+                                <span class="text">Categories</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
+                                <span class="text">Users</span>
+                            </a>
+                        </li>
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-sellers-cards.html"> <i class="icon material-icons md-store"></i>
                         <span class="text">Sellers</span>
@@ -207,48 +194,49 @@
                     <h2 class="content-title card-title">Categories </h2>
                     <p>Add, edit or delete a category</p>
                 </div>
-             
-              
+                <!-- <div>
+                    <input type="text" placeholder="Search Categories" class="form-control bg-white">
+                </div> -->
             </div>
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-5">
-                            <form action="/admin/edit-category" method="post" enctype="multipart/form-data">
-                                <div class="mb-4">
-                                    <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="name" name="name" value="<%=category.name%>"/>
-                                </div>
-                                <div class="mb-4">
-                                    <img src="/assets2/imgs/category/<%=category.image%>" width="75px" height="75px" alt="<%=category.image%>">
-                                    <label for="product_slug" class="form-label">Change Image</label>
-                                    <input type="file" name="image" class="form-control" required value="<%=category.image%>"/>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">isListed</label>
-                                    <select class="form-select" name="isListed">
-                                        <option value="1">Yes</option>
-                                        <option value="0">No</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Description</label>
-                                    <input type="text" placeholder="Type here" class="form-control" name="description" value="<%=category.description%>">
-                                </div>
-                                <% if (typeof message !== 'undefined') {
+                        <form method="post" action="/admin/edit-category/<%= data.id %>" enctype="multipart/form-data" >
+                            <div class="mb-4">
+                                <label for="category_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" name="name" value="<%= data.name %>" class="form-control" id="caregory_name" />
+                            </div>
+                            <div class="mb-4">
+                                <div><img src="/assets2/imgs/category/<%= data.image %>" alt="<%= data.image %>" width="75px" height="75px"></div>
+                                <label for="image class="form-label">image</label>
+                                <input type="file" placeholder="" name="image" class="form-control" value="<%= data.filename %>" id="image" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">isListed</label>
+                                <select class="form-select" name="isListed" value="<%= data.isListed %>">
+                                    <option <% if (data.isListed) { %> selected <% } %> value="true">Yes</option>
+                                      <option <% if (!data.isListed) { %> selected <% } %> value="false">No</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <input placeholder="Type here" class="form-control" name="description" value="<%= data.description %>"></input>
+                            </div>
+                            <% if (typeof message !== 'undefined') {
                       
-                                    %>
-                                    <p style="color: rgba(18, 138, 28, 0.836);"><%= message %><p>
-                                  <% } %> 
+                                %>
+                                <p style="color: rgba(23, 206, 44, 0.836);"><%= message %><p>
+                              <% } %> 
                            
-                                    <button type="submit" class="btn btn-primary btn-md m-2">Update Category</button>
-                                    <a class="btn btn-primary btn-md m-2" href="/admin/category" role ="button">Back</a>
-                    
-                            </form>
-                        </div>
- 
+                                <button type="submit" class="btn btn-primary btn-md m-2">Update category</button>
+                                <a class="btn btn-primary btn-md m-2" href="/admin/category" role ="button">Back</a>
+                         
+                        </form>
+                        </div> <!-- .col// -->
                     </div> <!-- .row // -->
-           
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">

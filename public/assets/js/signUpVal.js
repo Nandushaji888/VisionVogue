@@ -1,9 +1,9 @@
 //User signup form validation 
 
 const form = document.getElementById('register'); 
-const firstName = document.getElementById('Name');
+const firstName = document.getElementById('name');
 const email = document.getElementById('email');
-const phone = document.getElementById('phone');
+const phone = document.getElementById('mno');
 const password = document.getElementById('password');
 
 const setError = (element, message, e) => {
