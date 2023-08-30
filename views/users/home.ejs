@@ -963,7 +963,7 @@
                                     <div class="product-img-action-wrap">
                                         <div class="product-img product-img-zoom">
                                             <a href="/product/<%=products[i]._id%>">
-                                                <img class="" src="/assets2/imgs/products/<%=products[i].image[0]%>" width="40px" height="200px" alt="">
+                                                <img class="" src="/assets2/imgs/products/<%=products[i].image[0]%>" alt="">
                                                 <!-- <img class="hover-img" src="/assets/imgs/shop/product-1-2.jpg" alt=""> -->
                                             </a>
                                         </div>
@@ -973,7 +973,8 @@
                                             <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
+                                          <% if(i<=2){ %>  <span class="hot">Hot</span>
+                                          <%}else{}%>
                                         </div>
                                     </div>
                                     <div class="product-content-wrap">

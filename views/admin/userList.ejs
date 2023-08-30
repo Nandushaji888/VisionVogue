@@ -222,10 +222,17 @@
                               <td><%= users[i].phone %></td>
                            
                              
-                              <td> <div class="d-flex"><a href="/admin/edit-user/<%=users[i]._id%>" class="btn-sm btn-info me-1">Edit</a> <a type="button" href="/admin/user-status/<%=users[i]._id%>" class="btn-sm btn-danger"><% if (users[i].isActive) { %> <span>Block</span> <% } else { %> <span>Unblock</span> <% } %>
+                              <td> <div class="d-flex"><a href="/admin/edit-user/<%=users[i]._id%>" class="btn-sm btn-info me-1">Edit</a> 
+                                
+                                
+                                
+                                <a type="button" href="/admin/user-status/<%=users[i]._id%>" class="btn-sm btn-danger"><% if (users[i].isActive) { %> <span>Block</span> <% } else { %> <span>Unblock</span> <% } %>
                               </a></div>
                             </tr>
                             <% } %>
+
+
+                            
                   </table>
             </div> <!-- card end// -->
      

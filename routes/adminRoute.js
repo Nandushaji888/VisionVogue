@@ -54,7 +54,7 @@ admin_route.post('/category',categoryUpload.single("image") , categoryController
 admin_route.post('/category-search',categoryController.searchCategory)
 admin_route.get('/edit-category',auth.isLogin,categoryController.editCategory)
 admin_route.post('/edit-category/:id',categoryUpload.single('image'),categoryController.updateCategory)
-admin_route.get('/delete-category',auth.isLogin, categoryController.deleteCategory)
+admin_route.get('/category-status',auth.isLogin, categoryController.categoryStatus)
 
 
 admin_route.get('/products',auth.isLogin,productController.productList)

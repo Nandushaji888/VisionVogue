@@ -1,4 +1,5 @@
 const Category = require('../../models/categoryModel')
+const Product = require('../../models/productModel')
 const categoryLoad = async(req,res) => {
     try {
         const category = await Category.find({})
@@ -141,12 +142,55 @@ const updateCategory = async (req,res)=>{
 // }
 // }
 
-const deleteCategory = async(req, res) => {
-    const id = req.query.id;
-   await Category.deleteOne({_id : id})
+// const disableCategory = async(req, res) => {
+//     const id = req.query.id;
+//     const productsToUpdate = await Product.find({ category: id });
+//     console.log(productsToUpdate);
+//         for (const product of productsToUpdate) {
+//             product.isListed = false;
+//             await product.save();
+//         }
 
-   res.redirect('/admin/category')
+        
+//    await Category.findByIdAndUpdate({_id : id},{isListed : false})
 
+//    res.redirect('/admin/category')               
+
+// }
+
+const categoryStatus = async( req, res) => {
+    try {
+        const id = req.query.id;
+        let block = {
+            isListed : false
+        }
+        let unblock = {
+            isListed : true
+        }
+        const categoryData = await Category.findById({_id : id});
+        if(categoryData.isListed) {
+                  const productsToUpdate = await Product.find({ category: id });
+                  console.log(productsToUpdate);
+                  for (const product of productsToUpdate) {
+                   product.isListed = false;
+            await product.save();
+        }
+            await Category.findByIdAndUpdate(id, block, {new : true})
+        }else{
+            const productsToUpdate = await Product.find({ category: id });
+            console.log(productsToUpdate);
+                for (const product of productsToUpdate) {
+                    product.isListed = true;
+                    await product.save();
+                }
+            await Category.findByIdAndUpdate(id, unblock, {new : true})
+
+        }
+
+        res.redirect('/admin/category')
+    } catch (error) {
+        console.log(error.message);
+    }
 }
 
 
@@ -155,6 +199,6 @@ module.exports ={
     addCatgory,
     searchCategory,
     editCategory,
-    deleteCategory,
+    categoryStatus,
     updateCategory
 }

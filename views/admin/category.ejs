@@ -210,7 +210,7 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Categories </h2>
-                    <p>Add, edit or delete a category</p>
+                    <!-- <p>Add, edit or delete a category</p> -->
                 </div>
              
                     <form action="/admin/category-search" method="post">
@@ -281,7 +281,10 @@
                 <td><%= category[i].isListed %></td>
                 <td><%= category[i].description %></td>
                 <td><a class="btn btn-info btn-sm btn-block mx-2" href="/admin/edit-category?id=<%= category[i]._id %>">edit</a>
-                <a class="btn btn-danger btn-sm btn-block mx-2" href="/admin/delete-category?id=<%= category[i]._id %>">delete</a>
+
+
+
+                <a class="btn btn-danger btn-sm btn-block mx-2" href="/admin/category-status?id=<%= category[i]._id %>"><% if(category[i].isListed){%> Disable <%}else{%>Enable<%}%></a>
                 </td>
             </tr>
 

@@ -163,10 +163,12 @@ const verifyLogin = async(req, res) => {
 
 const loadHome = async(req, res) => {
     try {
-        const productData = await Product.find().populate('category')
-        const categoryData = await Category.find()
+        const productData = await Product.find({isListed : true}).populate('category')
+        const categoryData = await Category.find({isListed : true})
+        console.log(categoryData);
         const userData = await User.findById(req.session.user_id)
         console.log(userData);
+
         res.render('home',{products : productData, categories : categoryData, user : userData})
     } catch (error) {
         console.log(error.message);

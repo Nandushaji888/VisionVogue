@@ -5,8 +5,8 @@ const Category = require('../../models/categoryModel')
 const productList = async(req, res) => {
     try {
         const productData = await Product.find({}).populate('category')
-        // const categoryData = await Category.find({})
-        res.render('products',{products : productData})
+        if(productData)
+        {res.render('products',{products : productData})}
     } catch (error) {
         console.log(error.message);
     }
@@ -74,12 +74,13 @@ const loadEditProduct = async (req,res)=>{
 
 const updateProduct = async(req, res) => {
     try {
-        const category =await Category.findOne({name : req.body.category})
+        
         const imageFilenames = req.files.map(file => file.filename);
+        const category =await Category.findOne({name : req.body.category})
 
         const id = req.params.id;
         let data;
-        if(req.file) {
+        if(req.files.length) {
            data = {
             id : id,
             name : req.body.name,
@@ -107,11 +108,14 @@ const updateProduct = async(req, res) => {
                 stock : req.body.stock
             }
         }
+        console.log(data);
 
         const newData =await Product.findByIdAndUpdate(id, data , {new : true}).populate('category')
 
         if(newData)
-      {  res.render('editProduct',{product : newData, category : category , message : "Product successfully edited"})}
+        {                   const category =await Category.find()
+
+                    res.render('editProduct',{product : newData, category : category , message : "Product successfully edited"})}
         
     } catch (error) {
         console.log(error.message);
