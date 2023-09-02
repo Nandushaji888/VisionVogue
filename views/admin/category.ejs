@@ -8,13 +8,15 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:title" content="">
-    <meta property="og:type" content="">   
+    <meta property="og:type" content="">
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="/assets2/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link href="/assets2/css/main.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 </head>
 
 <body>
@@ -25,7 +27,8 @@
                 <img src="/assets2/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
             </a>
             <div>
-                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i>
+                </button>
             </div>
         </div>
         <nav>
@@ -40,27 +43,27 @@
                         <span class="text">Products</span>
                     </a>
                 </li>
-                    <li class="menu-item">
+                <!-- <li class="menu-item">
                         <a class="menu-link" href="/admin/add-product"> <i class="icon material-icons md-add_box"></i>
                             <span class="text">Add Product</span>
                         </a>
-                    </li>
-                    <li class="menu-item active">
-                        <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-post_add"></i>
-                            <span class="text">Categories</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
-                            <span class="text">Users</span>
-                        </a>
-                    </li>
-                    <div class="submenu">
-                        <a href="page-products-list.html">Product List</a>
-                        <a href="page-products-grid.html">Product grid</a>
-                        <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="/admin/category" class="active">Categories</a>
-                    </div>
+                    </li> -->
+                <li class="menu-item active">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-post_add"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Users</span>
+                    </a>
+                </li>
+                <div class="submenu">
+                    <a href="page-products-list.html">Product List</a>
+                    <a href="page-products-grid.html">Product grid</a>
+                    <a href="page-products-grid-2.html">Product grid 2</a>
+                    <a href="/admin/category" class="active">Categories</a>
+                </div>
                 </li>
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
@@ -71,7 +74,7 @@
                         <a href="page-orders-2.html">Order list 2</a>
                         <a href="page-orders-detail.html">Order detail</a>
                         <a href="page-orders-tracking.html">Order tracking</a>
-<a href="page-invoice.html">Invoice</a>
+                        <a href="page-invoice.html">Invoice</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -96,7 +99,8 @@
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
+                    <a class="menu-link" href="page-transactions-1.html"> <i
+                            class="icon material-icons md-monetization_on"></i>
                         <span class="text">Transactions</span>
                     </a>
                     <div class="submenu">
@@ -154,7 +158,7 @@
     <main class="main-wrap">
         <header class="main-header navbar">
             <div class="col-search">
-                <form class="searchform">
+                <!-- <form class="searchform">
                     <div class="input-group">
                         <input list="search_terms" type="text" class="form-control" placeholder="Search term">
                         <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
@@ -165,10 +169,11 @@
                         <option value="Apple iphone">
                         <option value="Ahmed Hassan">
                     </datalist>
-                </form>
+                </form> -->
             </div>
             <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i
+                        class="material-icons md-apps"></i> </button>
                 <ul class="nav">
                     <li class="nav-item">
                         <a class="nav-link btn-icon" href="#">
@@ -177,30 +182,44 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                class="material-icons md-cast"></i></a>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                            aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="/assets2/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="/assets2/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="/assets2/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="/assets2/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets2/imgs/theme/flag-us.png"
+                                    alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/assets2/imgs/theme/flag-fr.png"
+                                    alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/assets2/imgs/theme/flag-jp.png"
+                                    alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/assets2/imgs/theme/flag-cn.png"
+                                    alt="Français">中国人</a>
                         </div>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets2/imgs/people/avatar2.jpg" alt="User"></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                            aria-expanded="false"> <img class="img-xs rounded-circle"
+                                src="/assets2/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                                Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
+                                Settings</a>
+                            <a class="dropdown-item" href="#"><i
+                                    class="material-icons md-account_balance_wallet"></i>Wallet</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                center</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                            <a class="dropdown-item text-danger" href="#"><i
+                                    class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
                 </ul>
@@ -212,15 +231,15 @@
                     <h2 class="content-title card-title">Categories </h2>
                     <!-- <p>Add, edit or delete a category</p> -->
                 </div>
-             
-                    <form action="/admin/category-search" method="post">
+
+                <!-- <form action="/admin/category-search" method="post">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control bg-white" placeholder="Search Categories" aria-label="Recipient's username" aria-describedby="basic-addon2" name="search">
                             <div class="input-group-append">
                                 <input type="submit" value="Search" class="form-control bg-white"></div>
                           </div>
-                    </form>
-              
+                    </form> -->
+
             </div>
             <div class="card">
                 <div class="card-body">
@@ -229,7 +248,8 @@
                             <form action="/admin/category" method="post" enctype="multipart/form-data">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="name" name="name" required />
+                                    <input type="text" placeholder="Type here" class="form-control" id="name"
+                                        name="name" required />
                                 </div>
                                 <div class="mb-4">
                                     <label for="product_image" class="form-label">Uplaod Image</label>
@@ -244,24 +264,26 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <input type="text" placeholder="Type here" class="form-control" name="description" required>
+                                    <input type="text" placeholder="Type here" class="form-control" name="description"
+                                        required>
                                 </div>
-                                <% if (typeof message !== 'undefined') {
-                      
-                                    %>
-                                    <p style="color: rgba(38, 64, 41, 0.836);"><%= message %><p>
-                                  <% } %> 
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">Create category</button>
-                                </div>
+                                <% if (typeof message !=='undefined' ) { %>
+                                    <p style="color: rgba(38, 64, 41, 0.836);">
+                                        <%= message %>
+                                            <p>
+                                                <% } %>
+                                                    <div class="d-grid">
+                                                        <button type="submit" class="btn btn-primary">Create
+                                                            category</button>
+                                                    </div>
                             </form>
                         </div>
                         <div class="col-md-9">
                             <div class="table-responsive">
-                                <table class="table table-hover ">
+                                <table class="table table-hover " id="dataTable">
                                     <thead>
                                         <tr class="text-center">
-                                           
+
                                             <th>No</th>
                                             <th>Name</th>
                                             <th>Image</th>
@@ -269,51 +291,61 @@
                                             <th>Description</th>
                                             <th>Action</th>
                                         </tr>
-                                        <%
-    if(category.length >0){
-        for(let i = category.length - 1; i >=0; i--){
-            %>
-            <tr class="text-center ">
-               
-                <td><%= category.length - i %></td>
-                <td><%= category[i].name %></td>
-                <td><img src="/assets2/imgs/category/<%=category[i].image%>" width="75px" height="75px" alt="<%=category[i].image%>"></td>
-                <td><%= category[i].isListed %></td>
-                <td><%= category[i].description %></td>
-                <td><a class="btn btn-info btn-sm btn-block mx-2" href="/admin/edit-category?id=<%= category[i]._id %>">edit</a>
+                                        <thead>
 
 
+                                        <tbody>
+                                            <% if(category.length>0){
+                                                for(let i = category.length - 1; i >=0; i--){
+                                                %>
+                                                <tr class="text-center ">
 
-                <a class="btn btn-danger btn-sm btn-block mx-2" href="/admin/category-status?id=<%= category[i]._id %>"><% if(category[i].isListed){%> Disable <%}else{%>Enable<%}%></a>
-                </td>
-            </tr>
+                                                    <td class="align-middle">
+                                                        <%= category.length - i %>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <%= category[i].name %>
+                                                    </td>
+                                                    <td class="align-middle"><img
+                                                            src="/assets2/imgs/category/<%=category[i].image%>"
+                                                            width="75px" height="75px" alt="<%=category[i].image%>">
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <%= category[i].isListed %>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <%= category[i].description %>
+                                                    </td>
+                                                    <td class="align-middle"><a
+                                                            class="btn btn-info btn-sm btn-block mx-2"
+                                                            href="/admin/edit-category?id=<%= category[i]._id %>">edit</a>
+                                                        <a class="btn btn-danger btn-sm btn-block mx-2"
+                                                            href="/admin/category-status?id=<%= category[i]._id %>">
+                                                            <% if(category[i].isListed){%> Disable <%}else{%>Enable<%}%>
+                                                        </a>
+                                                    </td>
+                                                </tr>
 
-            <%
-        
-        }
+                                                <% } }else{ %>
+                                                    <tr>
+                                                        <td colspan="5">Users Not Found</td>
+                                                    </tr>
+                                                    <% } %>
 
-    }else{
-        %>
-        <tr>
-            <td colspan="5">Users Not Found</td>
-        </tr>
-        <%
-    }
-%>
-                                    </thead>
+                                        </tbody>
                                 </table>
-                                  
+
 
                             </div>
                         </div> <!-- .col// -->
                     </div> <!-- .row // -->
-           
+
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
                 <div class="col-sm-6">
                     <script>
-                    document.write(new Date().getFullYear())
+                        document.write(new Date().getFullYear())
                     </script> ©, Evara - HTML Ecommerce Template .
                 </div>
                 <div class="col-sm-6">
@@ -331,29 +363,8 @@
     <script src="/assets2/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/assets2/js/main.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </body>
 
 </html>
-
-
-<%
-if(category.length > 0){
-    for(let i = category.length - 1; i >=0; i--){
-        %>
-        <select class="form-select">
-            <option><%= category[i].name %></option>
-            <%
-
-}
-}else{
-%>
-<option>Category Not Found</option>
-
-<%
-}
-%>
-
-
-
-
-

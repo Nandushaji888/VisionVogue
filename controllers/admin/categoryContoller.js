@@ -13,44 +13,76 @@ const categoryLoad = async(req,res) => {
     }
 }
 
-const addCatgory =  async(req, res) => {
+// const addCategory =  async(req, res) => {
+//     try {
+//         console.log(req.body);
+//         const categoryData = new Category({
+//             name : req.body.name,
+//             image : req.file.filename,
+//             isListed : req.body.isListed,
+//             description : req.body.description
+//         })
+//         const category = await categoryData.save()
+//         console.log(category);
+//         if(category){
+//             const categoryList = await Category.find({})
+//             return res.render('category', {message: 'Category added Successfully', category :categoryList});
+//        }else {
+//            return res.render('category', {message: 'Something went Wrong. Try Again'})
+//        }
+//     } catch (error) {
+//         console.log(error.message);
+//     }
+// }
+
+const addCategory = async (req, res) => {
     try {
         console.log(req.body);
         const categoryData = new Category({
-            name : req.body.name,
-            image : req.file.filename,
-            isListed : req.body.isListed,
-            description : req.body.description
-        })
-        const category = await categoryData.save()
+            name: req.body.name,
+            image: req.file.filename,
+            isListed: req.body.isListed,
+            description: req.body.description
+        });
+        const category = await categoryData.save();
         console.log(category);
-        if(category){
-            const categoryList = await Category.find({})
-            return res.render('category', {message: 'Category added Successfully', category :categoryList});
-       }else {
-           return res.render('category', {message: 'Something went Wrong. Try Again'})
-       }
+
+        if (category) {
+            const categoryList = await Category.find({});
+            return res.render('category', { message: 'Category added Successfully', category: categoryList });
+        } 
     } catch (error) {
-        console.log(error.message);
-    }
-}
-
-
-const searchCategory = async(req, res) => {
-    try {
-        
-        var search = req.body.search;
-        const categoryData = await Category.find({"name" : {$regex :'.*'+ search + '.*', $options :'i'}})
-        if(categoryData.length > 0){
-            res.render('category', {category: categoryData})
-        }else{
-            res.render('category',{message : "Category not found" })
-
+        console.log(error.name); // Log the name property of the error
+        console.log(error.code);
+        if (error.name === 'MongoServerError' && error.code === 11000) {
+            // Duplicate key error, handle it by sending an appropriate message
+            const categoryList = await Category.find({});
+            return res.render('category', { message: 'Category name is already taken. Please try a different name.', category: categoryList });
+        } else {
+            console.log(error.message);
+            const categoryList = await Category.find({});
+            return res.render('category', { message: 'An error occurred while adding the category', category: categoryList  });
         }
-    } catch (error) {
-        res.status(400).send({success: false, message: error.message})
     }
-} 
+};
+
+
+
+// const searchCategory = async(req, res) => {
+//     try {
+        
+//         var search = req.body.search;
+//         const categoryData = await Category.find({"name" : {$regex :'.*'+ search + '.*', $options :'i'}})
+//         if(categoryData.length > 0){
+//             res.render('category', {category: categoryData})
+//         }else{
+//             res.render('category',{message : "Category not found" })
+
+//         }
+//     } catch (error) {
+//         res.status(400).send({success: false, message: error.message})
+//     }
+// } 
 
 const editCategory = async(req, res) => {
     try {
@@ -194,10 +226,11 @@ const categoryStatus = async( req, res) => {
 }
 
 
+
+
 module.exports ={
     categoryLoad,
-    addCatgory,
-    searchCategory,
+    addCategory,
     editCategory,
     categoryStatus,
     updateCategory

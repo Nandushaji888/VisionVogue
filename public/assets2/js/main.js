@@ -55,5 +55,10 @@
 	$('.darkmode').on('click', function () {
 		$('body').toggleClass("dark");
 	});
-	
+
+
 })(jQuery);
+
+$(document).ready(function(){
+	$('#dataTable').DataTable();
+});

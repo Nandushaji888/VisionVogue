@@ -24,8 +24,13 @@ user_route.use(express.urlencoded({ extended: true }));
 user_route.get("/register",userController.loadSignup)
 user_route.post('/register',userController.sendOtpAndRenderRegistration)
 user_route.get('/',userController.loadHome)
-// user_route.get('/register/verify')
+user_route.get('/register/verify', userController.loadSignup)
 user_route.post('/register/verify', userController.verifyAndRegisterUser)
+
+user_route.get('/forgot-password',userController.loadForgotPassword)
+user_route.post('/forgot-password',userController.sendVerificationMessage)
+user_route.get('/password-change',userController.loadForgotPassword)
+user_route.post('/password-change',userController.passwordChange)
 
 
 user_route.get('/login',auth.isLogout,userController.loadLogin)

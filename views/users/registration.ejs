@@ -36,7 +36,7 @@
                                 <ul>
                                     <li>Get great devices up to 50% off <a href="shop-grid-right.html">View details</a></li>
                                     <li>Supper Value Deals - Save more with coupons</li>
-                                    <li>Trendy 25silver jewelry, save up 35% off today <a href="shop-grid-right.html">Shop now</a></li>
+                                    <li>Trendy Stylish Specs, save up 35% off today <a href="shop-grid-right.html">Shop now</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                                         <li><a href="#"><img src="/assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                     </ul>
                                 </li>
-                                <li><i class="fi-rs-user"></i><a href="page-login-register.html">Log In / Sign Up</a></li>
+                                <!-- <li><i class="fi-rs-user"></i><a href="page-login-register.html">Log In / Sign Up</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -63,15 +63,15 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1">
-                        <a href="index.html"><img src="/assets/imgs/theme/logo.svg" alt="logo"></a>
+                        <a href="index.html"><img src="/assets/imgs/theme/Vision Vogue-logos_transparent.png" alt="logo"></a>
                     </div>
                     <div class="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-none d-lg-block hover-boder">
                         <nav>
                             <ul>
-                                <li><a class="active" href="index.html">Home</a>
+                                <li><a class="active" href="/">Home</a>
                                 
                                 </li>
-                                <li><a href="shop-grid-right.html">Shop <i class="fi-rs-angle-down"></i></a>
+                                <!-- <li><a href="shop-grid-right.html">Shop <i class="fi-rs-angle-down"></i></a>
                                     <ul class="sub-menu">
                                         <li><a href="shop-grid-right.html">Shop Grid – Right Sidebar</a></li>
                                         <li><a href="shop-grid-left.html">Shop Grid – Left Sidebar</a></li>
@@ -175,14 +175,14 @@
                                         <li><a href="page-terms.html">Terms of Service</a></li>
                                         <li><a href="page-404.html">404 Page</a></li>
                                     </ul>
-                                </li>
+                                </li> -->
                                 <li>
                                     <a href="page-contact.html">Contact</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
-                    <div class="header-action-right">
+                    <!-- <div class="header-action-right">
                         <div class="search-style-2">
                             <form action="#">
                                 <select class="select-active">
@@ -200,8 +200,8 @@
                                 </select>
                                 <input type="text" placeholder="Search for items…">
                             </form>
-                        </div>
-                        <div class="header-action-2">
+                        </div> -->
+                        <!-- <div class="header-action-2">
                             <div class="header-action-icon-2">
                                 <a href="shop-wishlist.html">
                                     <img class="svgInject" alt="Evara" src="/assets/imgs/theme/icons/icon-heart.svg">
@@ -250,7 +250,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="header-action-icon d-block d-lg-none">
                                 <div class="burger-icon">
                                     <span class="burger-icon-top"></span>
@@ -476,50 +476,50 @@
                                           Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy
                                       </p>
                                       <form action="/register/verify" method="post" id="register">
-                                          <div class="form-group">
-                                              <input type="text" required="" id="Name" name="name" placeholder="Your Name" 
-                                                <% if(locals.userDetails) { %> 
-                                                    value = "<%= userDetails.name %>" 
-                                                <%  } %> 
-                                              >
-                                          </div>
-                                          <div class="form-group">
-                                            <input type="text" required="email" name="email" placeholder="Email" 
-                                            <% if(locals.userDetails) { %>
-                                                value = "<%= userDetails.email %>"
-                                                <% } %>
-                                                >
+                                        <div class="form-group">
+                                            <input type="text" name="name" placeholder="Your Name" readonly
+                                            <% if(locals.userDetails) { %> 
+                                              value = "<%= userDetails.name %>" 
+                                          <%  } %> >
+                                            <div class="error text-danger ms-2"></div>
                                         </div>
-                                          <div class="form-group">
-                                            <input type="text" required="" id="phone" name="mno" placeholder="Mobile Number"
-                                            <% if(locals.userDetails) { %>
-                                                value = "<%= userDetails.mno %>"
-                                            <% } %>
-                                            >
+                                        <div class="form-group">
+                                          <input type="text" name="email" placeholder="Email" readonly
+                                          <% if(locals.userDetails) { %> 
+                                              value = "<%= userDetails.email %>" 
+                                          <%  } %> >
+                                          <div class="error text-danger ms-2"></div>
+                                        </div>
+                                        <div class="form-group">
+                                          <input type="text" name="mno" placeholder="Mobile Number" readonly
+                                          <% if(locals.userDetails) { %> 
+                                              value = "<%= userDetails.mno %>" 
+                                          <%  } %> >
+                                          <div class="error text-danger ms-2"></div>
                                         </div>
                                         
-                                          <div class="form-group">
-                                              <input required="" type="password" id="password" name="password" placeholder="Password"
-                                              <% if(locals.userDetails) { %>
-                                                value = "<%= userDetails.password %>"
-                                              <% } %>
-                                              >
-                                          </div>
-                                          <div class="form-group">
-                                              <input required="" type="text" id="otp" name="otp" placeholder="Enter OTP">
-                                          </div>
-                                          <div class="login_footer form-group">
-                                              <div class="chek-form">
-                                                  <div class="custome-checkbox">
-                                                      <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox12" value="">
-                                                      <label class="form-check-label" for="exampleCheckbox12"><span>I agree to terms &amp; Policy.</span></label>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                          <div class="form-group">
-                                              <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Submit &amp; Register</button>
-                                          </div>
-                                      </form>
+                                        <div class="form-group">
+                                            <input  type="password" name="password" placeholder="Password" readonly
+                                            <% if(locals.userDetails) { %> 
+                                              value = "<%= userDetails.password %>" 
+                                          <%  } %> >
+                                            <div class="error text-danger ms-2"></div>
+                                        </div>
+                                        <div class="form-group">
+                                          <input required="" type="text" id="otp" name="otp" placeholder="Enter OTP">
+                                        </div>
+                                        <!-- <div class="login_footer form-group">
+                                            <div class="chek-form">
+                                                <div class="custome-checkbox">
+                                                    <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox12" value="">
+                                                    <label class="form-check-label" for="exampleCheckbox12"><span>I agree to terms &amp; Policy.</span></label>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Submit &amp; Register</button>
+                                        </div>
+                                        </form>
                                       <% if (typeof message !== 'undefined') {
                           
                                         %>
@@ -682,7 +682,14 @@
     <script src="/assets/js/plugins/jquery.vticker-min.js"></script>
     <script src="/assets/js/plugins/jquery.theia.sticky.js"></script>
     <!-- Template  JS -->
-    <script src="/assets/js/main.js?v=3.4"></script>
+    <script src="/js/main.js?v=3.4"></script>
+    <script src="/js/signUpVal.js"></script>
+
 </body>
 
 </html>
+
+
+
+
+   

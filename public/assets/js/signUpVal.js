@@ -73,12 +73,12 @@ function validateInputs(e) {
 
     const phonenoRegex = /^\d{10}$/;
     if(phoneValue === ""){
-        setError(phone, 'Enter phone number', e);
+        setError(phone, 'Enter a valid phone number ', e);
         phone.focus();
         return false;
     }
     else if(!phoneValue.match(phonenoRegex)){
-        setError(phone, 'Enter valid number', e);
+        setError(phone, 'Enter a valid phone number', e);
         phone.focus();
         return false;
     }
@@ -127,7 +127,7 @@ function validateInputs(e) {
 }
 
 form.addEventListener('submit', function(e) {
-    //e.preventDefault()
+    // e.preventDefault()
     console.log('form submit was recorded');
     if(validateInputs(e)){
         console.log("VALIDATION Success");

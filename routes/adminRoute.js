@@ -50,8 +50,8 @@ admin_route.get('/logout',auth.isLogin, adminController.adminLogout)
 
 
 admin_route.get('/category',auth.isLogin,categoryController.categoryLoad)
-admin_route.post('/category',categoryUpload.single("image") , categoryController.addCatgory)
-admin_route.post('/category-search',categoryController.searchCategory)
+admin_route.post('/category',categoryUpload.single("image") , categoryController.addCategory)
+// admin_route.post('/category-search',categoryController.searchCategory)
 admin_route.get('/edit-category',auth.isLogin,categoryController.editCategory)
 admin_route.post('/edit-category/:id',categoryUpload.single('image'),categoryController.updateCategory)
 admin_route.get('/category-status',auth.isLogin, categoryController.categoryStatus)
