@@ -54,6 +54,7 @@ const userStatus = async( req, res) => {
         const userData = await User.findById({_id : id});
         if(userData.isActive) {
             await User.findByIdAndUpdate(id, block, {new : true})
+            
         }else{
             await User.findByIdAndUpdate(id, unblock, {new : true})
         }

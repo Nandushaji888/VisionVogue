@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require("../controllers/users/userController");
+const cartController = require('../controllers/users/cartController')
 const session = require('express-session');
 const user_route = express()
 const config = require('../config/config');
@@ -40,6 +41,11 @@ user_route.get('/logout',auth.isLogin, userController.userLogout)
 user_route.get('/product/:id',userController.loadProductDetails)
 
 user_route.get('/category/:id',userController.categoryWiseProducts)
+
+user_route.get('/cart',cartController.loadCart)
+user_route.post('/add-to-cart/:id',cartController.addToCart)
+user_route.get('/user-account',userController.loadAccount)
+
 
 
 module.exports = user_route;

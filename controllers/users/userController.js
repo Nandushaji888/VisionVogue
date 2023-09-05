@@ -113,8 +113,9 @@ const verifyAndRegisterUser = async (req, res) => {
       delete req.session.otp;
 
       await user.save();
+      req.session.user_id = user._id;
 
-      res.render("registration", { message: "User successfully registered" });
+      res.redirect("/");
     } else {
       res.render("registration", { message: "OTP incorrect, Try Again!" });
     }
@@ -155,10 +156,11 @@ const verifyLogin = async (req, res) => {
         } else {
           res.render("login", { message: "Email or password incorrect" });
         }
-      }else{
-        
-        res.render("login", { message: "Your access has been restricted by the administrator. Please reach out to the administrator at admin@gmail.com for further assistance." });
-
+      } else {
+        res.render("login", {
+          message:
+            "Your access has been restricted by the administrator. Please reach out to the administrator at admin@gmail.com for further assistance.",
+        });
       }
     } else {
       res.render("login", { message: "Email or password incorrect" });
@@ -169,20 +171,55 @@ const verifyLogin = async (req, res) => {
 };
 
 //for loading home page
+// const loadHome = async (req, res) => {
+//   try {
+//     const productData = await Product.aggregate([
+//       {
+//         $lookup: {
+//           from: "categories",
+//           localField: "category",
+//           foreignField: "_id",
+//           as: "category",
+//         },
+//       },
+//       {
+//         $match: {
+//           isListed: true,
+//           "category.isListed": true,
+//         },
+//       },
+//     ]);
+//     const categoryData = await Category.find({ isListed: true });
+//     const userData = await User.findById(req.session.user_id);
+
+//     res.render("home", {
+//       products: productData,
+//       categories: categoryData,
+//       user: userData,
+//     });
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
+
 const loadHome = async (req, res) => {
   try {
-    const productData = await Product.find({ isListed: true }).populate(
-      "category"
-    );
-    const categoryData = await Category.find({ isListed: true });
-    // console.log(categoryData);
-    const userData = await User.findById(req.session.user_id);
-    // console.log(userData);
+    const productData = await Product.find({ isListed: true })
+      .populate({
+        path: "category",
+        match: { isListed: true }, 
+      })
+      .exec();
+
+      const categoryData = await Category.find({ isListed: true });
+      const userData = await User.findById(req.session.user_id);
+      const filteredProducts = productData.filter((product) => product.category);
 
     res.render("home", {
-      products: productData,
-      categories: categoryData,
+      products: filteredProducts,
       user: userData,
+      categories: categoryData,
+
     });
   } catch (error) {
     console.log(error.message);
@@ -332,6 +369,14 @@ const passwordChange = async (req, res) => {
   }
 };
 
+const loadAccount = async(req, res) => {
+  try {
+    res.render('userProfile')
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 module.exports = {
   loadSignup,
   sendOtpAndRenderRegistration,
@@ -345,4 +390,6 @@ module.exports = {
   sendVerificationMessage,
   loadForgotPassword,
   passwordChange,
+  loadAccount
+ 
 };

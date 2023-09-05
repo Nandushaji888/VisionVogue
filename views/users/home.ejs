@@ -864,15 +864,15 @@
                                                     <!-- <img class="hover-img" src="/assets/imgs/shop/product-1-2.jpg" alt=""> -->
                                                 </a>
                                             </div>
-                                            <div class="product-action-1">
+                                            <!-- <div class="product-action-1">
                                                 <a aria-label="Quick view" class="action-btn hover-up"
                                                     data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
                                                         class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                    href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                    href="/product/<%=products[i]._id%>"><i class="fi-rs-heart"></i></a>
                                                 <a aria-label="Compare" class="action-btn hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                            </div>
+                                                    href="/product/<%=products[i]._id%>"><i class="fi-rs-shuffle"></i></a>
+                                            </div> -->
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <% if(i<=2){ %> <span class="hot">Hot</span>
                                                     <%}else{}%>
@@ -880,11 +880,11 @@
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.html">
+                                                <a href="/product/<%=products[i]._id%>">
                                                     <%=products[i].category.name%>
                                                 </a>
                                             </div>
-                                            <h2><a href="shop-product-right.html">
+                                            <h2><a href="/product/<%=products[i]._id%>">
                                                     <%=products[i].name%>
                                                 </a></h2>
                                             <div class="rating-result" title="90%">
@@ -892,6 +892,15 @@
                                                     <span>90%</span>
                                                 </span>
                                             </div>
+                                      
+                                                <span>
+                                                    <% if(products[i].stock > 0) {%>
+                                                    <span class="text-success">In Stock</span>
+                                                    <%}else{%>
+                                                    <span class="text-danger">Out of Stock</span>
+                                                    <%}%>
+                                                </span>
+                                         
                                             <div class="product-price">
                                                 <span>
                                                     <%=products[i].price%>
@@ -900,10 +909,10 @@
                                                     <%=products[i].price%>
                                                 </span>
                                             </div>
-                                            <div class="product-action-1 show">
+                                            <!-- <div class="product-action-1 show">
                                                 <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                    href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                            </div>
+                                                    href="/add-to-cart/<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
