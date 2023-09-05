@@ -880,7 +880,7 @@
                                             </ul>
                                         </div>
                            
-
+<!-- 
                                         <div class="attr-detail attr-size">
                                             <strong class="mr-10">Size</strong>
                                             <ul class="list-filter size-filter font-small">
@@ -888,8 +888,8 @@
                                               <li class="active"><a href="#" onclick="selectSize('medium')">M</a></li>
                                               <li><a href="#" onclick="selectSize('large')">L</a></li>
                                             </ul>
-                                          </div>
-                                          <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                          </div> -->
+                                          <!-- <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                           <div class="detail-extralink">
                                             <div class="detail-qty border radius m-auto">
                                               <a href="#" class="qty-down" onclick="decreaseQuantity()"><i class="fi-rs-angle-small-down"></i></a>
@@ -898,7 +898,7 @@
                                             </div>
                                             <div class="product-extra-link2">
                                                 <form method="POST" action="/add-to-cart/<%= product._id %>" id="addToCartForm">
-                                                    <!-- <input type="hidden" name="productId" id="productId" value="<%= product._id %>"> -->
+                                              <input type="hidden" name="productId" id="productId" value="<%= product._id %>">
                                                     <input type="hidden" name="size" id="size" value="medium"> 
                                                     <input type="hidden" name="quantity" id="quantity" value="1"> 
                                       
@@ -906,9 +906,21 @@
                                                     <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                   </form>
                                             </div>
-                                          </div>
-                                        
-
+                                          </div> -->
+                                          <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                          <div class="detail-extralink">
+                                            <form action="/add-to-cart" method="post" class="d-flex align-items-center">
+                                                <div class="form-outline" style="width: 70px;">
+                                         
+                                                  <input value="1" min="1" max="<%= product.stock%>" type="number" id="quantity" name="quantity" class="qty-val" />
+                                                </div>
+                                              
+                                                <input type="hidden" class="productId" name="productId" value="<%= product._id %>">
+                                              
+                                                <button type="submit" class="button button-add-to-cart mx-2">Add to cart</button>
+                                              </form>
+                                              
+                                            </div>
 
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
@@ -1055,34 +1067,7 @@
         </div>
     </footer>
 
-    <script>
-        let selectedSize = 'medium'; 
-        let quantity = 1;
-      
-        function selectSize(size) {
-          selectedSize = size;
-          // Update the hidden input field for size
-          document.getElementById('size').value = size;
-        }
-      
-        function decreaseQuantity() {
-          if (quantity > 1) {
-            quantity--;
-            document.getElementById('qty-val').textContent = quantity;
-            document.getElementById('quantity').value = quantity;
-          }
-        }
-      
-        function increaseQuantity() {
-          quantity++;
-          document.getElementById('qty-val').textContent = quantity;
-          document.getElementById('quantity').value = quantity;
-        }
-      
-        function addToCart() {
-          document.getElementById('addToCartForm').submit();
-        }
-      </script>
+
 
 
 

@@ -43,7 +43,7 @@ user_route.get('/product/:id',userController.loadProductDetails)
 user_route.get('/category/:id',userController.categoryWiseProducts)
 
 user_route.get('/cart',cartController.loadCart)
-user_route.post('/add-to-cart/:id',cartController.addToCart)
+user_route.post('/add-to-cart',cartController.addToCart)
 user_route.get('/user-account',userController.loadAccount)
 
 
