@@ -439,7 +439,7 @@
                 </div>
             </div>
         </div>
-        <section class="pt-150 pb-150">
+        <section class="pt-80 pb-150">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 m-auto">
@@ -463,7 +463,7 @@
                                             <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                                            <a class="nav-link" href="/logout"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -572,32 +572,32 @@
                                         </div>
                                     </div> -->
                                     <div class="tab-pane fade active show" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                        <a class="btn btn-fill-out submit btn-medium mb-4 " href="/add-address">Add Address</a>
+
                                         <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="card mb-3 mb-lg-0">
-                                                    <div class="card-header">
-                                                        <h5 class="mb-0">Billing Address</h5>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <address>3522 Interstate<br> 75 Business Spur,<br> Sault Ste. <br>Marie, MI 49783</address>
-                                                        <p>New York</p>
-                                                        <a href="#" class="btn-small">Edit</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <h5 class="mb-0">Shipping Address</h5>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <address>4299 Express Lane<br>
-                                                            Sarasota, <br>FL 34249 USA <br>Phone: 1.941.227.4444</address>
-                                                        <p>Sarasota</p>
-                                                        <a href="#" class="btn-small">Edit</a>
+                                            <% for(let i = 0; i < user.address.length; i++){ %>
+                                                <div class="col-lg-4">
+                                                    <div class="card mb-3 mb-lg-0">
+                                                        <div class="card-header">
+    
+                                                            <% if(i ===0) {%>
+                                                            <h5 class="mb-0">Billing Address</h5>
+                                                            <%}else{%>
+                                                                <h5 class="mb-0">Other Address</h5>
+                                                                <%}%>
+    
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <address><%=user.address[i].customerName%><br><%= user.address[i].addressLine1%>,<br> <%= user.address[i].city%> <br><%=user.address[i].zipcode%></address>
+                                                            <p><%=user.address[i].state%></p>
+                                                            <a href="#" class="btn-small">Edit</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <%}%>
+                                                
+
+                                
                                         </div>
                                     </div> 
                                     <div class="tab-pane fade" id="account-detail" role="tabpanel" aria-labelledby="account-detail-tab">

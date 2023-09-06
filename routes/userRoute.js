@@ -42,9 +42,21 @@ user_route.get('/product/:id',userController.loadProductDetails)
 
 user_route.get('/category/:id',userController.categoryWiseProducts)
 
-user_route.get('/cart',cartController.loadCart)
-user_route.post('/add-to-cart',cartController.addToCart)
-user_route.get('/user-account',userController.loadAccount)
+user_route.get('/cart',auth.isLogin,cartController.loadCart)
+user_route.post('/add-to-cart',auth.isLogin,cartController.addToCart)
+user_route.post('/change-quantity',auth.isLogin,cartController.changeQuantity)
+user_route.get('/remove-cart/:id',auth.isLogin,cartController.deleteCartItem)
+user_route.get('/checkout',auth.isLogin,cartController.loadPlaceOrder)
+user_route.post('/checkout',auth.isLogin,cartController.postOrder)
+user_route.get('/order-success',auth.isLogin,cartController.orderSuccessPage)
+
+
+
+
+user_route.get('/user-account',auth.isLogin,userController.loadAccount)
+user_route.get('/add-address',auth.isLogin, userController.loadAddAddress)
+user_route.post('/add-address',auth.isLogin, userController.addAddress)
+
 
 
 

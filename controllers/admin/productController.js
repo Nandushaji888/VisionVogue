@@ -191,7 +191,7 @@ const updateProduct = async (req, res) => {
 };
 
 //deleting a product
-const deleteProduct = async (req, res) => {
+const   deleteProduct = async (req, res) => {
   try {
     const id = req.params.id;
     await Product.findByIdAndDelete(id);

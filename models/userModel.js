@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
+    address : {
+        type : Array
+    },
     password : {
         type : String,
         required : true
@@ -25,16 +28,15 @@ const userSchema = new mongoose.Schema({
         type : Number,
         default : 0
     },
-    cart : {
-        items: [{
+    cart :  [{
        productId: {
          type: mongoose.Schema.Types.ObjectId,
          ref: 'Product', 
-       },
-       size: String,     
+       },  
        quantity: Number,  
+       price : Number
    }]
-}
+
 })
 
 

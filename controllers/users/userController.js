@@ -239,6 +239,7 @@ const userLogout = async (req, res) => {
 
 const loadProductDetails = async (req, res) => {
   try {
+    
     const id = req.params.id;
     const productData = await Product.findById(id).populate("category");
     console.log(productData);
@@ -371,11 +372,39 @@ const passwordChange = async (req, res) => {
 
 const loadAccount = async(req, res) => {
   try {
-    res.render('userProfile')
+    const userData = await User.findById(req.session.user_id)
+    console.log(userData.address[0].city);
+
+    res.render('userProfile',{user : userData})
   } catch (error) {
     console.log(error.message);
   }
 }
+
+const loadAddAddress = async (req,res)=>{
+  try {
+      res.render('addAddress')
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
+const addAddress =  async (req,res)=>{
+  try {
+      const address = req.body;
+      console.log('address'+ address);
+      const user = await User.findById(req.session.user_id);
+
+      user.address.push(address);
+      await user.save();
+
+      res.redirect('/user-account')
+
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
 
 module.exports = {
   loadSignup,
@@ -390,6 +419,8 @@ module.exports = {
   sendVerificationMessage,
   loadForgotPassword,
   passwordChange,
-  loadAccount
+  loadAccount,
+  loadAddAddress,
+  addAddress
  
 };

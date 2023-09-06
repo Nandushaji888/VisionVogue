@@ -1,118 +1,184 @@
-const Cart = require('../../models/cartSchema');
-const User = require('../../models/userModel');
-const Product = require('../../models/productModel');
+const Cart = require("../../models/cartSchema");
+const User = require("../../models/userModel");
+const Product = require("../../models/productModel");
+const Order = require("../../models/orderSchema")
 
-// const addToCart1 = async (req, res) => {
-//   try {
-//     const productId = req.params.id;
-//     const selectedSize = req.body.size; 
-//     const quantity = parseInt(req.body.quantity);
-
-  
-//     if (isNaN(quantity) || quantity <= 0) {
-//       return res.status(400).json({ message: 'Invalid quantity' });
-//     }
-//     const userId = req.session.user_id;
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-
-//     const existingItem = user.cart.items.find((item) => (
-//       item.productId.equals(productId) && item.size === selectedSize
-//     ));
-
-//     if (existingItem) {
-//       existingItem.quantity += quantity;
-//     } else {
-//       user.cart.items.push({ productId, size: selectedSize, quantity });
-//     }
-
-//     await user.save();
-
-//     res.render('userCart',{user : user})
-  
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// };
-const addToCart = async (req,res)=>{
+const addToCart = async (req, res) => {
   try {
-      console.log(req.body);
-      const productId = req.body.productId;
-      const quantity = parseInt(req.body.quantity);
-      console.log('productId-----'+productId+'   quantity-----' + quantity);
+    console.log(req.body);
+    const productId = req.body.productId;
+    const quantity = parseInt(req.body.quantity);
 
-      if(isNaN(quantity) || quantity <= 0){
-          res.status(400).json({ message: 'Invalid quantity' });
-      }
-      
-      const userId = req.session.user_id;
-      console.log('userId------'+userId);
-      const user = await User.findById(userId);
+    if (isNaN(quantity) || quantity <= 0) {
+      res.status(400).json({ message: "Invalid quantity" });
+    }
+    const product = await Product.findById(productId)
+    const price = product.price;
+    const userId = req.session.user_id;
+    console.log("userId------" + userId);
+    const user = await User.findById(userId);
 
-      if(!user){
-          res.status(404).json({message: 'user not found'})
-      }
+    if (!user) {
+      res.status(404).json({ message: "user not found" });
+    }
 
-      const existingItem = user.cart.items.find((item) => (
-          item.productId.equals(productId)
-        ));
-    
-      if (existingItem) {
-          existingItem.quantity += quantity;
-        } else {
-          user.cart.items.push({ productId, quantity });
-        }
-    
-        await user.save();
+    const existingItem = user.cart.find((item) =>
+      item.productId.equals(productId)
+    );
 
-        console.log('product added to cart')
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      user.cart.push({ productId, quantity,price });
+    }
 
-        res.redirect('/cart')
-      // res.redirect('/product/'+productId);
+    await user.save();
+
+    console.log("product added to cart");
+
+    res.redirect("/cart");
+    // res.redirect('/product/'+productId);
   } catch (error) {
-      console.log(error.message);
+    console.log(error.message);
   }
-}
+};
 
-
-
-
-// const loadCart = async(req, res) => {
-//     try {
-
-//         const id = req.session.user_id;
-//         const user = await User.findById(id)
-//       const cartItems = user.cart.items;
-//       const productData = await Product.find({_id : {$in : cartItems.map(item => item.productId)} })
-
-//       const cartWithProductDetails = cartItems.map(cartItem => {
-//         const productDetail = productData.find(product => product._id.equals(cartItem.productId));
-//         return {
-//           ...cartItem,
-//           productDetail, 
-//         };
-//       });
-
-//       console.log(cartWithProductDetails);
-//       res.render('userCart', { user : user, cartItems: cartWithProductDetails });
-//     } catch (error) {
-//         console.log(error.message);
-//     }
-// }
 
 const loadCart = async (req,res)=>{
   try {
-      const userCart = await User.findOne({_id: req.session.user_id}).populate('cart.items.productId')
-      res.render('userCart',{userCart: userCart})
+      const userCart = await User.findOne({_id: req.session.user_id}).populate('cart.productId')
+      let grandTotal=0;
+      for(let i =0;i<userCart.cart.length;i++){
+          grandTotal= grandTotal + parseInt(userCart.cart[i].productId.price)* parseInt(userCart.cart[i].quantity)
+      }
+      console.log(grandTotal);
+
+      res.render('userCart',{userCart: userCart, grandTotal : grandTotal})
   } catch (error) {
       console.log(error.message);
   }
 }
 
+
+//changing quntity in 
+const changeQuantity = async (req,res)=>{
+  console.log(req.body)
+  req.body.count = parseInt(req.body.count)
+  try {
+      const data = await User.updateOne(
+          {
+            _id: req.session.user_id,
+             'cart.productId': req.body.productId,
+          },
+          {
+            $inc: {
+              'cart.$.quantity': req.body.count,
+            }
+          },
+          {
+              new:true
+          }
+      )
+      console.log("Dataa", data)
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
+//deleteCart items
+const deleteCartItem = async (req, res) => {
+  try {
+    const userId = req.session.user_id;
+    const productIdToDelete = req.params.id; 
+
+    console.log('productId to remove'+productIdToDelete);
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log('user'+user);
+    user.cart = user.cart.filter((item) =>
+      !item.productId.equals(productIdToDelete)
+    );
+
+    await user.save();
+
+    console.log("Product removed from cart");
+
+    res.redirect('/cart')
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+//load check out page
+
+const loadPlaceOrder = async(req, res) => {
+  try {
+    const user = await User.findOne({_id: req.session.user_id}).populate('cart.productId')
+    const userCart = await User.findOne({_id: req.session.user_id})
+    // console.log(req.body);
+      res.render('checkout.ejs', {user : user, userCart : userCart})
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const postOrder= async(req, res) => {
+  try {
+    const userId = req.session.user_id
+    const userData = await User.findById(userId)
+    
+    const order =  new Order ({
+      
+      customerId: userId,
+      products: req.body.product,
+      quantity: req.body.quantity,
+      price: req.body.salePrice,
+      totalAmount: req.body.GrandTotal,
+      shippingAddress: req.body.address,
+    })
+    const orderSuccess = await order.save();
+    if(orderSuccess) {
+      
+      res.redirect('/order-success')
+    console.log(req.body);}
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+  // const userId = req.session.user_id;
+  //   const order = new Order({
+  //     customerId: userId,
+  //     productId: req.body.productId,
+  //     quantity: req.body.quantity,
+  //     price: req.body.salePrice,
+
+  //     totalAmount: req.body.GrandTotal,
+  //     shippingAddress: req.body.address,
+  //   });
+  //   const orderSuccess = await order.save();
+  //   if(orderSuccess) {
+  //     res.redirect('/cart')
+  //   }
+
+  const orderSuccessPage = async(req, res) => {
+    try {
+      res.render('orderSuccessPage')
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
 module.exports = {
   addToCart,
-  loadCart
+  loadCart,
+  changeQuantity,
+  deleteCartItem,
+  loadPlaceOrder,
+  postOrder,
+  orderSuccessPage
 };
