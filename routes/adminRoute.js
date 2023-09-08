@@ -3,6 +3,7 @@ const adminController = require('../controllers/admin/adminController')
 const categoryController = require('../controllers/admin/categoryContoller')
 const productController = require('../controllers/admin/productController')
 const userController = require('../controllers/admin/userController')
+const orderController = require('../controllers/admin/orderController')
 const session = require('express-session'); 
 const admin_route = express()
 const config = require('../config/config');
@@ -69,5 +70,9 @@ admin_route.get('/users', auth.isLogin, userController.loadUsers)
 admin_route.get('/edit-user/:id', auth.isLogin, userController.loadEditUser)
 admin_route.post('/edit-user/:id',userController.updateUser)
 admin_route.get('/user-status/:id', userController.userStatus)
+
+
+admin_route.get('/orders',auth.isLogin,orderController.loadOrderList)
+
 
 module.exports = admin_route;

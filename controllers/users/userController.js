@@ -1,6 +1,7 @@
 const User = require("../../models/userModel");
 const Product = require("../../models/productModel");
 const Category = require("../../models/categoryModel");
+const Order = require('../../models/orderModel')
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
@@ -128,7 +129,9 @@ const verifyAndRegisterUser = async (req, res) => {
 
 const loadLogin = async (req, res) => {
   try {
-    res.render("login");
+    const categories = await Category.find()
+    const user = req.session.user_id
+    res.render("login",{ user : user, categories : categories});
   } catch (error) {
     console.log(error.message);
   }
@@ -243,7 +246,9 @@ const loadProductDetails = async (req, res) => {
     const id = req.params.id;
     const productData = await Product.findById(id).populate("category");
     console.log(productData);
-    res.render("productDetails", { product: productData });
+    const categories = await Category.find()
+    const user = await User.findById(req.session.user_id)
+    res.render("productDetails", { product: productData, user : user, categories : categories });
   } catch (error) {
     console.log(error.message);
   }
@@ -266,9 +271,12 @@ const categoryWiseProducts = async (req, res) => {
       console.log(products);
       const categoryList = await Category.find({ isListed: true });
 
+      const user = await User.findById(req.session.user_id)
+
       res.render("categoryWiseProducts", {
         products: products,
         categories: categoryList,
+        user : user
       });
     } else {
       console.log("Category not found");
@@ -319,12 +327,12 @@ const sendVerificationMessage = async (req, res) => {
       const accountSid = process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;
       const client = twilio(accountSid, authToken);
-      // console.log(verificationCode);
-      // await client.messages.create({
-      //   body: `Your verification code for resetting your password is : ${verificationCode}`,
-      //   from: process.env.PHONE,
-      //   to: fullPhoneNumber,
-      // });
+      console.log(verificationCode);
+      await client.messages.create({
+        body: `Your verification code for resetting your password is : ${verificationCode}`,
+        from: process.env.PHONE,
+        to: fullPhoneNumber,
+      });
       req.session.otp = verificationCode;
       req.session.mno = phoneNumber;
       res.render("forgotPassOTP", { message: "Check your phone for otp" });
@@ -372,10 +380,11 @@ const passwordChange = async (req, res) => {
 
 const loadAccount = async(req, res) => {
   try {
+    const orderData = await Order.find({customerId : req.session.user_id})
     const userData = await User.findById(req.session.user_id)
     console.log(userData.address[0].city);
 
-    res.render('userProfile',{user : userData})
+    res.render('userProfile',{user : userData , order : orderData})
   } catch (error) {
     console.log(error.message);
   }
@@ -404,6 +413,8 @@ const addAddress =  async (req,res)=>{
       console.log(error.message);
   }
 }
+
+
 
 
 module.exports = {

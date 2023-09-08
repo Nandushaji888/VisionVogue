@@ -4,7 +4,11 @@ const mongoose = require('mongoose');
 //-----   Order Model   -----//
 const orderSchema = new mongoose.Schema({
     orderId: String,
-    customerId: mongoose.Schema.Types.ObjectId,
+    customerId: {
+        type : mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    },
+    
 
     products : {
 

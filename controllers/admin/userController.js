@@ -42,28 +42,35 @@ const updateUser = async( req, res) => {
         console.log(error.message);
     }
 }
-const userStatus = async( req, res) => {
+const userStatus = async (req, res) => {
     try {
         const id = req.params.id;
-        let block = {
-            isActive : false
-        }
-        let unblock = {
-            isActive : true
-        }
-        const userData = await User.findById({_id : id});
-        if(userData.isActive) {
-            await User.findByIdAndUpdate(id, block, {new : true})
-            
-        }else{
-            await User.findByIdAndUpdate(id, unblock, {new : true})
+        let updateData = {};
+
+        // Toggle the isActive status
+        const userData = await User.findById(id);
+        if (userData.isActive) {
+            updateData.isActive = false;
+        } else {
+            updateData.isActive = true;
         }
 
-        res.redirect('/admin/users')
+        // Update the user's isActive status
+        const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
+        // Check if the user was found and updated
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Send a success response
+        res.status(200).json({ message: 'User status updated successfully', user: updatedUser });
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
+
 
 module.exports = {
     loadUsers,

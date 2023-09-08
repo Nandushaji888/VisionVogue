@@ -68,13 +68,8 @@
                     <div class="main-menu main-menu-grow main-menu-padding-1 main-menu-lh-1 main-menu-mrg-1 hm3-menu-padding d-none d-lg-block hover-boder">
                         <nav>
                             <ul>
-                                <li><a class="active" href="index.html">Home <i class="fi-rs-angle-down"></i></a>
-                                    <ul class="sub-menu">
-                                        <li><a href="index.html">Home 1</a></li>
-                                        <li><a href="index-2.html">Home 2</a></li>
-                                        <li><a href="index-3.html">Home 3</a></li>
-                                        <li><a href="index-4.html">Home 4</a></li>
-                                    </ul>
+                                <li><a class="active" href="/">Home </a>
+                            
                                 </li>
                                 <li><a href="shop-grid-right.html">Shop <i class="fi-rs-angle-down"></i></a>
                                     <ul class="sub-menu">
@@ -439,7 +434,7 @@
                 </div>
             </div>
         </div>
-        <section class="pt-80 pb-150">
+        <section class="pt-150 pb-150">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 m-auto">
@@ -447,7 +442,7 @@
                             <div class="col-md-4">
                                 <div class="dashboard-menu">
                                     <ul class="nav flex-column" role="tablist">
-                                        <!-- <li class="nav-item">
+                                        <li class="nav-item">
                                             <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
                                         </li>
                                         <li class="nav-item">
@@ -455,7 +450,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
-                                        </li> -->
+                                        </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
                                         </li>
@@ -470,38 +465,17 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="tab-content dashboard-content">
-                                    <!-- <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                                        <div class="card-body">
-                                            <form method="post" name="enq">
-                                                <div class="row">
-                                                    <div class="form-group col-md-6">
-                                                        <label>First Name <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="name" type="text">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Email Address <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="email" type="email">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Current Password <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="password" type="password">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>New Password <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="npassword" type="password">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Confirm Password <span class="required">*</span></label>
-                                                        <input required="" class="form-control square" name="cpassword" type="password">
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
-                                                    </div>
-                                                </div>
-                                            </form>
+                                    <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Hello <%=user.name%>! </h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a></p>
+                                            </div>
                                         </div>
-                                    </div> -->
-                                    <!-- <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                                    </div>
+                                    <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
                                         <div class="card">
                                             <div class="card-header">
                                                 <h5 class="mb-0">Your Orders</h5>
@@ -519,34 +493,23 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            <% for(let i = 0; i < order.length; i++){ %>
                                                             <tr>
-                                                                <td>#1357</td>
-                                                                <td>March 45, 2020</td>
-                                                                <td>Processing</td>
-                                                                <td>$125.00 for 2 item</td>
+                                                                <td><%= i+1%></td>
+                                                                <td><%=String(order[i].createdAt).slice(4,16)%></td>
+                                                                <td><%= order[i].orderStatus%></td>
+                                                                <td>₹ <%=order[i].totalAmount%></td>
                                                                 <td><a href="#" class="btn-small d-block">View</a></td>
                                                             </tr>
-                                                            <tr>
-                                                                <td>#2468</td>
-                                                                <td>June 29, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$364.00 for 5 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>#2366</td>
-                                                                <td>August 02, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$280.00 for 3 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
+                                                            <%}%>
+                                                            
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> -->
-                                    <!-- <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
+                                    </div>
+                                    <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
                                         <div class="card">
                                             <div class="card-header">
                                                 <h5 class="mb-0">Orders tracking</h5>
@@ -570,8 +533,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> -->
-                                    <div class="tab-pane fade active show" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                    </div>
+                                    <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                                         <a class="btn btn-fill-out submit btn-medium mb-4 " href="/add-address">Add Address</a>
 
                                         <div class="row">
@@ -581,10 +544,12 @@
                                                         <div class="card-header">
     
                                                             <% if(i ===0) {%>
-                                                            <h5 class="mb-0">Billing Address</h5>
-                                                            <%}else{%>
-                                                                <h5 class="mb-0">Other Address</h5>
-                                                                <%}%>
+                                                            <h5 class="mb-0">Home</h5>
+                                                            <%}else if(i===1){%>
+                                                                <h5 class="mb-0">Office</h5>
+                                                                <%}else{%>
+                                                                    <h5 class="mb-0">Other Address</h5>
+                                                                    <%}%>
     
                                                         </div>
                                                         <div class="card-body">
@@ -595,11 +560,8 @@
                                                     </div>
                                                 </div>
                                                 <%}%>
-                                                
-
-                                
                                         </div>
-                                    </div> 
+                                    </div>
                                     <div class="tab-pane fade" id="account-detail" role="tabpanel" aria-labelledby="account-detail-tab">
                                         <div class="card">
                                             <div class="card-header">

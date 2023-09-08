@@ -1,8 +1,10 @@
-const Cart = require("../../models/cartSchema");
+const Category = require('../../models/categoryModel') 
 const User = require("../../models/userModel");
 const Product = require("../../models/productModel");
-const Order = require("../../models/orderSchema")
+const Order = require("../../models/orderModel")
 
+
+// item adding to cart
 const addToCart = async (req, res) => {
   try {
     console.log(req.body);
@@ -43,7 +45,7 @@ const addToCart = async (req, res) => {
   }
 };
 
-
+//loading cart pag
 const loadCart = async (req,res)=>{
   try {
       const userCart = await User.findOne({_id: req.session.user_id}).populate('cart.productId')
@@ -53,7 +55,10 @@ const loadCart = async (req,res)=>{
       }
       console.log(grandTotal);
 
-      res.render('userCart',{userCart: userCart, grandTotal : grandTotal})
+      const user = await User.findById(req.session.user_id)
+      const categories = await Category.find()
+
+      res.render('userCart',{userCart: userCart, grandTotal : grandTotal, user : user, categories : categories})
   } catch (error) {
       console.log(error.message);
   }
@@ -121,7 +126,8 @@ const loadPlaceOrder = async(req, res) => {
     const user = await User.findOne({_id: req.session.user_id}).populate('cart.productId')
     const userCart = await User.findOne({_id: req.session.user_id})
     // console.log(req.body);
-      res.render('checkout.ejs', {user : user, userCart : userCart})
+    const categories = await Category.find()
+      res.render('checkout.ejs', {user : user, userCart : userCart,categories : categories})
   } catch (error) {
     console.log(error.message);
   }
@@ -130,40 +136,34 @@ const loadPlaceOrder = async(req, res) => {
 const postOrder= async(req, res) => {
   try {
     const userId = req.session.user_id
-    const userData = await User.findById(userId)
+    const userData = await User.findById(userId,{cart:1,_id :0})
     
     const order =  new Order ({
       
       customerId: userId,
-      products: req.body.product,
+      products: userData.cart,
       quantity: req.body.quantity,
       price: req.body.salePrice,
       totalAmount: req.body.GrandTotal,
-      shippingAddress: req.body.address,
+      shippingAddress: JSON.parse(req.body.address),
     })
     const orderSuccess = await order.save();
     if(orderSuccess) {
-      
+      for (const cartItem of userData.cart) {
+        const product = await Product.findById(cartItem.productId);
+
+        if (product) {
+          product.stock -= cartItem.quantity;
+          await product.save();
+        }
+      }
       res.redirect('/order-success')
     console.log(req.body);}
   } catch (error) {
     console.log(error.message);
   }
 }
-  // const userId = req.session.user_id;
-  //   const order = new Order({
-  //     customerId: userId,
-  //     productId: req.body.productId,
-  //     quantity: req.body.quantity,
-  //     price: req.body.salePrice,
 
-  //     totalAmount: req.body.GrandTotal,
-  //     shippingAddress: req.body.address,
-  //   });
-  //   const orderSuccess = await order.save();
-  //   if(orderSuccess) {
-  //     res.redirect('/cart')
-  //   }
 
   const orderSuccessPage = async(req, res) => {
     try {

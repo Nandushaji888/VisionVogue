@@ -5167,8 +5167,9 @@ h6.post-title {
 .header-top-ptb-1 #news-flash {
   min-width: 400px;
   font-size: 14px;
-  line-height: 10px;
+  line-height: 12px;
   font-weight: 600;
+
 }
 
 .header-top-ptb-1 #news-flash li {
@@ -5349,8 +5350,12 @@ h6.post-title {
 }
 
 .logo.logo-width-1 a img {
-  width: 120px;
+  padding-top: 10px;
+  width: 300px;
   min-width: 120px;
+}
+.logo-image{
+  margin-top: -30px;
 }
 
 .search-style-1 form {
@@ -6446,7 +6451,7 @@ h6.post-title {
 
 .header-style-1 .header-top-ptb-1 {
   padding: 13px 0;
-  border-bottom: 3px solid #39b4ac;
+  border-bottom:3px solid #39b4ac;;
   background-color: #d8f4e2;
   background-image: none;
 }
@@ -6510,7 +6515,9 @@ h6.post-title {
 }
 
 .header-style-3 .header-top-ptb-1 {
-  background-color:#45ad76;
+  height: 40px;
+  background-color: #088178;
+  border-bottom:3px solid #39b4ac;;
   color: #fff;
   background-image: none;
 }
@@ -6578,7 +6585,7 @@ h6.post-title {
 
 .header-style-3 .search-style-2 form {
   border: 1px solid #e2e9e1;
-  border-radius: 4px;
+  border-radius: 10px;
   max-width: 700px;
 }
 
