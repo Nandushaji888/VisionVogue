@@ -1,5 +1,7 @@
 <%- include('../partials/home/home-header.ejs') %>
-                
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+
+
     <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
@@ -26,39 +28,71 @@
                                         <th scope="col">Remove</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <% var sum = 0%>
-                                    <% for(var i=0;i<userCart.cart.length;i++) { %>
-                                    <tr>
-                                        <td class="image product-thumbnail"><img src="/assets2/imgs/products/<%=userCart.cart[i].productId.image[0]%>" alt="#"></td>
-                                        <td class="product-des product-name">
-                                            <h5 class="product-name"><a href="shop-product-right.html"><%= userCart.cart[i].productId.name %></a></h5>
-                                            <p class="font-xs"><%= userCart.cart[i].productId.brand %>
-                                            </p>
-                                        </td>
-                                        <td class="price" data-title="Price"><span>₹ <%= userCart.cart[i].productId.price %> </span></td>
-                                        <td class="text-center" data-title="Stock">
-                                            <div class=" radius  m-auto">
-                                                <a  class="btn px-2 py-0" onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',-1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')" >-</a>
-                                                <span id="qty-<%= userCart.cart[i].productId._id %>" class="qty-val mx-3"><%= userCart.cart[i].quantity %></span>
-                                                <a  class="btn px-2 py-0" onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')" >+</a>
-                                            </div>
-                                        </td>
-                                        <td class="text-right" data-title="Cart">
-                                            <span>₹</span><span id="subtot-<%= i %>" > <%= userCart.cart[i].productId.price * userCart.cart[i].quantity %></span>
-                                            <% sum = sum+(userCart.cart[i].productId.price * userCart.cart[i].quantity)%>
-                                        </td>
-                                        <td class="action"  data-title="Remove"><a  href="/remove-cart/<%=userCart.cart[i].productId._id%>" class="text-muted"><i class="fi-rs-trash"></i></a></td>                                    </tr>
-                                    <% } %>
-                                   
-                                </tbody>
+                                <%if(userCart && userCart.cart.length>0){%>
+                                    <tbody>
+                                        <% var sum=0%>
+                                            <% for(var i=0;i<userCart.cart.length;i++) { %>
+                                                <tr>
+                                                    <td class="image product-thumbnail"><img
+                                                            src="/assets2/imgs/products/<%=userCart.cart[i].productId.image[0]%>"
+                                                            alt="#"></td>
+                                                    <td class="product-des product-name">
+                                                        <h5 class="product-name"><a
+                                                                href="/product/<%=userCart.cart[i].productId._id%>">
+                                                                <%= userCart.cart[i].productId.name %>
+                                                            </a></h5>
+                                                        <p class="font-xs">
+                                                            <%= userCart.cart[i].productId.brand %>
+                                                        </p>
+                                                    </td>
+                                                    <td class="price" data-title="Price"><span>₹ <%=
+                                                                userCart.cart[i].productId.price %> </span></td>
+                                                    <td class="text-center" data-title="Stock">
+                                                        <div class=" radius  m-auto">
+                                                            <a class="btn px-2 py-0"
+                                                                id="decrease-<%=userCart.cart[i].productId._id%>"
+                                                                onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',-1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')">-</a>
+                                                            <span id="qty-<%= userCart.cart[i].productId._id %>"
+                                                                class="qty-val mx-3">
+                                                                <%= userCart.cart[i].quantity %>
+                                                            </span>
+                                                            <a class="btn px-2 py-0"
+                                                                id="increase-<%=userCart.cart[i].productId._id%>"
+                                                                onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')">+</a>
+
+                                                            <!-- <a  class="btn px-2 py-0" onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',-1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')" >-</a>
+                                               
+                                                <a  class="btn px-2 py-0" onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')" >+</a> -->
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right" data-title="Cart">
+                                                        <span>₹</span><span id="subtot-<%= i %>">
+                                                            <%= userCart.cart[i].productId.price *
+                                                                userCart.cart[i].quantity %>
+                                                        </span>
+                                                        <% sum=sum+(userCart.cart[i].productId.price *
+                                                            userCart.cart[i].quantity)%>
+                                                    </td>
+                                                    <td class="action" data-title="Remove"><a
+                                                            href="/remove-cart/<%=userCart.cart[i].productId._id%>"
+                                                            class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                                                </tr>
+                                                <% } %>
+                                                    <%}else{%>
+                                                        <h3 class="text-info">No Item in Cart</h3>
+
+                                                        <%}%>
+
+                                    </tbody>
+
                             </table>
+
                         </div>
                         <div class="cart-action text-end">
                             <a href="/" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
                         </div>
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
-                        <div class="row mb-50"> 
+                        <div class="row mb-50">
                             <div class="col-lg-6 col-md-12">
                                 <div class="border p-md-4 p-30 border-radius cart-totals">
                                     <div class="heading_s1 mb-3">
@@ -69,20 +103,32 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="cart_total_label">Cart Subtotal</td>
-                                                    <td class="cart_total_amount">₹<span id="grandTotal" class="font-lg fw-900 text-brand"><%=grandTotal%></span></td>
+                                                    <td class="cart_total_amount">₹<span id="grandTotal"
+                                                            class="font-lg fw-900 text-brand">
+                                                            <%=grandTotal%>
+                                                        </span></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Shipping</td>
-                                                    <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping</td>
+                                                    <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free
+                                                        Shipping</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Total</td>
-                                                    <td class="cart_total_amount"><strong><span id="total" class="font-xl fw-900 text-brand">₹ <%= grandTotal %></span></strong></td>
+                                                    <td class="cart_total_amount"><strong><span id="total"
+                                                                class="font-xl fw-900 text-brand">₹ <%= grandTotal %>
+                                                                    </span></strong></td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
-                                    <a href="/checkout" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                                    <%if(userCart && userCart.cart.length){%>
+                                        <a href="/checkout" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To
+                                            CheckOut</a>
+                                        <%}else{%>
+                                            <a onclick="noItem()" class="btn "> <i class="fi-rs-box-alt mr-10"></i>
+                                                Proceed To CheckOut</a>
+                                            <%}%>
                                 </div>
                             </div>
                         </div>
@@ -91,49 +137,70 @@
             </div>
         </section>
     </main>
- 
-    
+
+
     <script>
-    function changeQuantity(productId,count,price,subTotal,cartSubTotal,total,quantity){
-        console.log(productId,count,price,subTotal,cartSubTotal,total,quantity);
-        const subtotalValue = document.getElementById(subTotal).innerHTML
-        const grandTotalValue = document.getElementById('grandTotal').innerHTML
-        const quantityValue = document.getElementById(quantity).innerHTML
-        let totalValue = parseInt(subtotalValue)
-       
-        console.log(quantityValue,count);
-        if(quantityValue == 1 && count == -1){
-            return;
+        function changeQuantity(productId, count, price, subTotal, cartSubTotal, total, quantity) {
+
+
+            const decreaseButton = document.getElementById(`decrease-${productId}`);
+            const increaseButton = document.getElementById(`increase-${productId}`);
+            decreaseButton.disabled = true;
+            increaseButton.disabled = true;
+            console.log(productId, count, price, subTotal, cartSubTotal, total, quantity);
+            const subtotalValue = document.getElementById(subTotal).innerHTML
+            const grandTotalValue = document.getElementById('grandTotal').innerHTML
+            const quantityValue = document.getElementById(quantity).innerHTML
+            let totalValue = parseInt(subtotalValue)
+
+            console.log(quantityValue, count);
+            if (quantityValue == 1 && count == -1) {
+                return;
+            }
+            $.ajax({
+                url: '/change-quantity',
+                method: 'post',
+                data: {
+                    productId,
+                    count
+                }, success: function (response) {
+                    // Enable buttons after the request is done
+                    decreaseButton.disabled = false;
+                    increaseButton.disabled = false;
+
+                }
+
+            })
+
+
+            if (count === 1) {
+                document.getElementById(subTotal).innerHTML = parseInt(price) + totalValue
+                document.getElementById('grandTotal').innerHTML = parseInt(price) + parseInt(grandTotalValue);
+                document.getElementById('total').innerHTML = parseInt(price) + parseInt(grandTotalValue);
+                document.getElementById(quantity).innerHTML = parseInt(quantityValue) + 1;
+
+
+            } else if (count === -1) {
+                document.getElementById(subTotal).innerHTML = totalValue - parseInt(price)
+                document.getElementById('grandTotal').innerHTML = parseInt(grandTotalValue) - parseInt(price);
+                document.getElementById('total').innerHTML = parseInt(grandTotalValue) - parseInt(price);
+                document.getElementById(quantity).innerHTML = parseInt(quantityValue) - 1;
+
+            }
+
+
         }
-        $.ajax({ 
-         url:'/change-quantity',
-         method: 'post',
-         data:{
-             productId,
-             count
-         },
-        })
-        
-        
-        if(count === 1){
-            document.getElementById(subTotal).innerHTML = parseInt(price)+totalValue
-            document.getElementById('grandTotal').innerHTML = parseInt(price)+parseInt(grandTotalValue);
-            document.getElementById('total').innerHTML = parseInt(price)+parseInt(grandTotalValue);
-            document.getElementById(quantity).innerHTML = parseInt(quantityValue)+1;
 
 
-        }else if(count === -1){
-            document.getElementById(subTotal).innerHTML = totalValue-parseInt(price)
-            document.getElementById('grandTotal').innerHTML = parseInt(grandTotalValue)-parseInt(price);
-            document.getElementById('total').innerHTML = parseInt(grandTotalValue)-parseInt(price);
-            document.getElementById(quantity).innerHTML = parseInt(quantityValue)-1;
-
+        function noItem() {
+            Swal.fire(
+                'No Item in Cart!',
+                'Add some items to the Cart!',
+                'question'
+            )
         }
-    
-              
-    }
     </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-<%- include('../partials/home/home-footer.ejs') %>
+    <%- include('../partials/home/home-footer.ejs') %>

@@ -1,6 +1,7 @@
 const express = require('express');
 const userController = require("../controllers/users/userController");
 const cartController = require('../controllers/users/cartController')
+const orderController = require('../controllers/users/orderController')
 const session = require('express-session');
 const user_route = express()
 const config = require('../config/config');
@@ -46,9 +47,10 @@ user_route.get('/cart',auth.isLogin,cartController.loadCart)
 user_route.post('/add-to-cart',auth.isLogin,cartController.addToCart)
 user_route.post('/change-quantity',auth.isLogin,cartController.changeQuantity)
 user_route.get('/remove-cart/:id',auth.isLogin,cartController.deleteCartItem)
-user_route.get('/checkout',auth.isLogin,cartController.loadPlaceOrder)
-user_route.post('/checkout',auth.isLogin,cartController.postOrder)
-user_route.get('/order-success',auth.isLogin,cartController.orderSuccessPage)
+user_route.get('/checkout',auth.isLogin,orderController.loadPlaceOrder)
+user_route.post('/checkout',auth.isLogin,orderController.postOrder)
+user_route.get('/order-success',auth.isLogin,orderController.orderSuccessPage)
+user_route.get('/order-cancel/:id',auth.isLogin, orderController.orderCancellation)
 
 
 
@@ -56,6 +58,7 @@ user_route.get('/order-success',auth.isLogin,cartController.orderSuccessPage)
 user_route.get('/user-account',auth.isLogin,userController.loadAccount)
 user_route.get('/add-address',auth.isLogin, userController.loadAddAddress)
 user_route.post('/add-address',auth.isLogin, userController.addAddress)
+user_route.get('/order-details/:id',auth.isLogin, orderController.loadOrderDetails)
 
 
 

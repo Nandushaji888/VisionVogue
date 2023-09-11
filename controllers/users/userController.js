@@ -138,72 +138,43 @@ const loadLogin = async (req, res) => {
 };
 
 //verification for user login
-
 const verifyLogin = async (req, res) => {
   try {
-    const email = req.body.email;
-    const password = req.body.password;
+      const email = req.body.email;
+      const password = req.body.password;
+    
 
-    const userData = await User.findOne({ email: email }).lean();
+      const userData = await User.findOne({ email: email }).lean();
 
-    if (userData) {
-      if (userData.isActive) {
-        console.log("userdata", userData);
-        const passwordMatch = await bcrypt.compare(password, userData.password);
-        console.log(passwordMatch);
+      if (userData) {
+          if (userData.isActive) {
+              const passwordMatch = await bcrypt.compare(password, userData.password);
 
-        if (passwordMatch && userData.is_admin === 0) {
-          req.session.user_id = userData._id;
-
-          res.redirect("/");
-        } else {
-          res.render("login", { message: "Email or password incorrect" });
-        }
+              if (passwordMatch && userData.is_admin === 0) {
+                  req.session.user_id = userData._id;
+                  const originalURL = req.session.originalURL || '/';
+                  console.log(originalURL);
+                  delete req.session.originalURL;
+                  res.json({ success: true,originalURL });
+              } else {
+                  res.status(401).json({ success: false});
+              }
+          } else {
+              res.status(403).json({
+                  success: false 
+              });
+          }
       } else {
-        res.render("login", {
-          message:
-            "Your access has been restricted by the administrator. Please reach out to the administrator at admin@gmail.com for further assistance.",
-        });
+          res.status(401).json({ success: false});
       }
-    } else {
-      res.render("login", { message: "Email or password incorrect" });
-    }
   } catch (error) {
-    console.log(error.message);
+      console.error(error.message);
+      res.status(500).json({ success: false, message: "An error occurred while processing your request." });
   }
 };
 
-//for loading home page
-// const loadHome = async (req, res) => {
-//   try {
-//     const productData = await Product.aggregate([
-//       {
-//         $lookup: {
-//           from: "categories",
-//           localField: "category",
-//           foreignField: "_id",
-//           as: "category",
-//         },
-//       },
-//       {
-//         $match: {
-//           isListed: true,
-//           "category.isListed": true,
-//         },
-//       },
-//     ]);
-//     const categoryData = await Category.find({ isListed: true });
-//     const userData = await User.findById(req.session.user_id);
 
-//     res.render("home", {
-//       products: productData,
-//       categories: categoryData,
-//       user: userData,
-//     });
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
+
 
 const loadHome = async (req, res) => {
   try {
@@ -217,6 +188,9 @@ const loadHome = async (req, res) => {
       const categoryData = await Category.find({ isListed: true });
       const userData = await User.findById(req.session.user_id);
       const filteredProducts = productData.filter((product) => product.category);
+
+      if(userData)
+    {console.log(userData.cart.length);}
 
     res.render("home", {
       products: filteredProducts,
@@ -242,8 +216,8 @@ const userLogout = async (req, res) => {
 
 const loadProductDetails = async (req, res) => {
   try {
-    
     const id = req.params.id;
+    req.session.originalURL = `/product/${id}`;
     const productData = await Product.findById(id).populate("category");
     console.log(productData);
     const categories = await Category.find()
@@ -259,7 +233,9 @@ const loadProductDetails = async (req, res) => {
 const categoryWiseProducts = async (req, res) => {
   try {
     const categoryName = decodeURIComponent(req.params.id);
-    console.log(categoryName);
+
+    req.session.originalURL = `/category/${categoryName}`;
+        console.log(categoryName);
     const category = await Category.findOne({ name: categoryName });
 
     if (category) {
@@ -318,21 +294,21 @@ const sendVerificationMessage = async (req, res) => {
         "IN",
         "International"
       );
-      const fullPhoneNumber = formattedPhoneNumber.startsWith(countryCode)
-        ? formattedPhoneNumber
-        : countryCode + formattedPhoneNumber;
+      // const fullPhoneNumber = formattedPhoneNumber.startsWith(countryCode)
+      //   ? formattedPhoneNumber
+      //   : countryCode + formattedPhoneNumber;
 
-      console.log(fullPhoneNumber);
-
-      const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      const authToken = process.env.TWILIO_AUTH_TOKEN;
-      const client = twilio(accountSid, authToken);
+      // console.log(fullPhoneNumber);
       console.log(verificationCode);
-      await client.messages.create({
-        body: `Your verification code for resetting your password is : ${verificationCode}`,
-        from: process.env.PHONE,
-        to: fullPhoneNumber,
-      });
+
+      // const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      // const authToken = process.env.TWILIO_AUTH_TOKEN;
+      // const client = twilio(accountSid, authToken);
+      // await client.messages.create({
+      //   body: `Your verification code for resetting your password is : ${verificationCode}`,
+      //   from: process.env.PHONE,
+      //   to: fullPhoneNumber,
+      // });
       req.session.otp = verificationCode;
       req.session.mno = phoneNumber;
       res.render("forgotPassOTP", { message: "Check your phone for otp" });
@@ -366,9 +342,8 @@ const passwordChange = async (req, res) => {
         { $set: { password: spassword } }
       );
       if (updatedData) {
-        res.render("forgotPassOTP", {
-          message: "Password Successfully Updated",
-        });
+        req.session.user_id = updatedData._id
+        res.redirect("/");
       }
     } else {
       res.render("forgotPassOTP", { message: "Entered OTP is incorrect" });
@@ -378,17 +353,7 @@ const passwordChange = async (req, res) => {
   }
 };
 
-const loadAccount = async(req, res) => {
-  try {
-    const orderData = await Order.find({customerId : req.session.user_id})
-    const userData = await User.findById(req.session.user_id)
-    console.log(userData.address[0].city);
 
-    res.render('userProfile',{user : userData , order : orderData})
-  } catch (error) {
-    console.log(error.message);
-  }
-}
 
 const loadAddAddress = async (req,res)=>{
   try {
@@ -414,6 +379,18 @@ const addAddress =  async (req,res)=>{
   }
 }
 
+const loadAccount = async(req, res) => {
+  try {
+    const orderData = await Order.find({customerId : req.session.user_id})
+    const userData = await User.findById(req.session.user_id)
+    console.log(userData.address[0].city);
+
+    res.render('userProfile',{user : userData , order : orderData})
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 
 
 
@@ -432,6 +409,7 @@ module.exports = {
   passwordChange,
   loadAccount,
   loadAddAddress,
-  addAddress
+  addAddress,
+ 
  
 };

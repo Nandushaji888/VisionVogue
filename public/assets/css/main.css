@@ -7496,6 +7496,34 @@ span.fi-rs-apps {
   -o-transition: all .5s ease-in-out;
   -ms-transition: all .5s ease-in-out;
 }
+[class*="dlist"] {
+  margin-bottom: 5px;
+}
+
+.dlist-inline dt, .dlist-inline dd {
+  display: inline-block;
+}
+
+.dlist {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.dlist dt {
+  width: 150px;
+  font-weight: normal;
+}
+
+.dlist dd {
+  margin-left: 30px;
+  vertical-align: baseline;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  margin-bottom: 0;
+  text-align: right;
+}
 
 .follow-us a.follow-us-facebook,
 .single-social-share a.facebook-icon {

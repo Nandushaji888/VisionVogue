@@ -1,18 +1,21 @@
 const mongoose = require('mongoose');
     const moment = require('moment-timezone');
 
-//-----   Order Model   -----//
+
 const orderSchema = new mongoose.Schema({
     orderId: String,
     customerId: {
         type : mongoose.Schema.Types.ObjectId,
         ref:'User'
     },
-    
-
-    products : {
-
-    },
+    products : [{
+        productId: {
+            type : mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        },
+        quantity: Number,
+        price: Number,
+    }],
     paymentMethod : String,
     paymentStatus: {
         type : String,
@@ -52,6 +55,5 @@ const orderSchema = new mongoose.Schema({
     }
 });
 
-const Orderdb = mongoose.model('order', orderSchema);
+module.exports = mongoose.model('order', orderSchema);
 
-module.exports = Orderdb;

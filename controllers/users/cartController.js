@@ -48,7 +48,10 @@ const addToCart = async (req, res) => {
 //loading cart pag
 const loadCart = async (req,res)=>{
   try {
-      const userCart = await User.findOne({_id: req.session.user_id}).populate('cart.productId')
+      const userCart = await User.findOne({_id: req.session.user_id}).populate('cart.productId')  
+
+
+              
       let grandTotal=0;
       for(let i =0;i<userCart.cart.length;i++){
           grandTotal= grandTotal + parseInt(userCart.cart[i].productId.price)* parseInt(userCart.cart[i].quantity)
@@ -121,64 +124,12 @@ const deleteCartItem = async (req, res) => {
 
 //load check out page
 
-const loadPlaceOrder = async(req, res) => {
-  try {
-    const user = await User.findOne({_id: req.session.user_id}).populate('cart.productId')
-    const userCart = await User.findOne({_id: req.session.user_id})
-    // console.log(req.body);
-    const categories = await Category.find()
-      res.render('checkout.ejs', {user : user, userCart : userCart,categories : categories})
-  } catch (error) {
-    console.log(error.message);
-  }
-}
 
-const postOrder= async(req, res) => {
-  try {
-    const userId = req.session.user_id
-    const userData = await User.findById(userId,{cart:1,_id :0})
-    
-    const order =  new Order ({
-      
-      customerId: userId,
-      products: userData.cart,
-      quantity: req.body.quantity,
-      price: req.body.salePrice,
-      totalAmount: req.body.GrandTotal,
-      shippingAddress: JSON.parse(req.body.address),
-    })
-    const orderSuccess = await order.save();
-    if(orderSuccess) {
-      for (const cartItem of userData.cart) {
-        const product = await Product.findById(cartItem.productId);
-
-        if (product) {
-          product.stock -= cartItem.quantity;
-          await product.save();
-        }
-      }
-      res.redirect('/order-success')
-    console.log(req.body);}
-  } catch (error) {
-    console.log(error.message);
-  }
-}
-
-
-  const orderSuccessPage = async(req, res) => {
-    try {
-      res.render('orderSuccessPage')
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
 
 module.exports = {
   addToCart,
   loadCart,
   changeQuantity,
   deleteCartItem,
-  loadPlaceOrder,
-  postOrder,
-  orderSuccessPage
+ 
 };

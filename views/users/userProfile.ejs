@@ -489,22 +489,29 @@
                                                                 <th>Date</th>
                                                                 <th>Status</th>
                                                                 <th>Total</th>
-                                                                <th>Actions</th>
+                                                                <th>Details</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            <%if(order.length){%>
                                                             <% for(let i = 0; i < order.length; i++){ %>
                                                             <tr>
                                                                 <td><%= i+1%></td>
                                                                 <td><%=String(order[i].createdAt).slice(4,16)%></td>
                                                                 <td><%= order[i].orderStatus%></td>
                                                                 <td>₹ <%=order[i].totalAmount%></td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
+                                                                <td><a href="/order-details/<%=order[i]._id%>" class="btn-small d-block">View</a></td>
                                                             </tr>
                                                             <%}%>
+
+                                                           
                                                             
                                                         </tbody>
+                                                      
                                                     </table>
+                                                    <%}else{%>
+                                                        <h4>No order details available</h4>
+                                                        <%}%>
                                                 </div>
                                             </div>
                                         </div>

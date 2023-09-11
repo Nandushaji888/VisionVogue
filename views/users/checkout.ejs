@@ -82,7 +82,7 @@
                                 <div class="card mb-3 mb-lg-0">
                                     <div class="card-header">
                                         <!-- <input class="form-check-input" value="<%= JSON.stringify(user.address[i]) %>" type="radio" name="address" id="address"> -->
-                                        <input class="form-check-input" value='<%= JSON.stringify(user.address[i]) %>' type="radio" name="address" id="address<%= i %>">
+                                        <input class="form-check-input" required value='<%= JSON.stringify(user.address[i]) %>' type="radio" name="address" id="address<%= i %>">
 
                                         <% if(i ===0) {%>
                                         <label class="form-check-label" for="flexRadioDefault1">
@@ -166,11 +166,17 @@
                                     <div class="custome-radio">
                                         <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" value="COD" checked="">
                                         <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#cashOnDelivery" aria-controls="checkPayment"  >Cash On Delivery</label>
+                                        <!-- <div class="form-group collapse in" id="checkPayment">
+                                            <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
+                                        </div> -->
+                                    </div>
+                                    <div class="custome-radio">
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="">
+                                        <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Check Payment</label>
                                         <div class="form-group collapse in" id="checkPayment">
                                             <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
                                         </div>
                                     </div>
-                    
                                 </div>
                             </div>
                             <button href="#" type="submit" class="btn btn-fill-out btn-block mt-30">Place Order</button>
