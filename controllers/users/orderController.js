@@ -4,6 +4,7 @@ const Product = require("../../models/productModel");
 const Order = require("../../models/orderModel");
 const { Error } = require("mongoose");
 const Razorpay = require("razorpay");
+const mongoose=require('mongoose')
 // const { log } = require("har-validator");
 const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
 
@@ -124,18 +125,21 @@ const postOrder = async (req, res) => {
 };
 const crypto = require('crypto');
 
-const verifyPayment = (req, res) => {
+const verifyPayment = async(req, res) => {
   try {
+    console.log('this is id:',req.body.orderId);
+    const kk = await Order.find({_id : new mongoose.Types.ObjectId(req.body.orderId)}).lean()
+    if(kk)
+      console.log(kk);
       console.log(req.body.orderId);
     const hmac = crypto.createHmac('sha256', RAZORPAY_SECRET_KEY);
     hmac.update(req.body.payment.razorpay_order_id + "|" + req.body.payment.razorpay_payment_id);
     const calculatedSignature = hmac.digest('hex');
 
     if (calculatedSignature === req.body.payment.razorpay_signature) {
-      Order.updateMany({_id : req.body.orderId}, {$set : {
-        paymentStatus : 'RECEIVED',
-        orderStatus :"PLACED"
-      }})
+      console.log(typeof(req.body.orderId));
+      await Order.updateOne({_id : new mongoose.Types.ObjectId(req.body.orderId)},{$set : { paymentStatus : 'RECEIVED', orderStatus :"PLACED"}}).lean()
+
       res.status(200).json({ status: 'success', msg: 'Payment verified' });
     } else {
 
@@ -146,8 +150,6 @@ const verifyPayment = (req, res) => {
     res.status(500).json({ status: 'error', msg: 'Internal server error' });
   }
 };
-
-module.exports = verifyPayment;
 
 
 
