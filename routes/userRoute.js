@@ -51,6 +51,7 @@ user_route.get('/checkout',auth.isLogin,orderController.loadPlaceOrder)
 user_route.post('/checkout',auth.isLogin,orderController.postOrder)
 user_route.get('/order-success',auth.isLogin,orderController.orderSuccessPage)
 user_route.get('/order-cancel/:id',auth.isLogin, orderController.orderCancellation)
+user_route.post('/verify-payment',auth.isLogin,orderController.verifyPayment)
 
 
 

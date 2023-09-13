@@ -383,7 +383,7 @@ const loadAccount = async(req, res) => {
   try {
     const orderData = await Order.find({customerId : req.session.user_id})
     const userData = await User.findById(req.session.user_id)
-    console.log(userData.address[0].city);
+    // console.log(userData.address[0].city);
 
     res.render('userProfile',{user : userData , order : orderData})
   } catch (error) {

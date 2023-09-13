@@ -16,12 +16,12 @@ const orderSchema = new mongoose.Schema({
         quantity: Number,
         price: Number,
     }],
-    paymentMethod : String,
+    // paymentMethod : String,
     paymentStatus: {
         type : String,
         default: "PENDING"
     },
-    paymentDetails:{
+    paymentMethod:{
         type: Object,
         default : 'COD'
     },
