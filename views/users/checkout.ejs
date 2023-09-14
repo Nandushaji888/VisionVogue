@@ -93,19 +93,11 @@
                                                     value='<%= JSON.stringify(user.address[i]) %>' type="radio"
                                                     name="address" id="address<%= i %>">
 
-                                                <% if(i===0) {%>
+                                                
                                                     <label class="form-check-label" for="flexRadioDefault1">
-                                                        <h5 class="mb-0">Home</h5>
+                                                      <h5 class="mb-0"><%=user.address[i].addressType%></h5>
                                                     </label>
-                                                    <%}else if(i===1){%>
-                                                        <label class="form-check-label" for="flexRadioDefault1">
-                                                            <h5 class="mb-0">Office</h5>
-                                                        </label>
-                                                        <%}else{%>
-                                                            <label class="form-check-label" for="flexRadioDefault1">
-                                                                <h5 class="mb-0">Other Address</h5>
-                                                            </label>
-                                                            <%}%>
+                                                   
                                             </div>
                                             <div class="card-body">
                                                 <address>
@@ -118,7 +110,7 @@
                                                                             <%=user.address[i].phone%><br>
                                                                                 <%=user.address[i].email%>
                                                 </address>
-                                                <a href="#" class="btn-small">Edit</a>
+                                              
                                             </div>
                                         </div>
                                     </div>

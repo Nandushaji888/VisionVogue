@@ -30,7 +30,7 @@ user_route.get('/register/verify', userController.loadSignup)
 user_route.post('/register/verify', userController.verifyAndRegisterUser)
 
 user_route.get('/forgot-password',userController.loadForgotPassword)
-user_route.post('/forgot-password',userController.sendVerificationMessage)
+user_route.post('/forgot-password',userController.otpForForgotPass)
 user_route.get('/password-change',userController.loadForgotPassword)
 user_route.post('/password-change',userController.passwordChange)
 
@@ -55,11 +55,16 @@ user_route.post('/verify-payment',auth.isLogin,orderController.verifyPayment)
 
 
 
-
 user_route.get('/user-account',auth.isLogin,userController.loadAccount)
 user_route.get('/add-address',auth.isLogin, userController.loadAddAddress)
 user_route.post('/add-address',auth.isLogin, userController.addAddress)
+user_route.get('/edit-address/:id',auth.isLogin,userController.loadEditAddress)
+user_route.post('/edit-address',auth.isLogin,userController.editAddress)
 user_route.get('/order-details/:id',auth.isLogin, orderController.loadOrderDetails)
+
+
+user_route.get('/priceLowTohigh/:id',userController.priceLowTohigh)
+user_route.get('/priceHighToLow/:id',userController.priceHighToLow)
 
 
 

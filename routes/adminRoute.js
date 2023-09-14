@@ -73,6 +73,8 @@ admin_route.get('/user-status/:id', userController.userStatus)
 
 
 admin_route.get('/orders',auth.isLogin,orderController.loadOrderList)
+admin_route.get('/order-details/:id',auth.isLogin,orderController.orderDetails)
+admin_route.post('/change-order-status',auth.isLogin,orderController.changeOrderStatus)
 
 
 module.exports = admin_route;

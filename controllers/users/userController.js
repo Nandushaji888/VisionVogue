@@ -4,6 +4,7 @@ const Category = require("../../models/categoryModel");
 const Order = require('../../models/orderModel')
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const mongoose=require('mongoose')
 require("dotenv").config();
 const twilio = require("twilio");
 const phoneUtil = require("libphonenumber-js");
@@ -22,7 +23,7 @@ const securePassword = async (password) => {
 // for sending mail for verification
 
 const generateOTP = () => {
-  return Math.floor(Math.random() * 9000 + 1000).toString();
+  return Math.floor(Math.random() * 900000 + 10000).toString();
 };
 
 const sendVerificationMail = async (name, email) => {
@@ -235,6 +236,7 @@ const categoryWiseProducts = async (req, res) => {
     const categoryName = decodeURIComponent(req.params.id);
 
     req.session.originalURL = `/category/${categoryName}`;
+    const pathurl = `/${categoryName}`
         console.log(categoryName);
     const category = await Category.findOne({ name: categoryName });
 
@@ -252,7 +254,8 @@ const categoryWiseProducts = async (req, res) => {
       res.render("categoryWiseProducts", {
         products: products,
         categories: categoryList,
-        user : user
+        user : user,
+        pathurl : pathurl
       });
     } else {
       console.log("Category not found");
@@ -270,58 +273,36 @@ const loadForgotPassword = async (req, res) => {
   }
 };
 
-function generateVerificationCode() {
-  return Math.floor(Math.random() * 9000 + 1000).toString();
-}
 
-const sendVerificationMessage = async (req, res) => {
-  console.log(typeof req.body.mno);
-  const phone = req.body.mno;
-  req.session.password = req.body.password;
-  console.log(phone);
+
+
+const otpForForgotPass = async (req, res) => {
   try {
-    const userData = await User.findOne({ phone: phone }).lean();
-    if (userData) {
-      console.log(userData);
+    console.log(req.body);
+  //  const userDetails = await Order.findOne({_id : new mongoose.Types.ObjectId(req.body.email)}).lean()
+    const userDetails = await User.findOne({email : req.body.email})
+    console.log(userDetails);
+    if(userDetails){
+    const otp = await sendVerificationMail(userDetails.name, userDetails.email);
+    req.session.email = userDetails.email
+    req.session.password = req.body.password;
+    req.session.otp = otp;
+    console.log("otp for verification is " + otp);
 
-      const verificationCode = generateVerificationCode();
-      console.log(verificationCode);
-      const phoneUtil = require("libphonenumber-js");
-      const phoneNumber = req.body.mno;
-      const countryCode = "+91";
-      const formattedPhoneNumber = phoneUtil.format(
-        phoneNumber,
-        "IN",
-        "International"
-      );
-      // const fullPhoneNumber = formattedPhoneNumber.startsWith(countryCode)
-      //   ? formattedPhoneNumber
-      //   : countryCode + formattedPhoneNumber;
-
-      // console.log(fullPhoneNumber);
-      console.log(verificationCode);
-
-      // const accountSid = process.env.TWILIO_ACCOUNT_SID;
-      // const authToken = process.env.TWILIO_AUTH_TOKEN;
-      // const client = twilio(accountSid, authToken);
-      // await client.messages.create({
-      //   body: `Your verification code for resetting your password is : ${verificationCode}`,
-      //   from: process.env.PHONE,
-      //   to: fullPhoneNumber,
-      // });
-      req.session.otp = verificationCode;
-      req.session.mno = phoneNumber;
-      res.render("forgotPassOTP", { message: "Check your phone for otp" });
-    } else {
+    res.render("forgotPassOTP", {
+      message: "OTP send, Please check your mail for OTP",
+    });}else{
       res.render("forgotPassword", {
-        message:
-          "Mobile Number Not Found: Please verify the number and try again.",
-      });
+        message: "Email doesnt register with us",
+      })
     }
+    console.log("otp for verification is " + otp);
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
+
+
 
 const passwordChange = async (req, res) => {
   try {
@@ -329,18 +310,21 @@ const passwordChange = async (req, res) => {
     console.log(req.session.otp);
     console.log(req.session.password);
     const enteredOtp = req.body.otp;
-    const phone = req.session.mno;
+    const email = req.session.email;
     console.log(enteredOtp);
-    console.log(phone);
+    console.log(email);
     console.log(enteredOtp === req.session.otp);
     if (enteredOtp === req.session.otp) {
       const newPassword = req.session.password;
       const spassword = await securePassword(newPassword);
 
       const updatedData = await User.findOneAndUpdate(
-        { phone: phone },
+        { email: email },
         { $set: { password: spassword } }
       );
+      delete req.session.otp;
+      delete req.session.password;
+      delete req.session.email;
       if (updatedData) {
         req.session.user_id = updatedData._id
         res.redirect("/");
@@ -391,6 +375,127 @@ const loadAccount = async(req, res) => {
     console.log(error.message);
   }
 }
+const loadEditAddress = async(req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const user = await User.findById(req.session.user_id)
+    console.log(user);
+    const address = user.address[id]
+    console.log(address);
+    res.render('editAddress', {address : address})
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', msg: 'Internal server error' });
+  }
+}
+
+const editAddress = async (req,res)=>{
+  try {
+      console.log(req.body);
+      // const user = await User.findById(req.session.user_id);
+      const addressId = req.body.addressId;
+      console.log(addressId);
+    
+      // Use findOneAndUpdate to update the specific address
+      const updatedUser = await User.findOneAndUpdate(
+        {
+          _id: req.session.user_id,
+          'address._id': addressId
+        },
+        {
+          $set: {
+            'address.$.customerName': req.body.customerName,
+            'address.$.addressLine1': req.body.addressLine1,
+            'address.$.city': req.body.city,
+            'address.$.state': req.body.state,
+            'address.$.zipcode': req.body.zipcode,
+            'address.$.phone': req.body.phone,
+            'address.$.email': req.body.email,
+            'address.$.addressType': req.body.addressType
+          }
+        },
+        { new: true } // To return the updated user document
+      );
+    
+      if (updatedUser) {
+        console.log('User address updated:', updatedUser);
+        res.redirect('/user-account')
+      } else {
+        console.log('Address not found or user not found.');
+        
+      }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    }
+    
+
+}
+
+const priceLowTohigh = async(req, res) => {
+  try {
+    const categoryName = decodeURIComponent(req.params.id);
+    const pathurl = `/${categoryName}`
+    const category = await Category.findOne({ name: categoryName });
+
+    if (category) {
+      console.log(category);
+
+      const products = await Product.find({ category: category._id })
+      .populate("category")
+      .sort({ price: -1 });
+    
+      console.log(products);
+      const categoryList = await Category.find({ isListed: true });
+
+      const user = await User.findById(req.session.user_id)
+
+      res.render("categoryWiseProducts", {
+        products: products,
+        categories: categoryList,
+        user : user,
+        pathurl :pathurl
+      });
+  }
+}catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', msg: 'Internal server error' });
+  }
+}
+
+const priceHighToLow = async(req, res) => {
+  try {
+    const categoryName = decodeURIComponent(req.params.id);
+    const pathurl = `/${categoryName}`
+    const category = await Category.findOne({ name: categoryName });
+
+    if (category) {
+      console.log(category);
+
+      const products = await Product.find({ category: category._id })
+      .populate("category")
+      .sort({ price: 1 });
+    
+      console.log(products);
+      const categoryList = await Category.find({ isListed: true });
+
+      const user = await User.findById(req.session.user_id)
+
+      res.render("categoryWiseProducts", {
+        products: products,
+        categories: categoryList,
+        user : user,
+        pathurl :pathurl
+      });
+  }
+}catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', msg: 'Internal server error' });
+  }
+}
 
 
 
@@ -405,12 +510,16 @@ module.exports = {
   userLogout,
   loadProductDetails,
   categoryWiseProducts,
-  sendVerificationMessage,
+  otpForForgotPass,
   loadForgotPassword,
   passwordChange,
   loadAccount,
   loadAddAddress,
   addAddress,
+  loadEditAddress,
+  editAddress,
+  priceLowTohigh,
+  priceHighToLow
  
  
 };

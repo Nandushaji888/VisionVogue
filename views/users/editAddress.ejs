@@ -702,40 +702,42 @@
                         <div class="mb-25">
                             <h4>Billing Details</h4>
                         </div>
-                        <form method="post">
+                        <form action="/edit-address" method="post">
                             <div class="form-group">
-                                <input id="customerName" type="text" required="" name="customerName" placeholder="Your name *">
+                                <input id="customerName" type="text" required="" name="customerName" value="<%=address.customerName%>" >
                             </div>
                      
                             
                             <div class="form-group">
-                                <input id="addressLine1" type="text" name="addressLine1" required="" placeholder="Address *">
+                                <input id="addressLine1" type="text" name="addressLine1" required="" value="<%=address.addressLine1%>">
                             </div>
                        
                             <div class="form-group">
-                                <input id="city" required="" type="text" name="city" placeholder="City / Town *">
+                                <input id="city" required="" type="text" name="city" value="<%=address.city%>">
                             </div>
                             <div class="form-group">
-                                <input id="state" required="" type="text" name="state" placeholder="State / County *">
+                                <input id="state" required="" type="text" name="state" value="<%=address.state%>">
                             </div>
                             <div class="form-group">
-                                <input id="pincode" required="" type="text" name="zipcode" placeholder="Postcode / ZIP *">
+                                <input id="pincode" required="" type="text" name="zipcode" value="<%=address.zipcode%>">
                             </div>
                             <div class="form-group">
-                                <input id="phone" required="" type="text" name="phone" placeholder="Phone *">
+                                <input id="phone" required="" type="text" name="phone" value="<%=address.phone%>">
                             </div>
                             <div class="form-group">
-                                <input id="email" required="" type="text" name="email" placeholder="Email address *">
+                                <input id="email" required="" type="text" name="email" value="<%=address.email%>">
                             </div>
                             <div class="form-group">
-                                <input id="addressType" required="" type="text" minlength="3" maxlength="15" name="addressType" placeholder="Address Type *">
+                                <input id="addressType" required="" type="text" minlength="3" maxlength="15" name="addressType" value="<%=address.addressType%>">
                             </div>
+                            <input  type="hidden" name="addressId" value="<%=address._id%>">
+
 
                             <!-- <div id="collapsePassword" class="form-group create-account collapse in">
                                 <input required="" type="password" placeholder="Password" name="password">
                             </div> -->
             
-                            <button type="submit" class="btn btn-fill-out btn-block hover-up" >Add Address</button>
+                            <button type="submit" class="btn btn-fill-out btn-block hover-up" >Update Address</button>
 
                            
                         </form>

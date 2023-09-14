@@ -15,8 +15,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="/assets2/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link href="/assets2/css/main.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
 </head>
 
 <body>
@@ -188,66 +186,143 @@
         <section class="content-main">
             <div class="content-header">
                 <div>
-                    <h2 class="content-title card-title">Order List </h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
-                </div>
-                <div>
-                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
+                    <h2 class="content-title card-title">Order detail</h2>
+                    <p>Details for Order ID:<%=order._id%></p>
                 </div>
             </div>
-            <div class="card mb-4">
-         
+            <div class="card">
+                <header class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                            <span>
+                                <i class="material-icons md-calendar_today"></i> <b>Wed, Aug 13, 2022, 4:34PM</b>
+                            </span> <br>
+                            <small class="text-muted">Order ID: <%=order._id%></small>
+                        </div>
+                        <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                            <form action="/admin/change-order-status" method="post">
+                            <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200" name="status">
+                                <option>Order status</option>
+                              <option value="PENDING">PENDING</option>
+                                <option value="PLACED">PLACED</option>
+                                <option value="CANCELLED">CANCELLED</option>
+                                <option value="DELIVERED">DELIVERED</option>
+                            </select>
+                            <input type="hidden" name="id" id="" value="<%=order._id%>">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <!-- <a class="btn btn-primary" href="#">Save</a> -->
+                        </form>
+                            <!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a> -->
+                        </div>
+                    </div>
+                </header> <!-- card-header end// -->
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover" id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th>#ID</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col" class="text-end"> Action </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <%for(let i = 0; i < order.length; i++){%>
-                                <tr>
-                                    <td><%= i+1%></td>
-                                    <td><b><%=order[i].customerId.name%></b></td>
-                                    <td><%=order[i].customerId.email%></td>
-                                    <td>₹ <%=order[i].totalAmount%></td>
-                                    <%if(order[i].orderStatus === "PENDING"){%>
-                                    <td><span class="badge rounded-pill alert-warning"><%=order[i].orderStatus%></span></td>
-                                    <%}else if(order[i].orderStatus === "PLACED"){%>
-                                        <td><span class="badge rounded-pill alert-success"><%=order[i].orderStatus%></span></td>
-                                        <%}else{%>
-                                            <td><span class="badge rounded-pill alert-danger"><%=order[i].orderStatus%></span></td>
-                                            <%}%>
-                                    <td><%=String(order[i].createdAt).slice(4,16)%></td>
-                                    <td class="text-end">
-                                        <!-- <a href="/admin/order-details/<%=order[i]._id%>" class="btn btn-md rounded font-sm">Detail</a> -->
-                                        <button class="rounded btn-info"><a style="color: black;" href="/admin/order-details/<%=order[i]._id%>" class="btn btn-sm rounded font-sm">Edit</a></button>
-                                        
-                                        <!-- <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> dropdown //end -->
-                                    </td>
-                                </tr>
-                                <%}%>
-                               
-                            </tbody>
-                        </table>
-                    </div> <!-- table-responsive //end -->
+                    <div class="row mb-50 mt-20 order-info-wrap">
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-person"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Customer</h6>
+                                    <p class="mb-1">
+                                        <%=customer.customerId.name%> <br>  <%=customer.customerId.email%> <br>  <%=customer.customerId.phone%>
+                                    </p>
+                                    
+                                </div>
+                            </article>
+                        </div> <!-- col// -->
+                        <!-- <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-local_shipping"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Order info</h6>
+                                    <p class="mb-1">
+                                        Shipping:  <br> Pay method: card <br> Status: new
+                                    </p>
+                                    
+                                </div>
+                            </article>
+                        </div> col// -->
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-place"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Deliver to</h6>
+                                    <p class="mb-1">
+                                        <%=order.shippingAddress.customerName%> <br><%=order.shippingAddress.addressLine1%>,<%=order.shippingAddress.city%><br>
+                                        <%=order.shippingAddress.city%>, <%=order.shippingAddress.zipcode%>  <br> <%=order.shippingAddress.email%> <br> <%=order.shippingAddress.phone%> 
+                                    </p>
+                                    
+                                </div>
+                            </article>
+                        </div> <!-- col// -->
+                    </div> <!-- row // -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">Product</th>
+                                            <th width="20%">Unit Price</th>
+                                            <th width="15%">Quantity</th>
+                                            <th width="20%">Payment Status</th>
+                                            <th width="20%">Order Status</th>
+                                            <th width="20%" class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%for(let i=0; i < order.products.length; i++){%>
+                                        <tr>
+                                            <td>
+                                                <a class="itemside" href="#">
+                                                    <div class="left">
+                                                        <img src="/assets2/imgs/products/<%=order.products[i].productId.image[0]%>" width="40" height="40" class="img-xs" alt="Item">
+                                                    </div>
+                                                    <div class="info"><%=order.products[i].productId.name%> </div>
+                                                </a>
+                                            </td>
+                                            <td>₹ <span><%=order.products[i].productId.price%></span></td>
+                                            <td> <%=order.products[i].quantity%> </td>
+                                            <td> <%=order.paymentStatus%> </td>
+                                            <td> <%=order.orderStatus%> </td>
+                                            <td class="text-end">₹<span><%=order.products[i].productId.price
+                                                *order.products[i].quantity %></span> </td>
+                                        </tr>
+                                        <%}%>
+                                        <tr>
+                                            <td colspan="6">
+                                                <article class="float-end">
+                                                    <dl class="dlist">
+                                                        <dt>Subtotal:</dt>
+                                                        <dd>₹<span> <%=order.totalAmount%></span></dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Shipping cost:</dt>
+                                                        <dd>00.00</dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Grand total:</dt>
+                                                        <dd> <b class="h5">₹<span> <%=order.totalAmount%></b> </dd>
+                                                    </dl>
+                                             
+                                                </article>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div> <!-- table-responsive// -->
+                            <!-- <a class="btn btn-primary" href="page-orders-tracking.html">View Order Tracking</a> -->
+                        </div> <!-- col// -->
+                       
+                    </div>
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
@@ -271,9 +346,6 @@
     <script src="/assets2/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/assets2/js/main.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
 </body>
 
 </html>

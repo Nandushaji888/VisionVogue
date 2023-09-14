@@ -6,17 +6,46 @@ const Order = require("../../models/orderModel");
 const loadOrderList = async(req, res) => {
     try {
         const order = await Order.find().populate('customerId')
-        const id =order[0].customerId
-        console.log(id);
-        console.log(order);
-        const user = await User.findById(id)
-        res.render('orderList', {order : order, user : user})
+        res.render('orderList', {order : order})
     } catch (error) {
-        console.log(error.message);
+        console.error(error);
+        res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    }
+}
+
+const orderDetails = async(req, res) => {
+    try {
+        const orderId = req.params.id
+        console.log(orderId);
+        const order = await Order.findOne({ _id: orderId }).populate(
+            "products.productId",
+          );
+          const customer = await Order.findOne({_id: orderId}).populate(
+            "customerId"
+          )
+        res.render('editOrder',{order : order,customer : customer})
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    }
+}
+
+const changeOrderStatus = async(req, res) => {
+    try {
+        const status = ""+req.body.status+""
+        const id = req.body.id
+        console.log('status is'+status +'id is'+id);
+        await Order.updateOne({_id:id},{$set:{orderStatus : status}})
+        res.redirect('/admin/orders')
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', msg: 'Internal server error' });
     }
 }
 
 
 module.exports = {
-    loadOrderList
+    loadOrderList,
+    orderDetails,
+    changeOrderStatus
 }
