@@ -78,13 +78,24 @@ const postOrder = async (req, res) => {
           await product.save();
         }
       }
-      // await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
+      await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
+
+
+
+
+      //<......for COD delovery....>
       if (req.body.paymentMethod === "COD") {
+        // Order.findByIdAndUpdate(orderId,{orderStatus :"PLACED"})
+        await Order.updateOne({_id : new mongoose.Types.ObjectId(orderId)},{ orderStatus :"PLACED"}).lean()
+
         console.log("razzzz2");
         res.status(200).json({
           status: true,
           msg: "Order created for COD",
         });
+
+
+        // FOR ONLINE PAYMENT
       } else if (req.body.paymentMethod === "razorpay") {
         // console.log(req.body);
         console.log(orderId);

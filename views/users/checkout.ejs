@@ -291,10 +291,10 @@
                     method: "post",
                     data: formData,
                     success: function (res) {
-                        alert('before call')
+                        // alert('before call')
                         if (res.success) {
-                            alert('after call')
-                            alert(res.receipt)
+                            // alert('after call')
+                            // alert(res.receipt)
                             var options = {
                                 "key": "" + res.key_id + "",
                                 "amount": "" + res.amount + "", 
@@ -327,7 +327,17 @@
                         }
 
                         if (res.status) {
-                            window.open("/order-success", "_self")
+                            Swal.fire({
+                        title: 'Order Placed Successfully!',
+                        text: 'View your orders',
+                        icon: 'success',
+                        showConfirmButton: true,
+                        confirmButtonText: "View order"
+                    }).then(function () {
+                        window.location.href = "http://localhost:3000/user-account"
+
+                    })
+                            // window.open("/order-success", "_self")
                         } else {
                             // alert(res.msg)
                         }
@@ -338,8 +348,8 @@
         })
 
         function verifyPayment(payment, order, orderId) {
-            alert("cal comes")
-            alert(orderId)
+            // alert("cal comes")
+            // alert(orderId)
             $.ajax({
                 url: '/verify-payment',
                 data: {
@@ -357,7 +367,7 @@
                         showConfirmButton: true,
                         confirmButtonText: "View order"
                     }).then(function () {
-                        // window.location.href = "http://localhost:3000/user-account"
+                        window.location.href = "http://localhost:3000/user-account"
 
                     })
                 }
