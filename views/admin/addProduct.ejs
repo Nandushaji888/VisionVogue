@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>Vision vogue</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -278,6 +278,14 @@
                                 <div id="imagePreview"></div>
                             </div>
                         </div>
+                    </div>
+                    <div>
+                        <label class="form-label">Select Cover Image</label>
+                        <select class="form-control" name="coverImage">
+                            <% for (let i = 0; i < filenames.length; i++) { %>
+                                <option value="<%= filenames[i] %>">Image <%= i + 1 %></option>
+                            <% } %>
+                        </select>
                     </div>
                     
                     <!-- Error message for exceeding the image limit -->

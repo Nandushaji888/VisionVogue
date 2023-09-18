@@ -497,6 +497,33 @@ const priceHighToLow = async(req, res) => {
   }
 }
 
+const resetPassword = async(req, res) => {
+  try {
+    console.log('dataaaaa '+ req.body.oldPass);
+    console.log('dataaaaa22222 '+ req.body.newPass);
+    const password = req.body.oldPass.toString()
+    const newPass = req.body.newPass.toString()
+    console.log(newPass);
+    const userData = await User.findById(req.session.user_id)
+    // console.log('user'+userData);
+    const passwordMatch = await bcrypt.compare(password, userData.password)
+    if(passwordMatch) {
+      const spassword = await securePassword(newPass);
+
+      await User.updateOne({_id : req.session.user_id},{password : spassword})
+      res.status(200).json({success : true})
+    }else{
+      console.log('wrong pass');
+      return res.status(200).json({ success: false });
+    }
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', msg: 'Cannot proceed reset password' });
+  }
+}
+
 
 
 
@@ -519,7 +546,9 @@ module.exports = {
   loadEditAddress,
   editAddress,
   priceLowTohigh,
-  priceHighToLow
+  priceHighToLow,
+  resetPassword
+  
  
  
 };

@@ -16,8 +16,10 @@ const productList = async (req, res) => {
 //load add to product page
 const LoadAddProduct = async (req, res) => {
   try {
+    const filenames = req.files.map((file) => file.filename);
+
     const categoryList = await Category.find({isListed : true});
-    res.render("addProduct", { category: categoryList });
+    res.render("addProduct", { category: categoryList, filenames: filenames, });
   } catch (error) {
     console.log(error.mess);
   }
@@ -37,12 +39,15 @@ const addProduct = async (req, res) => {
 
     // Map file objects to their filenames
     const filenames = req.files.map((file) => file.filename);
+    const coverImage = req.body.coverImage;
+
 
     const productData = new Product({
       name: req.body.name,
       description: req.body.description,
       details: req.body.details,
       image: filenames,
+      coverImage: coverImage,
       size: req.body.size,
       brand: req.body.brand,
       price: req.body.price,
@@ -55,10 +60,11 @@ const addProduct = async (req, res) => {
     const categoryList = await Category.find();
     // Save the product to the database
     if (product) {
-      res.render("addProduct", {
-        category: categoryList,
-        message: "Product successfully added",
-      });
+      res.redirect('/admin/products')
+      // res.render("addProduct", {
+      //   category: categoryList,
+      //   message: "Product successfully added",
+      // });
     } else {
       res.status(500).render("addProduct", {
         category: categoryList,
@@ -204,6 +210,30 @@ const   deleteProduct = async (req, res) => {
   }
 };
 
+const deleteImage = async (req, res) => {
+  const id = req.params.id;
+  const img = req.params.img;
+
+  try {
+      const updatedDocument = await Product.findOneAndUpdate(
+          { _id: id },
+          { $pull: { image: img } },
+          { new: true }
+      );
+
+      if (!updatedDocument) {
+          console.log('Document not found');
+          return res.status(404).json({ message: 'Document not found' });
+      }
+
+      console.log('Element removed successfully');
+      res.redirect('/admin/edit-product/'+id)
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'An error occurred while deleting the element' });
+  }
+};
+
 module.exports = {
   productList,
   LoadAddProduct,
@@ -211,4 +241,6 @@ module.exports = {
   loadEditProduct,
   updateProduct,
   deleteProduct,
+  deleteImage
+  
 };

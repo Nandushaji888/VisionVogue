@@ -149,7 +149,7 @@ const verifyPayment = async(req, res) => {
 
     if (calculatedSignature === req.body.payment.razorpay_signature) {
       console.log(typeof(req.body.orderId));
-      await Order.updateOne({_id : new mongoose.Types.ObjectId(req.body.orderId)},{$set : { paymentStatus : 'RECEIVED', orderStatus :"PLACED"}}).lean()
+      await Order.updateOne({_id : new mongoose.Types.ObjectId(req.body.orderId)},{$set : { paymentStatus : 'COMPLETED', orderStatus :"PLACED"}}).lean()
 
       res.status(200).json({ status: 'success', msg: 'Payment verified' });
     } else {

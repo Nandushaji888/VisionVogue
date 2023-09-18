@@ -14,11 +14,11 @@
                         <% for (let i=0; i < categories.length; i++) { %>
                             <div class="card-1">
                                 <figure class=" img-hover-scale overflow-hidden">
-                                    <a href="/category/<%= encodeURIComponent(categories[i].name) %>">
-                                        <img src="/assets2/imgs/category/<%=categories[i].image%>" alt=""></a>
+                                    <a href="/category/<%= encodeURIComponent(categories[i]?.name) %>">
+                                        <img src="/assets2/imgs/category/<%=categories[i]?.image%>" alt=""></a>
                                 </figure>
-                                <h5><a href="/category/<%=categories[i].name%>">
-                                        <%=categories[i].name%>
+                                <h5><a href="/category/<%=categories[i]?.name%>">
+                                        <%=categories[i]?.name%>
                                     </a></h5>
                             </div>
                             <% } %>
@@ -125,10 +125,10 @@
                                     <div class="product-cart-wrap mb-30">
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
-                                                <a href="/product/<%=products[i]._id%>">
-                                                    <img class="" src="/assets2/imgs/products/<%=products[i].image[0]%>"
+                                                <a href="/product/<%=products[i]?._id%>">
+                                                    <img class="" src="/assets2/imgs/products/<%=products[i]?.image[0]%>"
                                                         alt="">
-                                                        <img class="hover-img" src="/assets2/imgs/products/<%=products[i].image[0]%>"
+                                                        <img class="hover-img" src="/assets2/imgs/products/<%=products[i]?.image[0]%>"
                                                         alt="">
                                                     <!-- <img class="hover-img" src="/assets/imgs/shop/product-1-2.jpg" alt=""> -->
                                                 </a>
@@ -141,12 +141,12 @@
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="/product/<%=products[i]._id%>">
-                                                    <%=products[i].category.name%>
+                                                <a href="/product/<%=products[i]?._id%>">
+                                                    <%=products[i]?.category.name%>
                                                 </a>
                                             </div>
-                                            <h2><a href="/product/<%=products[i]._id%>">
-                                                    <%=products[i].name%>
+                                            <h2><a href="/product/<%=products[i]?._id%>">
+                                                    <%=products[i]?.name%>
                                                 </a></h2>
                                             <div class="rating-result" title="90%">
                                                 <span>
@@ -155,7 +155,7 @@
                                             </div>
                                       
                                                 <span>
-                                                    <% if(products[i].stock > 0) {%>
+                                                    <% if(products[i]?.stock > 0) {%>
                                                     <span class="text-success">In Stock</span>
                                                     <%}else{%>
                                                     <span class="text-danger">Out of Stock</span>
@@ -164,15 +164,15 @@
                                          
                                             <div class="product-price">
                                                 <span>
-                                                    ₹ <%=products[i].price%>
+                                                    ₹ <%=products[i]?.price%>
                                                 </span>
                                                 <span class="old-price">
-                                                    ₹ <%=products[i].price%>
+                                                    ₹ <%=products[i]?.price%>
                                                 </span>
                                             </div>
                                             <!-- <div class="product-action-1 show">
                                                 <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                    href="/add-to-cart/<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                    href="/add-to-cart/<%=products[i]?._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
                                             </div> -->
                                         </div>
                                     </div>
@@ -240,13 +240,13 @@
 
 
 
-                        <% for( let i =10; i > 0; i--){%>
+                        <% for( let i =8; i > 0; i--){%>
                         <div class="product-cart-wrap small hover-up">
                             <div class="product-img-action-wrap">
                                 <div class="product-img product-img-zoom">
-                                    <a href="/product/<%=products[i]._id%>">
-                                        <img class="default-img" src="/assets2/imgs/products/<%=products[i].image[0]%>" alt="">
-                                        <img class="hover-img" src="/assets2/imgs/products/<%=products[i].image[0]%>" alt="">
+                                    <a href="/product/<%=products[i]?._id%>">
+                                        <img class="default-img" src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
+                                        <img class="hover-img" src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
                                     </a>
                                 </div>
                                 <!-- <div class="product-action-1">
@@ -273,14 +273,14 @@
                                 </div>
                             </div>
                             <div class="product-content-wrap">
-                                <h2><a href="/product/<%=products[i]._id%>"><%=products[i].name%></a></h2>
+                                <h2><a href="/product/<%=products[i]?._id%>"><%=products[i]?.name%></a></h2>
                                 <div class="rating-result" title="90%">
                                     <span>
                                     </span>
                                 </div>
                                 <div class="product-price">
-                                    <span><%=products[i].price%> </span>
-                                    <span class="old-price"><%=products[i].price%></span>
+                                    <span><%=products[i]?.price%> </span>
+                                    <span class="old-price"><%=products[i]?.price%></span>
                                 </div>
                             </div>
                         </div>

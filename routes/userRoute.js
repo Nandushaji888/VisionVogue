@@ -21,7 +21,7 @@ user_route.set('views','./views/users')
 user_route.use(express.json());
 user_route.use(express.urlencoded({ extended: true }));
 
-
+//user registration
 
 user_route.get("/register",userController.loadSignup)
 user_route.post('/register',userController.sendOtpAndRenderRegistration)
@@ -29,38 +29,46 @@ user_route.get('/',userController.loadHome)
 user_route.get('/register/verify', userController.loadSignup)
 user_route.post('/register/verify', userController.verifyAndRegisterUser)
 
+//forgot password
 user_route.get('/forgot-password',userController.loadForgotPassword)
 user_route.post('/forgot-password',userController.otpForForgotPass)
 user_route.get('/password-change',userController.loadForgotPassword)
 user_route.post('/password-change',userController.passwordChange)
 
-
+//login and logout
 user_route.get('/login',auth.isLogout,userController.loadLogin)
 user_route.post('/login',userController.verifyLogin)
 user_route.get('/logout',auth.isLogin, userController.userLogout)
+
 
 user_route.get('/product/:id',userController.loadProductDetails)
 
 user_route.get('/category/:id',userController.categoryWiseProducts)
 
+
+//user cart
 user_route.get('/cart',auth.isLogin,cartController.loadCart)
 user_route.post('/add-to-cart',auth.isLogin,cartController.addToCart)
 user_route.post('/change-quantity',auth.isLogin,cartController.changeQuantity)
 user_route.get('/remove-cart/:id',auth.isLogin,cartController.deleteCartItem)
+
+//check out
 user_route.get('/checkout',auth.isLogin,orderController.loadPlaceOrder)
 user_route.post('/checkout',auth.isLogin,orderController.postOrder)
 user_route.get('/order-success',auth.isLogin,orderController.orderSuccessPage)
-user_route.get('/order-cancel/:id',auth.isLogin, orderController.orderCancellation)
 user_route.post('/verify-payment',auth.isLogin,orderController.verifyPayment)
 
 
-
+//user account
 user_route.get('/user-account',auth.isLogin,userController.loadAccount)
 user_route.get('/add-address',auth.isLogin, userController.loadAddAddress)
 user_route.post('/add-address',auth.isLogin, userController.addAddress)
 user_route.get('/edit-address/:id',auth.isLogin,userController.loadEditAddress)
 user_route.post('/edit-address',auth.isLogin,userController.editAddress)
 user_route.get('/order-details/:id',auth.isLogin, orderController.loadOrderDetails)
+user_route.get('/order-cancel/:id',auth.isLogin, orderController.orderCancellation)
+user_route.post('/reset-password',auth.isLogin,userController.resetPassword)
+
 
 
 user_route.get('/priceLowTohigh/:id',userController.priceLowTohigh)

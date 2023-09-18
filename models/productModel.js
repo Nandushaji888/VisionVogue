@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema({
         type : Array,
         default : ''
     },
+    coverImage: String,
     brand : {
         type : String,
         default : ''

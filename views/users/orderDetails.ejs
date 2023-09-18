@@ -72,7 +72,7 @@
                                             <%=order.products[i].quantity%>
                                         </td>
                                         <td>
-                                            <%=order.paymentDetails%>
+                                            <%=order.paymentStatus%>
                                         </td>
                                         <td class="text-end">₹ <%=order.products[i].productId.price
                                                 *order.products[i].quantity %>
@@ -110,8 +110,12 @@
                             </tbody>
                         </table>
                     </div> <!-- table-responsive// -->
+                    <%if(order.orderStatus == "DELIVERED"){%>
+                        <button class="button my-4" >Return</button>
+
+                        <%}else{%>
                     <button class="button my-4" onclick="orderCancel('<%=order._id%>')">Cancel this Order</button>
-                   
+                   <%}%>
                 </div> <!-- col// -->
                 <div class="col-lg-1"></div>
                 <div class="col-lg-4">
