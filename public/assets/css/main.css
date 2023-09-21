@@ -7503,6 +7503,11 @@ span.fi-rs-apps {
 .dlist-inline dt, .dlist-inline dd {
   display: inline-block;
 }
+.green-pagination-link {
+  color: darkgreen; 
+}
+
+
 
 .dlist {
   display: -webkit-box;

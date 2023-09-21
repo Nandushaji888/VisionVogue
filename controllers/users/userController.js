@@ -1,10 +1,10 @@
 const User = require("../../models/userModel");
 const Product = require("../../models/productModel");
 const Category = require("../../models/categoryModel");
-const Order = require('../../models/orderModel')
+const Order = require("../../models/orderModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 require("dotenv").config();
 const twilio = require("twilio");
 const phoneUtil = require("libphonenumber-js");
@@ -130,9 +130,9 @@ const verifyAndRegisterUser = async (req, res) => {
 
 const loadLogin = async (req, res) => {
   try {
-    const categories = await Category.find()
-    const user = req.session.user_id
-    res.render("login",{ user : user, categories : categories});
+    const categories = await Category.find();
+    const user = req.session.user_id;
+    res.render("login", { user: user, categories: categories });
   } catch (error) {
     console.log(error.message);
   }
@@ -141,63 +141,62 @@ const loadLogin = async (req, res) => {
 //verification for user login
 const verifyLogin = async (req, res) => {
   try {
-      const email = req.body.email;
-      const password = req.body.password;
-    
+    const email = req.body.email;
+    const password = req.body.password;
 
-      const userData = await User.findOne({ email: email }).lean();
+    const userData = await User.findOne({ email: email }).lean();
 
-      if (userData) {
-          if (userData.isActive) {
-              const passwordMatch = await bcrypt.compare(password, userData.password);
+    if (userData) {
+      if (userData.isActive) {
+        const passwordMatch = await bcrypt.compare(password, userData.password);
 
-              if (passwordMatch && userData.is_admin === 0) {
-                  req.session.user_id = userData._id;
-                  const originalURL = req.session.originalURL || '/';
-                  console.log(originalURL);
-                  delete req.session.originalURL;
-                  res.json({ success: true,originalURL });
-              } else {
-                  res.status(401).json({ success: false});
-              }
-          } else {
-              res.status(403).json({
-                  success: false 
-              });
-          }
+        if (passwordMatch && userData.is_admin === 0) {
+          req.session.user_id = userData._id;
+          const originalURL = req.session.originalURL || "/";
+          console.log(originalURL);
+          delete req.session.originalURL;
+          res.json({ success: true, originalURL });
+        } else {
+          res.status(401).json({ success: false });
+        }
       } else {
-          res.status(401).json({ success: false});
+        res.status(403).json({
+          success: false,
+        });
       }
+    } else {
+      res.status(401).json({ success: false });
+    }
   } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ success: false, message: "An error occurred while processing your request." });
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while processing your request.",
+    });
   }
 };
-
-
-
 
 const loadHome = async (req, res) => {
   try {
     const productData = await Product.find({ isListed: true })
       .populate({
         path: "category",
-        match: { isListed: true }, 
+        match: { isListed: true },
       })
       .exec();
 
-      const categoryData = await Category.find({ isListed: true });
-      const userData = await User.findById(req.session.user_id);
-      const filteredProducts = productData.filter((product) => product.category);
+    const categoryData = await Category.find({ isListed: true });
+    const userData = await User.findById(req.session.user_id);
+    const filteredProducts = productData.filter((product) => product.category);
 
-      if(userData)
-    {console.log(userData.cart.length);}
+    if (userData) {
+      console.log(userData.cart.length);
+    }
 
     res.render("home", {
       products: filteredProducts,
       user: userData,
       categories: categoryData,
-
     });
   } catch (error) {
     console.log(error.message);
@@ -221,9 +220,106 @@ const loadProductDetails = async (req, res) => {
     req.session.originalURL = `/product/${id}`;
     const productData = await Product.findById(id).populate("category");
     console.log(productData);
-    const categories = await Category.find()
-    const user = await User.findById(req.session.user_id)
-    res.render("productDetails", { product: productData, user : user, categories : categories });
+    const categories = await Category.find();
+    const user = await User.findById(req.session.user_id);
+    res.render("productDetails", {
+      product: productData,
+      user: user,
+      categories: categories,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+function paginateQuery(query, page, limit) {
+  try {
+    const skip = (page - 1) * limit;
+    return query.skip(skip).limit(limit);
+  } catch (error) {
+    console.error("Error in paginateQuery:", error);
+    throw error; 
+  }
+}
+
+const searchResult = async (req, res) => {
+  try {
+    const search = req.body.search;
+    const categoryList = await Category.find({ isListed: true });
+    const categoryName = await Category.find({
+      name: { $regex: search, $options: "i" },
+    });
+
+    // Calculate page and limit based on query parameters
+    var page = 1;
+    if (req.query.page) {
+      page = req.query.page;
+    }
+    const limit = 3;
+
+    const productsQuery = Product.find({
+      isListed: true,
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { category: { $in: categoryName } },
+        { brand: { $regex: search, $options: "i" } },
+      ],
+    }).populate("category");
+
+    const count = await Product.find({
+      isListed: true,
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { category: { $in: categoryName } },
+        { brand: { $regex: search, $options: "i" } },
+      ],
+    })
+      .populate("category")
+      .countDocuments();
+
+    const products = await paginateQuery(productsQuery, page, limit).exec();
+
+    console.log("productsQuery is" + productsQuery);
+
+    console.log("count is " + count);
+
+    const user = await User.findById(req.session.user_id);
+
+    res.render("categoryWiseProducts", {
+      products: products,
+      categories: categoryList,
+      user: user,
+      pathurl: null,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      page: page,
+    });
+
+    // console.log(req.body);
+
+    // const userData = req.session.user_id;
+    // const search = req.body.search;
+    // const categoryList = await Category.find({ isListed: true });
+    // const categoryName = await Category.find({
+    //   name: { $regex: search, $options: "i" },
+    // });
+
+    // const products = await Product.find({
+    //   isListed: true,
+    //   $or: [
+    //     { name: { $regex: search, $options: "i" } },
+    //     { category: { $in: categoryName } },
+    //     { brand: { $regex: search, $options: "i" } },
+    //   ],
+    // }).populate("category");
+
+    // res.render("categoryWiseProducts", {
+    //   products: products,
+    //   user: userData,
+    //   categories: categoryList,
+    //   pathurl: null,
+
+    // });
   } catch (error) {
     console.log(error.message);
   }
@@ -236,46 +332,40 @@ const categoryWiseProducts = async (req, res) => {
     const categoryName = decodeURIComponent(req.params.id);
 
     req.session.originalURL = `/category/${categoryName}`;
-    const pathurl = `/${categoryName}`
-        // console.log(categoryName);
+    const pathurl = `/${categoryName}`;
+    // console.log(categoryName);
     const category = await Category.findOne({ name: categoryName });
 
     if (category) {
-      console.log(category);
+      // console.log(category);
       var page = 1;
-      if(req.query.page){
-        page = req.query.page
+      if (req.query.page) {
+        page = req.query.page;
       }
+      const limit = 3;
+      const productsQuery = Product.find({ category: category._id })
+        .populate("category")
+        .sort({ createdAt: -1 });
 
-
-      const limit = 3
-
-
-
-      const products = await Product.find({ category: category._id }).populate(
-        "category"
-      ).limit(limit*1)
-      .sort((page - 1) * limit)
-      .exec()
-
-
-      const count = await Product.find({ category: category._id }).populate(
-        "category"
-      ).countDocuments()
-      console.log('count is ' + count);
+      const products = await paginateQuery(productsQuery, page, limit).exec();
+      const count = await Product.find({ category: category._id })
+        .populate("category")
+        .countDocuments();
+      console.log("count is " + count);
 
       // console.log(products);
       const categoryList = await Category.find({ isListed: true });
 
-      const user = await User.findById(req.session.user_id)
+      const user = await User.findById(req.session.user_id);
 
       res.render("categoryWiseProducts", {
         products: products,
         categories: categoryList,
-        user : user,
-        pathurl : pathurl,
-        totalPages : Math.ceil(count/limit),
-        currentPagr : page
+        user: user,
+        pathurl: pathurl,
+        totalPages: Math.ceil(count / limit),
+        count: count,
+        page: page,
       });
     } else {
       console.log("Category not found");
@@ -285,6 +375,104 @@ const categoryWiseProducts = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+
+
+const priceLowTohigh = async (req, res) => {
+  try {
+    const categoryName = decodeURIComponent(req.params.id);
+    const pathurl = `/${categoryName}`;
+    const category = await Category.findOne({ name: categoryName });
+
+    if (category) {
+      console.log(category);
+      var page = 1;
+      if (req.query.page) {
+        page = req.query.page;
+      }
+
+      const limit = 3;
+      const productsQuery = Product.find({ category: category._id })
+        .populate("category")
+        .sort({ price: -1 });
+
+      const products = await paginateQuery(productsQuery, page, limit).exec();
+
+      // const products = await paginateQuery(productsQuery, page, limit).exec();
+      const count = await Product.find({ category: category._id })
+        .populate("category")
+        .countDocuments();
+      console.log("count is " + count);
+
+      console.log(products);
+      const categoryList = await Category.find({ isListed: true });
+
+      const user = await User.findById(req.session.user_id);
+
+      res.render("categoryWiseProducts", {
+        products: products,
+        categories: categoryList,
+        user: user,
+        pathurl: pathurl,
+        totalPages: Math.ceil(count / limit),
+        count: count,
+        page: page,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", msg: "Internal server error" });
+  }
+};
+
+const priceHighToLow = async (req, res) => {
+  try {
+    const categoryName = decodeURIComponent(req.params.id);
+    const pathurl = `/${categoryName}`;
+    const category = await Category.findOne({ name: categoryName });
+
+    if (category) {
+      console.log(category);
+      var page = 1;
+      if (req.query.page) {
+        page = req.query.page;
+      }
+
+      const limit = 3;
+      const productsQuery = Product.find({ category: category._id })
+        .populate("category")
+        .sort({ price: 1 });
+
+      const products = await paginateQuery(productsQuery, page, limit).exec();
+
+      // const products = await paginateQuery(productsQuery, page, limit).exec();
+      const count = await Product.find({ category: category._id })
+        .populate("category")
+        .countDocuments();
+      console.log("count is " + count);
+
+      console.log(products);
+      const categoryList = await Category.find({ isListed: true });
+
+      const user = await User.findById(req.session.user_id);
+
+      res.render("categoryWiseProducts", {
+        products: products,
+        categories: categoryList,
+        user: user,
+        pathurl: pathurl,
+        totalPages: Math.ceil(count / limit),
+        count: count,
+        page: page,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", msg: "Internal server error" });
+  }
+};
+
 const loadForgotPassword = async (req, res) => {
   try {
     res.render("forgotPassword");
@@ -293,36 +481,35 @@ const loadForgotPassword = async (req, res) => {
   }
 };
 
-
-
-
 const otpForForgotPass = async (req, res) => {
   try {
     console.log(req.body);
-  //  const userDetails = await Order.findOne({_id : new mongoose.Types.ObjectId(req.body.email)}).lean()
-    const userDetails = await User.findOne({email : req.body.email})
+    //  const userDetails = await Order.findOne({_id : new mongoose.Types.ObjectId(req.body.email)}).lean()
+    const userDetails = await User.findOne({ email: req.body.email });
     console.log(userDetails);
-    if(userDetails){
-    const otp = await sendVerificationMail(userDetails.name, userDetails.email);
-    req.session.email = userDetails.email
-    req.session.password = req.body.password;
-    req.session.otp = otp;
-    console.log("otp for verification is " + otp);
+    if (userDetails) {
+      const otp = await sendVerificationMail(
+        userDetails.name,
+        userDetails.email
+      );
+      req.session.email = userDetails.email;
+      req.session.password = req.body.password;
+      req.session.otp = otp;
+      console.log("otp for verification is " + otp);
 
-    res.render("forgotPassOTP", {
-      message: "OTP send, Please check your mail for OTP",
-    });}else{
+      res.render("forgotPassOTP", {
+        message: "OTP send, Please check your mail for OTP",
+      });
+    } else {
       res.render("forgotPassword", {
         message: "Email doesnt register with us",
-      })
+      });
     }
     console.log("otp for verification is " + otp);
   } catch (error) {
     console.error(error.message);
   }
 };
-
-
 
 const passwordChange = async (req, res) => {
   try {
@@ -346,7 +533,7 @@ const passwordChange = async (req, res) => {
       delete req.session.password;
       delete req.session.email;
       if (updatedData) {
-        req.session.user_id = updatedData._id
+        req.session.user_id = updatedData._id;
         res.redirect("/");
       }
     } else {
@@ -357,201 +544,147 @@ const passwordChange = async (req, res) => {
   }
 };
 
-
-
-const loadAddAddress = async (req,res)=>{
+const loadAddAddress = async (req, res) => {
   try {
-      res.render('addAddress')
-  } catch (error) {
-      console.log(error.message);
-  }
-}
-
-const addAddress =  async (req,res)=>{
-  try {
-      const address = req.body;
-      console.log('address'+ address);
-      const user = await User.findById(req.session.user_id);
-
-      user.address.push(address);
-      await user.save();
-
-      res.redirect('/user-account')
-
-  } catch (error) {
-      console.log(error.message);
-  }
-}
-
-const loadAccount = async(req, res) => {
-  try {
-    const orderData = await Order.find({customerId : req.session.user_id})
-    const userData = await User.findById(req.session.user_id)
-    const categories = await Category.find()
-    // console.log(userData.address[0].city);
-
-    res.render('userProfile',{user : userData , order : orderData, categories : categories})
+    res.render("addAddress");
   } catch (error) {
     console.log(error.message);
   }
-}
-const loadEditAddress = async(req, res) => {
+};
+
+const addAddress = async (req, res) => {
+  try {
+    const address = req.body;
+    console.log("address" + address);
+    const user = await User.findById(req.session.user_id);
+
+    user.address.push(address);
+    await user.save();
+    if (req.session.originalURL) {
+      res.redirect("/checkout");
+      delete req.session.originalURL;
+    }
+
+    res.redirect("/user-account");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const loadAccount = async (req, res) => {
+  try {
+    const orderData = await Order.find({ customerId: req.session.user_id });
+    const userData = await User.findById(req.session.user_id);
+    const categories = await Category.find();
+    // console.log(userData.address[0].city);
+
+    res.render("userProfile", {
+      user: userData,
+      order: orderData,
+      categories: categories,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+const loadEditAddress = async (req, res) => {
   try {
     const id = req.params.id;
     console.log(id);
-    const user = await User.findById(req.session.user_id)
+    const user = await User.findById(req.session.user_id);
     console.log(user);
-    const address = user.address[id]
+    const address = user.address[id];
     console.log(address);
-    res.render('editAddress', {address : address})
-    
+    res.render("editAddress", { address: address });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    res.status(500).json({ status: "error", msg: "Internal server error" });
   }
-}
+};
 
-const editAddress = async (req,res)=>{
+const editAddress = async (req, res) => {
   try {
-      console.log(req.body);
-      // const user = await User.findById(req.session.user_id);
-      const addressId = req.body.addressId;
-      console.log(addressId);
-    
-      // Use findOneAndUpdate to update the specific address
-      const updatedUser = await User.findOneAndUpdate(
-        {
-          _id: req.session.user_id,
-          'address._id': addressId
-        },
-        {
-          $set: {
-            'address.$.customerName': req.body.customerName,
-            'address.$.addressLine1': req.body.addressLine1,
-            'address.$.city': req.body.city,
-            'address.$.state': req.body.state,
-            'address.$.zipcode': req.body.zipcode,
-            'address.$.phone': req.body.phone,
-            'address.$.email': req.body.email,
-            'address.$.addressType': req.body.addressType
-          }
-        },
-        { new: true } // To return the updated user document
-      );
-    
-      if (updatedUser) {
-        console.log('User address updated:', updatedUser);
-        res.redirect('/user-account')
-      } else {
-        console.log('Address not found or user not found.');
-        
-      }
+    console.log(req.body);
+    // const user = await User.findById(req.session.user_id);
+    const addressId = req.body.addressId;
+    console.log(addressId);
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    // Use findOneAndUpdate to update the specific address
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: req.session.user_id,
+        "address._id": addressId,
+      },
+      {
+        $set: {
+          "address.$.customerName": req.body.customerName,
+          "address.$.addressLine1": req.body.addressLine1,
+          "address.$.city": req.body.city,
+          "address.$.state": req.body.state,
+          "address.$.zipcode": req.body.zipcode,
+          "address.$.phone": req.body.phone,
+          "address.$.email": req.body.email,
+          "address.$.addressType": req.body.addressType,
+        },
+      },
+      { new: true } // To return the updated user document
+    );
+
+    if (updatedUser) {
+      console.log("User address updated:", updatedUser);
+      res.redirect("/user-account");
+    } else {
+      console.log("Address not found or user not found.");
     }
-    
-
-}
-
-const priceLowTohigh = async(req, res) => {
-  try {
-    const categoryName = decodeURIComponent(req.params.id);
-    const pathurl = `/${categoryName}`
-    const category = await Category.findOne({ name: categoryName });
-
-    if (category) {
-      console.log(category);
-
-      const products = await Product.find({ category: category._id })
-      .populate("category")
-      .sort({ price: -1 });
-    
-      console.log(products);
-      const categoryList = await Category.find({ isListed: true });
-
-      const user = await User.findById(req.session.user_id)
-
-      res.render("categoryWiseProducts", {
-        products: products,
-        categories: categoryList,
-        user : user,
-        pathurl :pathurl
-      });
-  }
-}catch (error) {
+  } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    res.status(500).json({ status: "error", msg: "Internal server error" });
   }
-}
+};
 
-const priceHighToLow = async(req, res) => {
+const resetPassword = async (req, res) => {
   try {
-    const categoryName = decodeURIComponent(req.params.id);
-    const pathurl = `/${categoryName}`
-    const category = await Category.findOne({ name: categoryName });
-
-    if (category) {
-      console.log(category);
-
-      const products = await Product.find({ category: category._id })
-      .populate("category")
-      .sort({ price: 1 });
-    
-      console.log(products);
-      const categoryList = await Category.find({ isListed: true });
-
-      const user = await User.findById(req.session.user_id)
-
-      res.render("categoryWiseProducts", {
-        products: products,
-        categories: categoryList,
-        user : user,
-        pathurl :pathurl
-      });
-  }
-}catch (error) {
-    console.error(error);
-    res.status(500).json({ status: 'error', msg: 'Internal server error' });
-  }
-}
-
-const resetPassword = async(req, res) => {
-  try {
-    console.log('dataaaaa '+ req.body.oldPass);
-    console.log('dataaaaa22222 '+ req.body.newPass);
-    const password = req.body.oldPass.toString()
-    const newPass = req.body.newPass.toString()
+    console.log("dataaaaa " + req.body.oldPass);
+    console.log("dataaaaa22222 " + req.body.newPass);
+    const password = req.body.oldPass.toString();
+    const newPass = req.body.newPass.toString();
     console.log(newPass);
-    const userData = await User.findById(req.session.user_id)
+    const userData = await User.findById(req.session.user_id);
     // console.log('user'+userData);
-    const passwordMatch = await bcrypt.compare(password, userData.password)
-    if(passwordMatch) {
+    const passwordMatch = await bcrypt.compare(password, userData.password);
+    if (passwordMatch) {
       const spassword = await securePassword(newPass);
 
-      await User.updateOne({_id : req.session.user_id},{password : spassword})
-      res.status(200).json({success : true})
-    }else{
-      console.log('wrong pass');
+      await User.updateOne(
+        { _id: req.session.user_id },
+        { password: spassword }
+      );
+      res.status(200).json({ success: true });
+    } else {
+      console.log("wrong pass");
       return res.status(200).json({ success: false });
     }
-
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'error', msg: 'Cannot proceed reset password' });
+    res
+      .status(500)
+      .json({ status: "error", msg: "Cannot proceed reset password" });
   }
-}
+};
 
-const returnProduct = async(req, res) => {
+const returnProduct = async (req, res) => {
   try {
     const reason = req.body.reason;
-    const id = req.body.id  
-    const order =  await Order.findByIdAndUpdate({_id : new mongoose.Types.ObjectId(id)})
+    const id = req.body.id;
+    const order = await Order.findByIdAndUpdate({
+      _id: new mongoose.Types.ObjectId(id),
+    });
     console.log(reason);
-    console.log( 'order ID'+req.body.id);
-    await Order.findByIdAndUpdate({_id : new mongoose.Types.ObjectId(id)}, {$set : {returnReason : reason, orderStatus : "RETURNED"}}).lean()
+    console.log("order ID" + req.body.id);
+    await Order.findByIdAndUpdate(
+      { _id: new mongoose.Types.ObjectId(id) },
+      { $set: { returnReason: reason, orderStatus: "RETURNED" } }
+    ).lean();
     for (const item of order.products) {
       const product = await Product.findById(item.productId);
 
@@ -561,49 +694,12 @@ const returnProduct = async(req, res) => {
       }
     }
 
-    return res.status(200).json({success : true})
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'error', msg: 'Cannot return product' });
+    res.status(500).json({ status: "error", msg: "Cannot return product" });
   }
-}
-
-
-
-const searchResult = async (req,res)=>{
-  try {
-      console.log(req.body);
-
-      const userData = req.session.user_id;
-      const search = req.body.search;
-      const categoryList = await Category.find({ isListed: true });
-      const categoryName = await Category.find({ name: { $regex: search, $options: "i" } });
-
-          const products = await Product.find({
-            isListed: true,
-          $or:
-          [
-              {name:{ $regex: search, $options: "i" }},
-              { category: { $in: categoryName }},
-              {brand : { $regex: search, $options: "i" }}
-          ]
-      }).populate(
-        "category"
-      );
-
-      res.render('categoryWiseProducts',{
-          products : products,
-          user : userData,
-          categories: categoryList,
-          pathurl : null
-      })    } 
-      catch (error) {
-      console.log(error.message)
-}
-}
-
-
-
+};
 
 module.exports = {
   loadSignup,
@@ -627,8 +723,5 @@ module.exports = {
   priceHighToLow,
   resetPassword,
   returnProduct,
-  searchResult
-  
- 
- 
+  searchResult,
 };

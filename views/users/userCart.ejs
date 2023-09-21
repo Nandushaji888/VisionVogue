@@ -1,5 +1,5 @@
 <%- include('../partials/home/home-header.ejs') %>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
 
 
     <main class="main">
@@ -92,8 +92,46 @@
                             <a href="/" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
                         </div>
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
-                        <div class="row mb-50">
-                            <div class="col-lg-6 col-md-12">
+                        <div class="d-flex mb-50 ">
+                            <div class="mb-30 mt-50 col-lg-6">
+                                <div class="heading_s1 mb-3">
+                                    <h4>Apply Coupon</h4>
+                                </div>
+
+                                <div class="total-amount">
+                                    <div class="left">
+                                        <div class="coupon">
+                                            <form action="#" target="_blank">
+                                                <div class="form-row row justify-content-center">
+                                                    <div class="form-group col-lg-6">
+                                                        <select class="form-select" name="category">
+                                                            <% if(coupons.length> 0){
+                                                                for(let i = coupons.length - 1; i >=0; i--){
+                                                                %>
+
+                                                                <option value="<%= coupons[i]._id %>">
+                                                                    <%= coupons[i].couponCode %>
+                                                                </option>
+                                                                <% } }else{ %>
+                                                                    <option>No Coupon awailable</option>
+
+                                                                    <% } %>
+
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+
+                                                        <button onclick="couponApply('<%= coupon[i]._id%>','<%=userCart.cart%>')" class="btn  btn-sm"><i
+                                                                class="fi-rs-label mr-10"></i>Apply</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12 ">
+
                                 <div class="border p-md-4 p-30 border-radius cart-totals">
                                     <div class="heading_s1 mb-3">
                                         <h4>Cart Totals</h4>
@@ -117,7 +155,7 @@
                                                     <td class="cart_total_label">Total</td>
                                                     <td class="cart_total_amount"><strong><span id="total"
                                                                 class="font-xl fw-900 text-brand">₹ <%= grandTotal %>
-                                                                    </span></strong></td>
+                                                            </span></strong></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -198,6 +236,24 @@
                 'Add some items to the Cart!',
                 'question'
             )
+        }
+
+
+
+        function couponApply(couponId,userCart) {
+        $.ajax({
+            url : '/apply-coupon',
+            method : 'post',
+            data : {
+                couponId,
+                userCart
+            },success : {
+
+            }
+        })
+
+            alert(couponId)
+            const sum = document.innerHTML
         }
     </script>
 

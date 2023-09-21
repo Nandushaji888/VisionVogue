@@ -38,6 +38,7 @@ const loadPlaceOrder = async (req, res) => {
     const user = await User.findOne({ _id: req.session.user_id }).populate(
       "cart.productId"
     );
+    req.session.originalURL = '/checkout'
     const userCart = await User.findOne({ _id: req.session.user_id });
     // console.log(req.body);
     const categories = await Category.find();

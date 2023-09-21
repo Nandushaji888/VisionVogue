@@ -47,23 +47,16 @@ const userStatus = async (req, res) => {
         const id = req.params.id;
         let updateData = {};
 
-        // Toggle the isActive status
         const userData = await User.findById(id);
         if (userData.isActive) {
             updateData.isActive = false;
         } else {
             updateData.isActive = true;
         }
-
-        // Update the user's isActive status
         const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
-
-        // Check if the user was found and updated
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        // Send a success response
         res.status(200).json({ message: 'User status updated successfully', user: updatedUser });
     } catch (error) {
         console.error(error.message);

@@ -4,6 +4,7 @@ const categoryController = require('../controllers/admin/categoryContoller')
 const productController = require('../controllers/admin/productController')
 const userController = require('../controllers/admin/userController')
 const orderController = require('../controllers/admin/orderController')
+const couponController = require('../controllers/admin/couponController')
 const session = require('express-session'); 
 const admin_route = express()
 const config = require('../config/config');
@@ -77,5 +78,10 @@ admin_route.get('/orders',auth.isLogin,orderController.loadOrderList)
 admin_route.get('/order-details/:id',auth.isLogin,orderController.orderDetails)
 admin_route.post('/change-order-status',auth.isLogin,orderController.changeOrderStatus)
 
+
+admin_route.get('/add-coupon',couponController.loadAddCoupon)
+admin_route.post('/add-coupon',couponController.addCoupon)
+admin_route.get('/coupon',couponController.loadCouponList)
+admin_route.get('/coupon-status/:id',couponController.couponStatus)
 
 module.exports = admin_route;

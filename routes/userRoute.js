@@ -75,6 +75,7 @@ user_route.post('/return',auth.isLogin,userController.returnProduct)
 user_route.get('/priceLowTohigh/:id',userController.priceLowTohigh)
 user_route.get('/priceHighToLow/:id',userController.priceHighToLow)
 user_route.post('/search-items', userController.searchResult )
+// user_route.get('/search-items', userController.searchResult )
 
 
 
