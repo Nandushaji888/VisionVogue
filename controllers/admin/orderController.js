@@ -36,6 +36,13 @@ const changeOrderStatus = async(req, res) => {
         const id = req.body.id
         console.log('status is'+status +'id is'+id);
         await Order.updateOne({_id:id},{$set:{orderStatus : status}})
+        const order = await Order.findById(id)
+        if(order.orderStatus == 'DELIVERED') {
+            await Order.updateOne({_id:id},{$set:{deliveredDate :  new Date()}})
+
+            // order.deliveredDate = new Date()
+            console.log( 'order status'+ order.deliveredDate);
+        }
         res.redirect('/admin/orders')
     } catch (error) {
         console.error(error);

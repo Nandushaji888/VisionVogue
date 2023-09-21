@@ -13,6 +13,7 @@
     <meta property="og:image" content="">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+    
     <!-- Template CSS -->
     <link rel="stylesheet" href="/assets/css/main.css?v=3.4">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -238,21 +239,10 @@
                     </div>
                     <div class="header-right">
                         <div class="search-style-2 rounded">
-                            <form action="#">
-                                <!-- <select class="select-active">
-                                    <option>All Categories</option>
-                                    <option>Women's</option>
-                                    <option>Men's</option>
-                                    <option>Cellphones</option>
-                                    <option>Computer</option>
-                                    <option>Electronics</option>
-                                    <option> Accessories</option>
-                                    <option>Home & Garden</option>
-                                    <option>Luggage</option>
-                                    <option>Shoes</option>
-                                    <option>Mother & Kids</option>
-                                </select> -->
-                                <input type="text" placeholder="Search for items...">
+                            <form action="/search-items" method="post">
+                               
+                                <input type="text" placeholder="Search for items..." name="search">
+                                <button class="btn btn-md" type="submit">Search</button>
                             </form>
                         </div>
                         <div class="header-action-right">
@@ -268,8 +258,8 @@
                                     <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="/assets/imgs/theme/icons/icon-cart.svg">
                                         
-                                        <%if(user && user.cart.length > 0){%>
-                                        <span class="pro-count blue"><%=user.cart.length%></span>
+                                        <%if(user && user.cart?.length > 0){%>
+                                        <span class="pro-count blue"><%=user.cart?.length%></span>
                                         <%}else{%>
                                             <!-- <span class="pro-count blue"></span> -->
                                             <%}%>

@@ -1,5 +1,5 @@
 <%- include('../partials/home/home-header.ejs') %>
-  
+
 
     <main class="main">
         <div class="page-header breadcrumb-wrap">
@@ -16,27 +16,18 @@
                     <div class="col-lg-9">
                         <div class="shop-product-fillter">
                             <div class="totall-product">
-                                <p> We found <strong class="text-brand"><%=products.length%></strong> items for you!</p>
+                                <%if(products.length> 0){%>
+                                    <p> We found <strong class="text-brand">
+                                            <%=products.length%>
+                                        </strong> items for you!</p>
+
+                                    <%}else{%>
+                                        <h3>No Items Found</h3>
+                                        <%}%>
                             </div>
                             <div class="sort-by-product-area">
                                 <div class="sort-by-cover mr-10">
-                                    <!-- <div class="sort-by-product-wrap">
-                                        <div class="sort-by">
-                                            <span><i class="fi-rs-apps"></i>Show:</span>
-                                        </div>
-                                        <div class="sort-by-dropdown-wrap">
-                                            <span> 50 <i class="fi-rs-angle-small-down"></i></span>
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="sort-by-dropdown">
-                                        <ul>
-                                            <li><a class="active" href="#">50</a></li>
-                                            <li><a href="#">100</a></li>
-                                            <li><a href="#">150</a></li>
-                                            <li><a href="#">200</a></li>
-                                            <li><a href="#">All</a></li>
-                                        </ul>
-                                    </div> -->
+
                                 </div>
                                 <div class="sort-by-cover">
                                     <div class="sort-by-product-wrap">
@@ -51,65 +42,89 @@
                                         <ul>
                                             <li><a href="/priceLowTohigh<%=pathurl%>">Price: Low to High</a></li>
                                             <li><a href="/priceHighToLow<%=pathurl%>">Price: High to Low</a></li>
-                                    
+
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row product-grid-3">
-                            <% for (let i =products.length-1; i >= 0; i--) { %>   
+                            <% for (let i=products.length-1; i>= 0; i--) { %>
                                 <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                                     <div class="product-cart-wrap mb-30">
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
                                                 <a href="/product/<%=products[i]._id%>">
-                                                    <img class="default-img" src="/assets2/imgs/products/<%=products[i].image[0]%>"  alt="">
-                                                    <img class="hover-img" src="/assets2/imgs/products/<%=products[i].image[0]%>"  alt="">
+                                                    <img class="default-img"
+                                                        src="/assets2/imgs/products/<%=products[i].image[0]%>" alt="">
+                                                    <img class="hover-img"
+                                                        src="/assets2/imgs/products/<%=products[i].image[0]%>" alt="">
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                             <i class="fi-rs-search"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                    href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                
                                             </div>
-                                            <div class="product-badges product-badges-position product-badges-mrg">
-                                                <span class="hot">Hot</span>
-                                            </div>
+                                            <!-- <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="hot"></span>
+                                            </div> -->
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.html"><%=products[i].category.name%></a>
+                                                <a href="shop-grid-right.html">
+                                                    <%=products[i].category.name%>
+                                                </a>
                                             </div>
-                                            <h2><a href="shop-product-right.html"><%=products[i].name%></a></h2>
+                                            <h2><a href="shop-product-right.html">
+                                                    <%=products[i].name%>
+                                                </a></h2>
                                             <div class="rating-result" title="90%">
                                                 <span>
                                                     <span>90%</span>
                                                 </span>
                                             </div>
+                                            <span>
+                                                <% if(products[i]?.stock > 0) {%>
+                                                    <% if( products[i]?.stock > 15){%>
+                                             <span class="in-stock text-success ml-2">In Stock</span>
+            
+                                                        <%}else{%>
+                                                         <span class="in-stock text-danger ml-2">Only few left</span>
+                                                            <%}%>
+                                             
+                                                <%}else{%>
+                                                <span class="text-danger">Out of Stock</span>
+                                                <%}%>
+                                            </span>
                                             <div class="product-price">
-                                                <span><%=products[i].price%> </span>
-                                                <span class="old-price"><%=products[i].price%></span>
+                                                <span>
+                                                    <%=products[i].price%>
+                                                </span>
+                                                <span class="old-price">
+                                                    <%=products[i].price%>
+                                                </span>
                                             </div>
-                                            <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                            </div>
+                                            <!-- <div class="product-action-1 show">
+                                                <a aria-label="Add To Cart" class="action-btn hover-up"
+                                                    href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
                                 <% } %>
-                                
-                            </div>
-                        </div>
-                      
-                          
 
-                           
-                           
-                         
-   
-               
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
                         <div class="row">
                             <div class="col-lg-12 col-mg-6"></div>
@@ -119,12 +134,14 @@
                             <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
                             <ul class="categories">
 
-                                <% for(let i = 0; i < categories.length; i++){%>
-                                <li><a href="/category/<%=categories[i].name%>"><%= categories[i].name%></a>
-                                </li>
+                                <% for(let i=0; i < categories.length; i++){%>
+                                    <li><a href="/category/<%=categories[i].name%>">
+                                            <%= categories[i].name%>
+                                        </a>
+                                    </li>
 
-                                <%}%>
-                                <!-- <li><a href="shop-grid-right.html">Blouses & Shirts</a></li>
+                                    <%}%>
+                                        <!-- <li><a href="shop-grid-right.html">Blouses & Shirts</a></li>
                                 <li><a href="shop-grid-right.html">Dresses</a></li>
                                 <li><a href="shop-grid-right.html">Swimwear</a></li>
                                 <li><a href="shop-grid-right.html">Beauty</a></li>
@@ -148,7 +165,7 @@
                                     </div>
                                 </div>
                             </div> -->
-                            <!-- <div class="list-group">
+                        <!-- <div class="list-group">
                                 <div class="list-group-item mb-10 mt-10">
                                     <label class="fw-900">Color</label>
                                     <div class="custome-checkbox">
@@ -174,13 +191,13 @@
                                     </div>
                                 </div>
                             </div> -->
-                            <!-- <a href="shop-grid-right.html" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Fillter</a> -->
-                        </div>
-                        <!-- Product sidebar Widget -->
-                     
-                      
+                        <!-- <a href="shop-grid-right.html" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Fillter</a> -->
                     </div>
+                    <!-- Product sidebar Widget -->
+
+
                 </div>
+            </div>
             </div>
         </section>
     </main>

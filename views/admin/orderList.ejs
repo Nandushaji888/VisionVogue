@@ -212,6 +212,9 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <%if(locals.order) {%>
+                                    <%order.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));%>
+
                                 <%for(let i = 0; i < order.length; i++){%>
                                 <tr>
                                     <td><%= i+1%></td>
@@ -222,8 +225,16 @@
                                     <td><span class="badge rounded-pill alert-warning"><%=order[i].orderStatus%></span></td>
                                     <%}else if(order[i].orderStatus === "PLACED"){%>
                                         <td><span class="badge rounded-pill alert-success"><%=order[i].orderStatus%></span></td>
-                                        <%}else{%>
+                                        <%}else if(order[i].orderStatus === "CANCELLED") {%>
                                             <td><span class="badge rounded-pill alert-danger"><%=order[i].orderStatus%></span></td>
+                                         <%}else if(order[i].orderStatus === "DELIVERED") {%>
+                                            <td><span class="badge rounded-pill alert-primary"><%=order[i].orderStatus%></span></td>
+                                            
+                                            <%}else if(order[i].orderStatus === "RETURNED") {%>
+                                               <td><span class="badge rounded-pill alert-info"><%=order[i].orderStatus%></span></td>
+                                            <%}else if(order[i].orderStatus === "SHIPPED") {%>
+                                               <td><span class="badge rounded-pill alert-secondary"><%=order[i].orderStatus%></span></td>
+
                                             <%}%>
                                     <td><%=String(order[i].createdAt).slice(4,16)%></td>
                                     <td class="text-end">
@@ -241,7 +252,12 @@
                                     </td>
                                 </tr>
                                 <%}%>
+
+                                
+                                <%}else{%>
                                
+                                    <h2>No Data Found</h2>
+                                    <%}%>
                             </tbody>
                         </table>
                     </div> <!-- table-responsive //end -->

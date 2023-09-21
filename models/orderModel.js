@@ -52,6 +52,20 @@ const orderSchema = new mongoose.Schema({
     updatedAt:{
         type: Date,
         default: () => moment.tz(Date.now(), "Asia/Kolkata")
+    },
+    deliveredDate : {
+        type : Date,
+        
+    },
+    paymentId : {
+        type : String
+    },
+    paymentOrderId : {
+        type : String
+
+    },
+    returnReason : {
+        type : String
     }
 });
 

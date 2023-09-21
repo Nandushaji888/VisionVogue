@@ -76,8 +76,8 @@
                                         </div>
                                         <div class="product_sort_info font-xs mb-30">
                                             <ul>
-                                                <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera Brand Warranty</li>
-                                                <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
+                                                <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
+                                                <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 7 Day Return Policy</li>
                                                 <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                             </ul>
                                         </div>
@@ -127,7 +127,12 @@
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">lux</a>, <a href="#" rel="tag">men</a>, <a href="#" rel="tag">watches</a> </li>
-                                            <li>Availability:<span class="in-stock text-primary ml-5"><%= product.stock%> Items In Stock</span></li>
+                                            <% if( product.stock > 15){%>
+                                            <li>Availability:<span class="in-stock text-primary ml-5">In Stock</span></li>
+
+                                            <%}else{%>
+                                                <li>Availability:<span class="in-stock text-danger ml-5">Only few left</span></li>
+                                                <%}%>
                                         </ul>
                                     </div>
                                     <!-- Detail Info -->

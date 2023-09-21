@@ -68,11 +68,13 @@ user_route.post('/edit-address',auth.isLogin,userController.editAddress)
 user_route.get('/order-details/:id',auth.isLogin, orderController.loadOrderDetails)
 user_route.get('/order-cancel/:id',auth.isLogin, orderController.orderCancellation)
 user_route.post('/reset-password',auth.isLogin,userController.resetPassword)
+user_route.post('/return',auth.isLogin,userController.returnProduct)
 
 
 
 user_route.get('/priceLowTohigh/:id',userController.priceLowTohigh)
 user_route.get('/priceHighToLow/:id',userController.priceHighToLow)
+user_route.post('/search-items', userController.searchResult )
 
 
 

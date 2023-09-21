@@ -156,7 +156,13 @@
                                       
                                                 <span>
                                                     <% if(products[i]?.stock > 0) {%>
-                                                    <span class="text-success">In Stock</span>
+                                                        <% if( products[i]?.stock > 15){%>
+                                                 <span class="in-stock text-success ml-2">In Stock</span>
+                
+                                                            <%}else{%>
+                                                             <span class="in-stock text-danger ml-2">Only few left</span>
+                                                                <%}%>
+                                                 
                                                     <%}else{%>
                                                     <span class="text-danger">Out of Stock</span>
                                                     <%}%>

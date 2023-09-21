@@ -21,9 +21,7 @@ const loadOrderDetails = async (req, res) => {
     const order = await Order.findOne({ _id: orderId }).populate(
       "products.productId"
     );
-    console.log("details of 0th product");
-    console.log(order.products[0].productId);
-    console.log("address" + order.shippingAddress.addressLine1);
+
     res.render("orderDetails", {
       order: order,
       user: user,
@@ -145,6 +143,8 @@ const verifyPayment = async(req, res) => {
       console.log(req.body.orderId);
     const hmac = crypto.createHmac('sha256', RAZORPAY_SECRET_KEY);
     hmac.update(req.body.payment.razorpay_order_id + "|" + req.body.payment.razorpay_payment_id);
+    await Order.updateOne({_id : new mongoose.Types.ObjectId(req.body.orderId)},{$set : { paymentId : req.body.payment.razorpay_payment_id, paymentOrderId :req.body.payment.razorpay_order_id }}).lean()
+
     const calculatedSignature = hmac.digest('hex');
 
     if (calculatedSignature === req.body.payment.razorpay_signature) {
@@ -193,6 +193,98 @@ const orderSuccessPage = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+// exports.cancelOrder = async (req, res, next) => {
+//   try{
+//       console.log(req.body);
+//       if(req.body){
+//       const {orderId, reason} = req.body;
+//       if(!orderId){
+//           return res.status(500).render('error', {
+//               message: "Error while updating order status!",
+//               errStatus : 500
+//           });
+//       }
+//       await Orderdb.findById(orderId)
+//           .then( async (order)=>{
+//               if(order !== null){
+//                   //re-stock ordered products
+//                   const updateOperations = [];
+//                   let i = 0;
+//                   for(const item of order.products) {
+//               updateOperations.push({
+//                 updateOne: {
+//                   filter: { _id: item.productId.toString() },
+//                   update: { $inc: { stock: item.quantity } },
+//                 },
+//               });
+//                       i++;
+//             }
+//                   const result = await Productdb.bulkWrite(updateOperations);
+//                   if (result.modifiedCount !== order.products.length) {
+//                       return res.status(500).render('error', {
+//                           message: "Unable to return the order",
+//                           errStatus : 500
+//                       });
+//                   }
+//                   //refund payment
+//                   const editOrder = {
+//                       _id: orderId,
+//                       orderStatus: "CANCELLED",
+//                       reason: reason
+//                   };
+//                   if(order.paymentStatus === "PAID"){
+//                       const amount = order.finalAmount*100;
+//                       const remarks = "Refund of order"
+//                       await addWalletTransactionToDb(req.session.user._id, amount, "C", remarks)
+//                           .then((data)=>{
+//                               console.log(`Refund of amount "₹${data.amount}" is successful!`);
+//                               // res.json({status:true, data: data});
+//                               editOrder.paymentStatus = "REFUNDED";
+//                           })
+//                           .catch((err)=>{
+//                               console.log(`Refund of amount failed!`);
+//                               console.log(err);
+//                               // res.json({status: false, errMsg:'Payment failed!'});
+//                           });
+//                   } else{
+//                       editOrder.paymentStatus = "NOT PAID";
+//                   }                    
+//                   await Orderdb.findByIdAndUpdate(orderId, editOrder)
+//                           .then(data => {
+//                               if (!data) {
+//                                   res.status(500).render('error', {
+//                                       message: "Unable to cancel the order",
+//                                       errStatus : 500
+//                                   });
+//                               }
+//                               else {
+//                                   //res.send(data);   
+//                                   console.log("Order cancelled successfully!");
+//                                   res.redirect('back');
+//                               }
+//                           })
+//                           .catch(err => {
+//                               res.status(500).render('error', {
+//                                   message: "Error cancelling the order",
+//                                   errStatus : 500
+//                               });
+//                               console.log(err.message);
+//                           });                  
+//               }
+//           }).catch(err =>{
+//                   console.log(err);
+//           });
+//       }
+//   } catch(err){
+//       res.status(500).render('error', {
+//           message: "Error while updating order status!",
+//           errStatus : 500
+//       });
+//       console.log(err);
+//   }
+// };
 
 module.exports = {
   orderSuccessPage,

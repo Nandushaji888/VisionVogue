@@ -237,16 +237,34 @@ const categoryWiseProducts = async (req, res) => {
 
     req.session.originalURL = `/category/${categoryName}`;
     const pathurl = `/${categoryName}`
-        console.log(categoryName);
+        // console.log(categoryName);
     const category = await Category.findOne({ name: categoryName });
 
     if (category) {
       console.log(category);
+      var page = 1;
+      if(req.query.page){
+        page = req.query.page
+      }
+
+
+      const limit = 3
+
+
 
       const products = await Product.find({ category: category._id }).populate(
         "category"
-      );
-      console.log(products);
+      ).limit(limit*1)
+      .sort((page - 1) * limit)
+      .exec()
+
+
+      const count = await Product.find({ category: category._id }).populate(
+        "category"
+      ).countDocuments()
+      console.log('count is ' + count);
+
+      // console.log(products);
       const categoryList = await Category.find({ isListed: true });
 
       const user = await User.findById(req.session.user_id)
@@ -255,7 +273,9 @@ const categoryWiseProducts = async (req, res) => {
         products: products,
         categories: categoryList,
         user : user,
-        pathurl : pathurl
+        pathurl : pathurl,
+        totalPages : Math.ceil(count/limit),
+        currentPagr : page
       });
     } else {
       console.log("Category not found");
@@ -524,6 +544,64 @@ const resetPassword = async(req, res) => {
   }
 }
 
+const returnProduct = async(req, res) => {
+  try {
+    const reason = req.body.reason;
+    const id = req.body.id  
+    const order =  await Order.findByIdAndUpdate({_id : new mongoose.Types.ObjectId(id)})
+    console.log(reason);
+    console.log( 'order ID'+req.body.id);
+    await Order.findByIdAndUpdate({_id : new mongoose.Types.ObjectId(id)}, {$set : {returnReason : reason, orderStatus : "RETURNED"}}).lean()
+    for (const item of order.products) {
+      const product = await Product.findById(item.productId);
+
+      if (product) {
+        product.stock += item.quantity;
+        await product.save();
+      }
+    }
+
+    return res.status(200).json({success : true})
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', msg: 'Cannot return product' });
+  }
+}
+
+
+
+const searchResult = async (req,res)=>{
+  try {
+      console.log(req.body);
+
+      const userData = req.session.user_id;
+      const search = req.body.search;
+      const categoryList = await Category.find({ isListed: true });
+      const categoryName = await Category.find({ name: { $regex: search, $options: "i" } });
+
+          const products = await Product.find({
+            isListed: true,
+          $or:
+          [
+              {name:{ $regex: search, $options: "i" }},
+              { category: { $in: categoryName }},
+              {brand : { $regex: search, $options: "i" }}
+          ]
+      }).populate(
+        "category"
+      );
+
+      res.render('categoryWiseProducts',{
+          products : products,
+          user : userData,
+          categories: categoryList,
+          pathurl : null
+      })    } 
+      catch (error) {
+      console.log(error.message)
+}
+}
+
 
 
 
@@ -547,7 +625,9 @@ module.exports = {
   editAddress,
   priceLowTohigh,
   priceHighToLow,
-  resetPassword
+  resetPassword,
+  returnProduct,
+  searchResult
   
  
  

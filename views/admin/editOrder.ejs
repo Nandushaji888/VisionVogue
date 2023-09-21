@@ -201,12 +201,19 @@
                         </div>
                         <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                             <form action="/admin/change-order-status" method="post">
+                                <span>Order Status : </span>
                             <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200" name="status">
-                                <option>Order status</option>
-                              <option value="PENDING">PENDING</option>
+                                <option <%if(order.orderStatus=== "PENDING") { %> selected <% } %> value="PENDING">PENDING</option>
+                                <option <%if(order.orderStatus=== "PLACED") { %> selected <% } %> value="PLACED">PLACED</option>
+                                <option <%if(order.orderStatus=== "CANCELLED") { %> selected <% } %> value="CANCELLED">CANCELLED</option>
+                                <option <%if(order.orderStatus=== "SHIPPED") { %> selected <% } %> value="SHIPPED">SHIPPED</option>
+                                <option <%if(order.orderStatus=== "DELIVERED") { %> selected <% } %> value="DELIVERED">DELIVERED</option>
+                                <option <%if(order.orderStatus=== "RETURNED") { %> selected <% } %> value="RETURNED">RETURNED</option>
+                              <!-- <option value="PENDING">PENDING</option>
                                 <option value="PLACED">PLACED</option>
                                 <option value="CANCELLED">CANCELLED</option>
                                 <option value="DELIVERED">DELIVERED</option>
+                                <option value="RETURNED">RETURNED</option> -->
                             </select>
                             <input type="hidden" name="id" id="" value="<%=order._id%>">
                             <button type="submit" class="btn btn-primary">Save</button>
@@ -261,6 +268,27 @@
                                 </div>
                             </article>
                         </div> <!-- col// -->
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-place"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Payment Details</h6>
+                                    
+                                    <p class="mb-1">
+                                        Payment Type : <%= order.paymentMethod%>
+                                    </p>
+                                    <%if(order.paymentMethod == 'razorpay'){%>
+                                    <p class="mb-1">
+                                        Transaction ID :<%=String(order.paymentOrderId).slice(6,20)%> 
+                                    </p>
+                                    <%}%>
+                                </div>
+                            </article>
+                        </div> <!-- col// -->
+
+                        
                     </div> <!-- row // -->
                     <div class="row">
                         <div class="col-lg-12">
@@ -268,17 +296,22 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th width="30%">Product</th>
-                                            <th width="20%">Unit Price</th>
-                                            <th width="15%">Quantity</th>
-                                            <th width="20%">Payment Status</th>
-                                            <th width="20%">Order Status</th>
-                                            <th width="20%" class="text-end">Total</th>
+                                            <th width="10%">Date</th>
+                                            <th width="15%">Order ID</th>
+                                            <th width="20%">Product</th>
+                                            <th width="10%">Unit Price</th>
+                                            <th width="10%">Quantity</th>
+                                            <th width="15%">Payment Status</th>
+                                            <th width="15%">Order Status</th>
+                                            <th width="10%" class="text-end">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <%for(let i=0; i < order.products.length; i++){%>
                                         <tr>
+                                            <td> <%=String(order.createdAt).slice(4,16)%> </td>
+                                            <td> <%= order._id.toString().slice(0, 13) %> </td>
+
                                             <td>
                                                 <a class="itemside" href="#">
                                                     <div class="left">
@@ -296,7 +329,7 @@
                                         </tr>
                                         <%}%>
                                         <tr>
-                                            <td colspan="6">
+                                            <td colspan="12">
                                                 <article class="float-end">
                                                     <dl class="dlist">
                                                         <dt>Subtotal:</dt>
