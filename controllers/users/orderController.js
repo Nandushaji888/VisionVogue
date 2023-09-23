@@ -2,11 +2,11 @@ const Category = require("../../models/categoryModel");
 const User = require("../../models/userModel");
 const Product = require("../../models/productModel");
 const Order = require("../../models/orderModel");
-const Coupon = require('../../models/couponModel')
+const Coupon = require("../../models/couponModel");
 
 const { Error } = require("mongoose");
 const Razorpay = require("razorpay");
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 // const { log } = require("har-validator");
 const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
 
@@ -41,12 +41,9 @@ const loadPlaceOrder = async (req, res) => {
       "cart.productId"
     );
     const coupons = await Coupon.find({
-      $and: [
-        { users: { $ne: req.session.user_id } },
-        { isListed: true }
-      ]
+      $and: [{ users: { $ne: req.session.user_id } }, { isListed: true }],
     });
-    req.session.originalURL = '/checkout'
+    req.session.originalURL = "/checkout";
     const userCart = await User.findOne({ _id: req.session.user_id });
     // console.log(req.body);
     const categories = await Category.find();
@@ -54,7 +51,7 @@ const loadPlaceOrder = async (req, res) => {
       user: user,
       userCart: userCart,
       categories: categories,
-      coupons : coupons
+      coupons: coupons,
     });
   } catch (error) {
     console.log(error.message);
@@ -63,94 +60,105 @@ const loadPlaceOrder = async (req, res) => {
 
 const postOrder = async (req, res) => {
   try {
+    console.log(req.body.Coupon);
     const userId = req.session.user_id;
     const userreq = await User.findById(userId, { cart: 1, _id: 0 });
-    // console.log('coupns11111111111'+req.body.coupon);
-    const discount = await Coupon.findOne({_id : req.body.coupon})
-    const GrandTotal = parseInt(req.body.GrandTotal)
+    const discountCoupon = await Coupon.findOne({
+      couponCode: req.body.Coupon,
+    });
+    let grandAmount;
+    let discountValue;
 
-    if(GrandTotal > discount.minOrderPrice ){
-      if(GrandTotal > discount.maxDiscount){
-        const percentageDiscount = parseInt(discount.discount)
-        // console.log('percentageDiscount '+ percentageDiscount);
-        const discountCal = Math.floor((GrandTotal * percentageDiscount)/100)
+    console.log(discountCoupon);
+    const GrandTotal = parseInt(req.body.GrandTotal);
+    console.log("this is grand total " + GrandTotal);
+    if (discountCoupon){
+      console.log(GrandTotal > discountCoupon.minOrderPrice);
 
-        if(discountCal <discount.maxDiscount){
-          var discountValue = discountCal
-        }else{
-          discountValue =discount.maxDiscount
+      if (GrandTotal > discountCoupon.minOrderPrice) {
+        const percentageDiscount = parseInt(discountCoupon.discount);
+        const discountCal = Math.floor((GrandTotal * percentageDiscount) / 100);
+        console.log('discountCal', discountCal);
+
+        if (discountCal < discountCoupon.maxDiscount) {
+           discountValue = discountCal;
+          console.log('discountValue1111' + discountValue);
+        } else {
+          discountValue = discountCoupon.maxDiscount;
+          console.log('discountValue22222' + discountValue);
         }
-        // console.log('discountValue '+ discountValue);
-        var grandAmount = GrandTotal-discountValue
+        console.log('GrandTotal' +GrandTotal );
+        console.log('discountValue' +discountValue );
+        grandAmount = GrandTotal - discountValue;
+      } else {
+        grandAmount = GrandTotal;
       }
-
+    } else {
+      grandAmount = GrandTotal;
     }
     console.log(grandAmount);
-
     const order = new Order({
       customerId: userId,
       products: userreq.cart,
       quantity: req.body.quantity,
       price: req.body.salePrice,
-      totalAmount: grandAmount,
+      paidAmount: grandAmount,
       paymentMethod: req.body.paymentMethod,
       shippingAddress: JSON.parse(req.body.address),
-      coupon : req.body.coupon,
-      discount : discountValue
-
+      coupon: req.body.coupon,
+      couponDiscount: discountValue,
     });
-    const orderId = order._id
+
+    console.log(order);
+    const orderId = order._id;
     const orderSuccess = await order.save();
     if (orderSuccess) {
-      for (const cartItem of userreq.cart) {
-        const product = await Product.findById(cartItem.productId);
-
-        if (product) {
-          product.stock -= cartItem.quantity;
-          await product.save();
-        }
-      }
-      await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
-
-
-
-
       //<......for COD delovery....>
       if (req.body.paymentMethod === "COD") {
-        // Order.findByIdAndUpdate(orderId,{orderStatus :"PLACED"})
-        await Order.updateOne({_id : new mongoose.Types.ObjectId(orderId)},{ orderStatus :"PLACED"}).lean()
+        console.log('usercart' +userreq.cart);
+        for (const cartItem of userreq.cart) {
+          const product = await Product.findById(cartItem.productId);
 
-        // console.log("razzzz2");
+          if (product) {
+            product.stock -= cartItem.quantity;
+            await product.save();
+          }
+        }
+        await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
+
+        await Order.updateOne(
+          { _id: new mongoose.Types.ObjectId(orderId) },
+          { orderStatus: "PLACED" }
+        ).lean();
         res.status(200).json({
           status: true,
           msg: "Order created for COD",
         });
 
-
         // FOR ONLINE PAYMENT
       } else if (req.body.paymentMethod === "razorpay") {
-        // console.log(req.body);
-        console.log(orderId);
+        console.log("online");
 
-        const amount = (req.body.GrandTotal -discountValue)*100
-        console.log('hjgfhgjldgldgfalsh '+amount);
+        const amount = grandAmount * 100;
+        console.log("amount" + amount);
         const options = {
           amount: amount,
           currency: "INR",
           receipt: orderId,
         };
-
+        console.log("checking.......");
         razorpay.orders.create(options, (err, order) => {
+          console.log(err);
           if (!err) {
-            // console.log('bgkjhgjhjh '+orderId);
+            console.log("order sending");
             res.status(200).send({
               success: true,
               msg: "Order created",
               order_id: order.id,
               amount: amount,
-              receipt : orderId,
+              products: userreq.cart,
+              receipt: orderId,
               key_id: RAZORPAY_ID_KEY,
-              // productId : req.body.products.productId,
               contact: "9998887776",
               name: "admin",
               email: "admin@gmail.com",
@@ -167,38 +175,65 @@ const postOrder = async (req, res) => {
     console.log(error.message);
   }
 };
-const crypto = require('crypto');
+const crypto = require("crypto");
 
-const verifyPayment = async(req, res) => {
+const verifyPayment = async (req, res) => {
   try {
-    console.log('this is id:',req.body.orderId);
-    const kk = await Order.find({_id : new mongoose.Types.ObjectId(req.body.orderId)}).lean()
-    if(kk)
-      console.log(kk);
-      console.log(req.body.orderId);
-    const hmac = crypto.createHmac('sha256', RAZORPAY_SECRET_KEY);
-    hmac.update(req.body.payment.razorpay_order_id + "|" + req.body.payment.razorpay_payment_id);
-    await Order.updateOne({_id : new mongoose.Types.ObjectId(req.body.orderId)},{$set : { paymentId : req.body.payment.razorpay_payment_id, paymentOrderId :req.body.payment.razorpay_order_id }}).lean()
+    console.log("this is id:", req.body.orderId);
+    const kk = await Order.find({
+      _id: new mongoose.Types.ObjectId(req.body.orderId),
+    }).lean();
+    if (kk) console.log(kk);
+    console.log(req.body.orderId);
+    const hmac = crypto.createHmac("sha256", RAZORPAY_SECRET_KEY);
+    hmac.update(
+      req.body.payment.razorpay_order_id +
+        "|" +
+        req.body.payment.razorpay_payment_id
+    );
+    await Order.updateOne(
+      { _id: new mongoose.Types.ObjectId(req.body.orderId) },
+      {
+        $set: {
+          paymentId: req.body.payment.razorpay_payment_id,
+          paymentOrderId: req.body.payment.razorpay_order_id,
+        },
+      }
+    ).lean();
 
-    const calculatedSignature = hmac.digest('hex');
+    const calculatedSignature = hmac.digest("hex");
 
     if (calculatedSignature === req.body.payment.razorpay_signature) {
-      console.log(typeof(req.body.orderId));
-      await Order.updateOne({_id : new mongoose.Types.ObjectId(req.body.orderId)},{$set : { paymentStatus : 'COMPLETED', orderStatus :"PLACED"}}).lean()
+      console.log(typeof req.body.orderId);
 
-      res.status(200).json({ status: 'success', msg: 'Payment verified' });
+      const products = req.body.products;
+      console.log(products);
+      for (const cartItem of products) {
+        const product = await Product.findById(cartItem.productId);
+
+        if (product) {
+          product.stock -= cartItem.quantity;
+          await product.save();
+        }
+      }
+      await User.updateOne({ _id: req.session.user_id }, { $unset: { cart: 1 } });
+      await Order.updateOne(
+        { _id: new mongoose.Types.ObjectId(req.body.orderId) },
+        { $set: { paymentStatus: "COMPLETED", orderStatus: "PLACED" } }
+      ).lean();
+      console.log('order placedddddd');
+
+      res.status(200).json({ status: "success", msg: "Payment verified" });
     } else {
-
-      res.status(400).json({ status: 'error', msg: 'Payment verification failed' });
+      res
+        .status(400)
+        .json({ status: "error", msg: "Payment verification failed" });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    res.status(500).json({ status: "error", msg: "Internal server error" });
   }
 };
-
-
-
 
 const orderCancellation = async (req, res) => {
   try {
@@ -240,7 +275,7 @@ const returnProduct = async (req, res) => {
     console.log("order ID" + req.body.id);
     await Order.findByIdAndUpdate(
       { _id: new mongoose.Types.ObjectId(id) },
-      { $set: { returnReason: reason, orderStatus: "RETURNED" } }
+      { $set: { returnReason: reason, orderStatus: "RETURNED",paymentStatus : "REFUNDED" } }
     ).lean();
     for (const item of order.products) {
       const product = await Product.findById(item.productId);
@@ -258,7 +293,6 @@ const returnProduct = async (req, res) => {
   }
 };
 
-
 module.exports = {
   orderSuccessPage,
   postOrder,
@@ -266,5 +300,5 @@ module.exports = {
   orderCancellation,
   loadOrderDetails,
   verifyPayment,
-  returnProduct
+  returnProduct,
 };

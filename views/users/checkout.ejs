@@ -93,11 +93,13 @@
                                                     value='<%= JSON.stringify(user.address[i]) %>' type="radio"
                                                     name="address" id="address<%= i %>">
 
-                                                
-                                                    <label class="form-check-label" for="flexRadioDefault1">
-                                                      <h5 class="mb-0"><%=user.address[i].addressType%></h5>
-                                                    </label>
-                                                   
+
+                                                <label class="form-check-label" for="flexRadioDefault1">
+                                                    <h5 class="mb-0">
+                                                        <%=user.address[i].addressType%>
+                                                    </h5>
+                                                </label>
+
                                             </div>
                                             <div class="card-body">
                                                 <address>
@@ -110,7 +112,7 @@
                                                                             <%=user.address[i].phone%><br>
                                                                                 <%=user.address[i].email%>
                                                 </address>
-                                              
+
                                             </div>
                                         </div>
                                     </div>
@@ -143,7 +145,8 @@
                                                             <h5><a href="shop-product-full.html">
                                                                     <%=user.cart[i].productId.name%>
                                                                 </a></h5> <span class="product-qty">x
-                                                                <%=user.cart[i].quantity%></span>
+                                                                <%=user.cart[i].quantity%>
+                                                            </span>
                                                         </td>
                                                         <td>₹<span>
                                                                 <%=user.cart[i].productId.price *
@@ -163,7 +166,8 @@
                                                             <th>SubTotal</th>
                                                             <td class="product-subtotal" colspan="2">₹<%=sum%>
                                                             </td>
-                                                            <input type="hidden" id="total1" name="GrandTotal" value="<%=sum%> ">
+                                                            <input type="hidden" id="total1" name="GrandTotal"
+                                                                value="<%=sum%> ">
 
                                                         </tr>
                                                         <tr>
@@ -172,10 +176,10 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Discount</th>
-                                                            <td colspan="2" class="product-subtotal">₹<span id="discount"
-                                                                class="font-xl text-brand fw-900">
-                                                                
-                                                            </span></td>
+                                                            <td colspan="2" class="product-subtotal">₹<span
+                                                                    id="discount" class="font-xl text-brand fw-900">
+
+                                                                </span></td>
                                                         </tr>
                                                         <tr>
                                                             <th>Total</th>
@@ -187,38 +191,30 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="mb-30 mt-50 col-lg-12">
-                                    <div class="heading_s1 mb-3">
-                                        <h4>Apply Coupon</h4>
-                                    </div>
-                                    <% if(coupons?.length> 0){%>
-    
+                            
+
+                                    <div class="mb-30 mt-50">
+                                        <div class="heading_s1 mb-3">
+                                            <h4>Apply Coupon</h4>
+                                        </div>
                                         <div class="total-amount">
                                             <div class="left">
                                                 <div class="coupon">
-                                                    <form action="/apply-coupon" method="post">
-                                                        <div class="form-row row justify-content-center">
-                                                            <div class="form-group col-lg-6">
-                                                                <select class="form-select" name="coupon" id="couponSelect">
-                                                                    <% for(let i=coupons?.length - 1; i>=0; i--) { %>
-                                                                        <option  value="<%= coupons[i]?._id %>">
-                                                                            <%= coupons[i]?.couponCode %>
-                                                                        </option>
-                                                                        <% } %>
-                                                                </select>
-                                                            </div>
-                                                            <input type="hidden" id="userId" value="<%= user._id %>">
-                                                            <div class="form-group col-lg-6">
-                                                                <button onclick="couponApply(event)" class="btn btn-sm"><i
-                                                                        class="fi-rs-label mr-10"></i>Apply</button>
-                                                            </div>
+                                                    <form action="#" target="_blank" id="coupon-apply">
+                                                    <div class="form-row row justify-content-center">
+                                                        <div class="form-group col-lg-6">
+                                                            <input id="couponName" class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
                                                         </div>
-                                                    </form>
+                                                        <div class="form-group col-lg-6">
+                                                            <button onclick="couponApply(event)" class="btn btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                        </div>
+                                                        <div class="text-danger" id="text"></div>
+                                                    </div>
+                                                </form>
                                                 </div>
                                             </div>
                                         </div>
-                                        <%}%>
-                                </div>
+                                    </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                 <div class="payment_method">
                                     <div class="mb-25">
@@ -227,22 +223,20 @@
                                     <div class="payment_option">
                                         <div class="custome-radio">
                                             <input class="form-check-input" required="" type="radio"
-                                                name="paymentMethod" id="exampleRadios3" value="COD" checked="">
+                                                name="paymentMethod" id="exampleRadios3" value="COD">
                                             <label class="form-check-label" for="exampleRadios3"
-                                                data-bs-toggle="collapse" data-target="#bankTranfer"
+                                                data-bs-toggle="collapse" data-target="#checkPayment"
                                                 aria-controls="bankTranfer">Cash On Delivery</label>
-
                                         </div>
                                         <div class="custome-radio">
                                             <input class="form-check-input" required="" type="radio"
                                                 name="paymentMethod" id="razorpay-button" value="razorpay" checked="">
-                                            <label class="form-check-label" for="exampleRadios4"
-                                                data-bs-toggle="collapse" data-target="#checkPayment"
+                                            <label class="form-check-label" for="razorpay-button"
+                                                data-bs-toggle="collapse" data-target="#bankTranfer"
                                                 aria-controls="checkPayment">Razorpay</label>
-
                                         </div>
-
                                     </div>
+                                    
                                     <!-- <div class="payment_option">
                   
                                     <div class="custome-radio">
@@ -324,19 +318,20 @@
                     data: formData,
                     success: function (res) {
                         // alert('before call')
-                        if (res.success) {  
+                        if (res.success) {
                             // alert('after call')
                             // alert(res.receipt)
                             var options = {
                                 "key": "" + res.key_id + "",
-                                "amount": "" + res.amount + "", 
+                                "amount": "" + res.amount + "",
                                 "currency": "INR",
                                 "name": "Vision Vogue",
                                 "order_id": "" + res.order_id + "",
-                                "receipt" : ""+res.receipt+"",
+                                "receipt": "" + res.receipt + "",
+                                "products": ""+res.products+"",
                                 "handler": function (response) {
-                                    
-                                    verifyPayment(response, res.order_id, res.receipt);
+
+                                    verifyPayment(response, res.order_id, res.receipt, res.products);
 
                                     // window.open("/order-success", "_self")
                                 },
@@ -360,15 +355,15 @@
 
                         if (res.status) {
                             Swal.fire({
-                        title: 'Order Placed Successfully!',
-                        text: 'View your orders',
-                        icon: 'success',
-                        showConfirmButton: true,
-                        confirmButtonText: "View order"
-                    }).then(function () {
-                        window.location.href = "http://localhost:3000/user-account"
+                                title: 'Order Placed Successfully!',
+                                text: 'View your orders',
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonText: "View order"
+                            }).then(function () {
+                                window.location.href = "http://localhost:3000/user-account"
 
-                    })
+                            })
                             // window.open("/order-success", "_self")
                         } else {
                             // alert(res.msg)
@@ -379,7 +374,7 @@
             })
         })
 
-        function verifyPayment(payment, order, orderId) {
+        function verifyPayment(payment, order, orderId, products) {
             // alert("cal comes")
             // alert(orderId)
             $.ajax({
@@ -387,7 +382,8 @@
                 data: {
                     payment,
                     order,
-                    orderId
+                    orderId,
+                    products
                 },
                 method: 'post',
                 success: function () {
@@ -399,54 +395,36 @@
                         showConfirmButton: true,
                         confirmButtonText: "View order"
                     }).then(function () {
-                        window.location.href = "http://localhost:3000/user-account"
+                        window.location.href = "http://localhost:3000/user-account#orders"
 
                     })
                 }
             })
         }
 
-        function couponApply(event) {
-            // alert('first')
-            event.preventDefault()
-            const couponSelect = document.getElementById('couponSelect');
-            const couponId = couponSelect.options[couponSelect.selectedIndex].value;
-            const userId = document.getElementById('userId').value
-            const coupenValue = document.getElementById('')
-            // alert(couponId)
-            // alert(userId)
-
+        function couponApply(e) {
+            e.preventDefault()
+            const couponName = document.getElementById('couponName').value
+            let grandTotal = parseFloat(document.getElementById('total').innerHTML);
             $.ajax({
                 url: '/apply-coupon',
                 method: 'post',
                 data: {
-                    couponId,
-                    userId
+                    couponName,
+                    grandTotal
                 }, success: function (res) {
                     if (res.success) {
-                        // alert('success');
-                        if (typeof res.couponValue !== 'undefined') {
-                            // alert(res.couponValue);
-                        } else {
-                            alert('Coupon value is undefined');
-                        }
-                        const couponValue = parseInt(res.couponValue);
-                        const maxDiscount = parseInt(res.maxDiscount)
-                        // alert(couponValue)
-                        let grandTotal = parseFloat(document.getElementById('total').innerHTML);
-                        // alert(grandTotal);
-
-                        const discountValue = Math.floor((grandTotal * couponValue) / 100);
-                        if(discountValue > maxDiscount){
-                           var discount =  maxDiscount
-                        }else{
-                            discount = discountValue
-                        } 
-                        // alert(discount);
-                        const newGrandTotal = grandTotal - discount;
+                        const newGrandTotal = res.newGrandTotal 
+                        const discount = res.discount
+                        const msg = res.msg
+                      
                         document.getElementById('total').innerHTML = newGrandTotal
-                        document.getElementById('total1').innerHTML = newGrandTotal
                         document.getElementById('discount').innerHTML = discount
+                        document.getElementById('text').innerHTML = msg
+                    }else if(res.success1) {
+                        const msg = res.msg
+                        document.getElementById('text').innerHTML = msg
+
                     }
                 }
             })

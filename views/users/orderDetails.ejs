@@ -130,7 +130,7 @@
                                         <td>
                                             <%=order.products[i].quantity%>
                                         </td>
-                                        <td>
+                                        <td id="payment-status">
                                             <%=order.paymentStatus%>
                                         </td>
 
@@ -153,7 +153,7 @@
                                                     </dl>
                                                     <dl class="dlist d-flex">
                                                         <dt>Discount:</dt>
-                                                        <dd><%= subtotal - order.totalAmount  %></dd>
+                                                        <dd><%= subtotal - order.paidAmount  %></dd>
                                                     </dl>
                                                     <dl class="dlist d-flex">
                                                         <dt>Shipping cost:</dt>
@@ -163,7 +163,7 @@
                                                         <dt>Grand total:</dt>
                                                         <dd> <b class="h5">
                                                                 <span>₹ </span>
-                                                                <%=order.totalAmount%>
+                                                                <%=order.paidAmount%>
                                                             </b> </dd>
                                                     </dl>
                                                     <!-- <dl class="dlist d-flex">
@@ -306,6 +306,7 @@
                             })
 
                             document.getElementById('orderStatus').innerHTML = 'Order Status : RETURNED'
+                            document.getElementById('payment-status').innerHTML = 'REFUNDED'
                             document.getElementById('orderCancel').style.display = 'none'
 
                         }

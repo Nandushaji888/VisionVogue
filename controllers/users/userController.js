@@ -663,26 +663,31 @@ const editAddress = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    console.log("dataaaaa " + req.body.oldPass);
-    console.log("dataaaaa22222 " + req.body.newPass);
+    // console.log("dataaaaa " + req.body.oldPass);
+    // console.log("dataaaaa22222 " + req.body.newPass);
     const password = req.body.oldPass.toString();
     const newPass = req.body.newPass.toString();
-    console.log(newPass);
-    const userData = await User.findById(req.session.user_id);
-    // console.log('user'+userData);
-    const passwordMatch = await bcrypt.compare(password, userData.password);
-    if (passwordMatch) {
-      const spassword = await securePassword(newPass);
-
-      await User.updateOne(
-        { _id: req.session.user_id },
-        { password: spassword }
-      );
-      res.status(200).json({ success: true });
-    } else {
-      console.log("wrong pass");
-      return res.status(200).json({ success: false });
+    if(password === newPass) {
+      return res.status(200).json({ success1: true });
+    }else{
+      console.log(newPass);
+      const userData = await User.findById(req.session.user_id);
+      // console.log('user'+userData);
+      const passwordMatch = await bcrypt.compare(password, userData.password);
+      if (passwordMatch) {
+        const spassword = await securePassword(newPass);
+  
+        await User.updateOne(
+          { _id: req.session.user_id },
+          { password: spassword }
+        );
+        res.status(200).json({ success: true });
+      } else {
+        console.log("wrong pass");
+        return res.status(200).json({ success: false });
+      }
     }
+    
   } catch (error) {
     console.error(error);
     res
@@ -696,36 +701,43 @@ const resetPassword = async (req, res) => {
 const applyCoupon = async (req, res) => {
   try {
     // console.log(req.body);
-    const couponDataUpdate = await Coupon.findByIdAndUpdate(
-      { _id: req.body.couponId },
-      { $push: { users: req.body.userId } },
-      { new: true }
-    );
-
-    const coupon = await Coupon.findOne({ _id: req.body.couponId });
-
-    // if (coupon) {
-    //   console.log("coupon", coupon);
-    //   console.log(coupon.couponCode);
-    // } else {
-    //   console.log("No coupon found");
-    // }
-
-    if (couponDataUpdate) {
-      console.log(coupon.discount);
-
-      // console.log("success");
+    // const couponDataUpdate = await Coupon.findByIdAndUpdate(
+    //   { couponCode: req.body.couponName },
+    //   { $push: { users: req.body.userId } },
+    //   { new: true }
+    // );
+    
+    const coupon = await Coupon.findOne({couponCode :req.body.couponName })
+      const grandTotal = req.body.grandTotal
+    const percentageDiscount = parseInt(coupon.discount)
+    if(coupon.minOrderPrice > grandTotal){
+      res
+      .status(200)
+      .json({
+        success1: true,
+        msg: `minimun Order Price should be ${coupon.minOrderPrice}`,
+      });
+    }else{
+      const discountCal = Math.floor((grandTotal * percentageDiscount)/100)
+      let discount;
+      if(discountCal > coupon.maxDiscount) {
+        discount = coupon.maxDiscount
+      }else{
+        discount = discountCal
+      }
+      const newGrandTotal = grandTotal - discount;
+      console.log("success");
       res
         .status(200)
         .json({
           success: true,
-          couponValue: coupon.discount,
-          maxDiscount : coupon.maxDiscount,
-          msg: "Coupon applied successfully",
+          newGrandTotal: newGrandTotal,
+          discount : discount,
+          msg: `Coupon applied successfully... You will get ${coupon.discount}% upto ₹${coupon.maxDiscount} coupon discount on this order !!!`,
         });
-    } else {
-      res.status(500).json({ status: "error", msg: "Cannot apply coupon" });
     }
+  
+  
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "error", msg: "Cannot apply coupon" });

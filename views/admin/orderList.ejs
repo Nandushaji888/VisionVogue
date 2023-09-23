@@ -222,10 +222,11 @@
 
                                 <%for(let i = 0; i < order.length; i++){%>
                                 <tr>
-                                    <td><%= i+1%></td>
+                                    <td>ODR<%=order[i]._id.toString().slice(0, 13) %>
+                                    </td>
                                     <td><b><%=order[i].customerId.name%></b></td>
                                     <td><%=order[i].customerId.email%></td>
-                                    <td>₹ <%=order[i].totalAmount%></td>
+                                    <td>₹ <%=order[i].paidAmount%></td>
                                     <%if(order[i].orderStatus === "PENDING"){%>
                                     <td><span class="badge rounded-pill alert-warning"><%=order[i].orderStatus%></span></td>
                                     <%}else if(order[i].orderStatus === "PLACED"){%>

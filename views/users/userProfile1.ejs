@@ -1,0 +1,336 @@
+<%- include('../partials/home/home-header.ejs') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow">Home</a>
+                    <span></span> Pages
+                    <span></span> Account
+                </div>
+            </div>
+        </div>
+        <section class="pt-150 pb-150">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="dashboard-menu">
+                                    <ul class="nav flex-column" role="tablist">
+
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="orders-tab" data-bs-toggle="tab"
+                                                href="#orders" role="tab" aria-controls="orders"
+                                                aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link " id="account-tab" data-bs-toggle="tab" href="#account"
+                                                role="tab" aria-controls="dashboard" aria-selected="false"><i
+                                                    class="fi-rs-settings-sliders mr-10"></i>Account Details</a>
+                                        </li>
+                                        <!-- <li class="nav-item">
+                                            <a class="nav-link" id="account-tab" data-bs-toggle="tab" href="#account" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Account Details</a>
+                                        </li> -->
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
+                                                role="tab" aria-controls="address" aria-selected="true"><i
+                                                    class="fi-rs-marker mr-10"></i>My Address</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="change-password-tab" data-bs-toggle="tab"
+                                                href="#change-password" role="tab" aria-controls="account-detail"
+                                                aria-selected="true"><i class="fi-rs-user? mr-10"></i>Change
+                                                Password</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/logout"><i
+                                                    class="fi-rs-sign-out mr-10"></i>Logout</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="tab-content dashboard-content">
+                                    <div class="tab-pane fade " id="account" role="tabpanel"
+                                        aria-labelledby="account-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Account Details</h5>
+                                            </div>
+                                            <div class="card-body">
+
+                                                <form method="post" name="enq">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-6">
+                                                            <label>First Name <span class="required">*</span></label>
+                                                            <input required="" class="form-control square"
+                                                                value="<%=user?.name%>" type="text" readonly>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label>Phone Number<span class="required">*</span></label>
+                                                            <input required="" class="form-control square"
+                                                                value="<%=user?.phone%>" type="text" readonly>
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label>Email Address <span class="required">*</span></label>
+                                                            <input required="" class="form-control square"
+                                                                value="<%=user?.email%>" type="email" readonly>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <button type="submit" class="btn btn-fill-out submit"
+                                                                name="submit" value="Submit">Save</button>
+                                                        </div>
+
+
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade active show" id="orders" role="tabpanel"
+                                        aria-labelledby="orders-tab">
+                                        <div class="card">
+                                            <%if(order?.length){%>
+
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Your Orders</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table" id="dataTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Order</th>
+                                                                <th>Order ID</th>
+                                                                <th>Date</th>
+                                                                <th>Status</th>
+                                                                <th>Total</th>
+                                                                <th>Details</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                                <% for(let i=order?.length-1; i>= 0; i--){ %>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <%=order?.length -i%>
+                                                                        </td>
+                                                                        <td>
+                                                                            ODR<%=order[i]?._id.toString().slice(0, 13)
+                                                                                %>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%=String(order[i]?.createdAt).slice(4,16)%>
+                                                                        </td>
+                                                                        <td>
+                                                                            <%= order[i]?.orderStatus%>
+                                                                        </td>
+                                                                        <td>₹ <%=order[i]?.paidAmount%>
+                                                                        </td>
+                                                                        <td><a href="/order-details/<%=order[i]._id%>"
+                                                                                class="btn-small d-block">View</a></td>
+                                                                    </tr>
+                                                                    <%}%>
+
+
+
+                                                        </tbody>
+
+                                                    </table>
+                                                    <%}else{%>
+                                                        <h4>No order details available</h4>
+                                                        <%}%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="address" role="tabpanel"
+                                        aria-labelledby="address-tab">
+                                        <a class="btn btn-fill-out submit btn-medium mb-4 " href="/add-address">Add
+                                            Address</a>
+                                        <%if(user?.address && user?.address.length){%>
+                                            <div class="row">
+                                                <% for(let i=0; i < user?.address.length; i++){ %>
+                                                    <div class="col-lg-4">
+                                                        <div class="card mb-3 mb-lg-0">
+                                                            <div class="card-header">
+
+
+                                                                <h5 class="mb-0">
+                                                                    <%=user?.address[i].addressType%>
+                                                                </h5>
+
+
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <address>
+                                                                    <%=user?.address[i].customerName%><br>
+                                                                        <%= user?.address[i].addressLine1%>,<br>
+                                                                            <%= user?.address[i].city%> <br>
+                                                                                <%=user?.address[i].zipcode%>
+                                                                </address>
+                                                                <p>
+                                                                    <%=user?.address[i].state%>
+                                                                </p>
+                                                                <a href="/edit-address/<%= i %>"
+                                                                    class="btn-small">Edit</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <%}%>
+                                            </div>
+                                            <%}else{%>
+                                                <h3 class="text-success">Add an Address</h3>
+                                                <%}%>
+                                    </div>
+                                    <div class="tab-pane fade" id="change-password" role="tabpanel"
+                                        aria-labelledby="change-password-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Account Details</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <form method="post" action="/reset-password">
+                                                    <div class="row">
+
+                                                        <div class="form-group col-md-12">
+                                                            <label>Current Password <span
+                                                                    class="required">*</span></label>
+                                                            <input required="" class="form-control square" id="password"
+                                                                name="oldPass" type="password">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label>New Password <span class="required">*</span></label>
+                                                            <input required="" class="form-control square"
+                                                                id="newpassword" name="newPass" type="password">
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label>Confirm Password <span
+                                                                    class="required">*</span></label>
+                                                            <input required="" class="form-control square"
+                                                                id="conpassword" name="conpassword" type="password">
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <button type="submit" class="btn btn-fill-out submit"
+                                                                onclick="return validatePassword(event);">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+
+
+
+
+        function validatePassword(event) {
+            event.preventDefault()
+            const password = document.getElementById('newpassword').value;
+            const reenteredPassword = document.getElementById('conpassword').value;
+            const oldPass = document.getElementById('password').value;
+
+
+            if (password !== reenteredPassword) {
+
+                Swal.fire(
+                    'New Password doesnt match!',
+                    'Password should be same',
+                    'error'
+
+                )
+
+                return false
+
+
+            } else if (password === oldPass) {
+                Swal.fire(
+                    'Password cannot be same!',
+                    'New Password must differ from old password',
+                    'error'
+
+                )
+
+            } else {
+                changePassword()
+
+            }
+        }
+
+
+        function changePassword() {
+            const oldPass = document.getElementById('password').value;
+            const newPass = document.getElementById('newpassword').value;
+
+            $.ajax({
+                url: '/reset-password',
+                method: 'post',
+                data: {
+                    oldPass,
+                    newPass
+                },
+                success: function (res) {
+
+
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Your password has been changed',
+                            icon: 'success',
+                            showConfirmButton: true,
+                            confirmButtonText: "OK"
+                        }).then(function () {
+                            window.location.href = "http://localhost:3000/user?-account";
+                        });
+                    } else if (res.success1) {
+
+                        Swal.fire({
+                            title: 'Password cannot be same',
+                            text: 'New Password must differ from old password',
+                            icon: 'error',
+                            showConfirmButton: true,
+                            confirmButtonText: "OK"
+
+                        });
+
+                    } else {
+                        Swal.fire({
+                            title: 'Incorrect Password',
+                            text: 'Old Password in incorrect',
+                            icon: 'error',
+                            showConfirmButton: true,
+                            confirmButtonText: "OK"
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while changing the password',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonText: "OK"
+                    });
+                }
+
+            });
+        }
+
+    </script>
+
+    <%- include('../partials/home/home-footer.ejs') %>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

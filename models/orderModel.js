@@ -34,9 +34,9 @@ const orderSchema = new mongoose.Schema({
         default: 0
     },
     totalItems : Number,
-    totalAmount : Number,   
+    paidAmount : Number,   
 
-    discount: {
+    couponDiscount: {
 		type: Number,
 		default: 0,
 	},
