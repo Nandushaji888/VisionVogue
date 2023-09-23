@@ -163,7 +163,7 @@
                                                             <th>SubTotal</th>
                                                             <td class="product-subtotal" colspan="2">₹<%=sum%>
                                                             </td>
-                                                            <input type="hidden" name="GrandTotal" value="<%=sum%> ">
+                                                            <input type="hidden" id="total1" name="GrandTotal" value="<%=sum%> ">
 
                                                         </tr>
                                                         <tr>
@@ -171,14 +171,53 @@
                                                             <td colspan="2"><em>Free Shipping</em></td>
                                                         </tr>
                                                         <tr>
+                                                            <th>Discount</th>
+                                                            <td colspan="2" class="product-subtotal">₹<span id="discount"
+                                                                class="font-xl text-brand fw-900">
+                                                                
+                                                            </span></td>
+                                                        </tr>
+                                                        <tr>
                                                             <th>Total</th>
-                                                            <td colspan="2" class="product-subtotal">₹<span
+                                                            <td colspan="2" class="product-subtotal">₹<span id="total"
                                                                     class="font-xl text-brand fw-900">
                                                                     <%=sum%>
                                                                 </span></td>
                                                         </tr>
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="mb-30 mt-50 col-lg-12">
+                                    <div class="heading_s1 mb-3">
+                                        <h4>Apply Coupon</h4>
+                                    </div>
+                                    <% if(coupons?.length> 0){%>
+    
+                                        <div class="total-amount">
+                                            <div class="left">
+                                                <div class="coupon">
+                                                    <form action="/apply-coupon" method="post">
+                                                        <div class="form-row row justify-content-center">
+                                                            <div class="form-group col-lg-6">
+                                                                <select class="form-select" name="coupon" id="couponSelect">
+                                                                    <% for(let i=coupons?.length - 1; i>=0; i--) { %>
+                                                                        <option  value="<%= coupons[i]?._id %>">
+                                                                            <%= coupons[i]?.couponCode %>
+                                                                        </option>
+                                                                        <% } %>
+                                                                </select>
+                                                            </div>
+                                                            <input type="hidden" id="userId" value="<%= user._id %>">
+                                                            <div class="form-group col-lg-6">
+                                                                <button onclick="couponApply(event)" class="btn btn-sm"><i
+                                                                        class="fi-rs-label mr-10"></i>Apply</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <%}%>
                                 </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                 <div class="payment_method">
@@ -278,6 +317,7 @@
             $('.payment-form').submit(function (e) {
                 e.preventDefault()
                 var formData = $(this).serialize();
+
                 $.ajax({
                     url: "/checkout",
                     method: "post",
@@ -364,6 +404,53 @@
                     })
                 }
             })
+        }
+
+        function couponApply(event) {
+            // alert('first')
+            event.preventDefault()
+            const couponSelect = document.getElementById('couponSelect');
+            const couponId = couponSelect.options[couponSelect.selectedIndex].value;
+            const userId = document.getElementById('userId').value
+            const coupenValue = document.getElementById('')
+            // alert(couponId)
+            // alert(userId)
+
+            $.ajax({
+                url: '/apply-coupon',
+                method: 'post',
+                data: {
+                    couponId,
+                    userId
+                }, success: function (res) {
+                    if (res.success) {
+                        // alert('success');
+                        if (typeof res.couponValue !== 'undefined') {
+                            // alert(res.couponValue);
+                        } else {
+                            alert('Coupon value is undefined');
+                        }
+                        const couponValue = parseInt(res.couponValue);
+                        const maxDiscount = parseInt(res.maxDiscount)
+                        // alert(couponValue)
+                        let grandTotal = parseFloat(document.getElementById('total').innerHTML);
+                        // alert(grandTotal);
+
+                        const discountValue = Math.floor((grandTotal * couponValue) / 100);
+                        if(discountValue > maxDiscount){
+                           var discount =  maxDiscount
+                        }else{
+                            discount = discountValue
+                        } 
+                        // alert(discount);
+                        const newGrandTotal = grandTotal - discount;
+                        document.getElementById('total').innerHTML = newGrandTotal
+                        document.getElementById('total1').innerHTML = newGrandTotal
+                        document.getElementById('discount').innerHTML = discount
+                    }
+                }
+            })
+
         }
 
     </script>

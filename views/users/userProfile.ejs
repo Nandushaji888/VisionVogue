@@ -1,6 +1,8 @@
 <%- include('../partials/home/home-header.ejs') %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 
     <main class="main">
         <div class="page-header breadcrumb-wrap">
@@ -97,7 +99,7 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="table-responsive">
-                                                    <table class="table">
+                                                    <table class="table" id="dataTable">
                                                         <thead>
                                                             <tr>
                                                                 <th>Order</th>
@@ -311,3 +313,4 @@ function changePassword() {
 </script>
 
     <%- include('../partials/home/home-footer.ejs') %>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

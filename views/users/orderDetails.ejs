@@ -103,6 +103,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <% let subtotal = 0%>
                                 <%for(let i=0; i < order.products.length; i++){%>
                                     <tr>
                                         <td>
@@ -137,6 +138,8 @@
                                         <td class="text-end">₹ <%=order.products[i].productId.price
                                                 *order.products[i].quantity %>
                                         </td>
+                                        <% subtotal=subtotal+(order.products[i].productId.price *
+                                        order.products[i].quantity )%>
                                     </tr>
                                     <%}%>
                                         <tr>
@@ -145,8 +148,12 @@
                                                     <dl class="dlist d-flex">
                                                         <dt>Subtotal:</dt>
                                                         <dd> <span>₹ </span>
-                                                            <%=order.totalAmount%>
+                                                            <%=subtotal%>
                                                         </dd>
+                                                    </dl>
+                                                    <dl class="dlist d-flex">
+                                                        <dt>Discount:</dt>
+                                                        <dd><%= subtotal - order.totalAmount  %></dd>
                                                     </dl>
                                                     <dl class="dlist d-flex">
                                                         <dt>Shipping cost:</dt>

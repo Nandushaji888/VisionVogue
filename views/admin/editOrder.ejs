@@ -312,6 +312,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <% let subtotal = 0%>
+
                                         <%for(let i=0; i < order.products.length; i++){%>
                                         <tr>
                                             <td> <%=String(order.createdAt).slice(4,16)%> </td>
@@ -331,6 +333,8 @@
                                             <td> <%=order.orderStatus%> </td>
                                             <td class="text-end">₹<span><%=order.products[i].productId.price
                                                 *order.products[i].quantity %></span> </td>
+                                                <% subtotal=subtotal+(order.products[i].productId.price *
+                                                order.products[i].quantity )%>
                                         </tr>
                                         <%}%>
                                         <tr>
@@ -338,7 +342,11 @@
                                                 <article class="float-end">
                                                     <dl class="dlist">
                                                         <dt>Subtotal:</dt>
-                                                        <dd>₹<span> <%=order.totalAmount%></span></dd>
+                                                        <dd>₹<span> <%=subtotal%></span></dd>
+                                                    </dl>
+                                                    <dl class="dlist d-flex">
+                                                        <dt>Discount:</dt>
+                                                        <dd>₹<span><%= subtotal - order.totalAmount  %></span></dd>
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt>Shipping cost:</dt>

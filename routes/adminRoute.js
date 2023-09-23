@@ -79,9 +79,9 @@ admin_route.get('/order-details/:id',auth.isLogin,orderController.orderDetails)
 admin_route.post('/change-order-status',auth.isLogin,orderController.changeOrderStatus)
 
 
-admin_route.get('/add-coupon',couponController.loadAddCoupon)
-admin_route.post('/add-coupon',couponController.addCoupon)
-admin_route.get('/coupon',couponController.loadCouponList)
-admin_route.get('/coupon-status/:id',couponController.couponStatus)
+admin_route.get('/add-coupon',auth.isLogin,couponController.loadAddCoupon)
+admin_route.post('/add-coupon',auth.isLogin,couponController.addCoupon)
+admin_route.get('/coupon',auth.isLogin,couponController.loadCouponList)
+admin_route.get('/coupon-status/:id',auth.isLogin,couponController.couponStatus)
 
 module.exports = admin_route;

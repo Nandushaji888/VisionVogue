@@ -2,7 +2,6 @@ const Category = require('../../models/categoryModel')
 const User = require("../../models/userModel");
 const Product = require("../../models/productModel");
 const Order = require("../../models/orderModel")
-const Coupon = require('../../models/couponModel')
 
 // item adding to cart
 const addToCart = async (req, res) => {
@@ -57,12 +56,15 @@ const loadCart = async (req,res)=>{
           grandTotal= grandTotal + parseInt(userCart.cart[i].productId.price)* parseInt(userCart.cart[i].quantity)
       }
       console.log(grandTotal);
-      const coupons = await Coupon.find({ users: { $ne: userCart._id}}); 
+      // const coupons = await Coupon.find({ users: { $ne: req.session.user_id}}); 
+      
+      
+      // console.log('ckfjkhsg'+coupons);
 
       const user = await User.findById(req.session.user_id)
       const categories = await Category.find()
 
-      res.render('userCart',{userCart: userCart, grandTotal : grandTotal, user : user, categories : categories,coupons : coupons})
+      res.render('userCart',{userCart: userCart, grandTotal : grandTotal, user : user, categories : categories})
   } catch (error) {
       console.log(error.message);
   }

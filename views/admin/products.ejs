@@ -337,7 +337,11 @@
                                                             <%= products[i].isListed %>
                                                         </td>
                                                         <td class="align-middle">
-                                                            <%= products[i].stock %>
+                                                            <%if(products[i].stock <= 15){%>
+                                                            <span style="color: red;"><%= products[i].stock %></span>
+                                                            <%}else{%>
+                                                                <%= products[i].stock %>
+                                                                <%}%>
                                                         </td>
                                                         <td class="align-middle">
                                                             <a href="/admin/edit-product/<%=products[i]._id%>"

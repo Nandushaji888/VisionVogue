@@ -2,6 +2,8 @@ const Category = require("../../models/categoryModel");
 const User = require("../../models/userModel");
 const Product = require("../../models/productModel");
 const Order = require("../../models/orderModel");
+const Coupon = require('../../models/couponModel')
+
 const { Error } = require("mongoose");
 const Razorpay = require("razorpay");
 const mongoose=require('mongoose')
@@ -29,7 +31,7 @@ const loadOrderDetails = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).render("errorPage");
   }
 };
 
@@ -38,6 +40,12 @@ const loadPlaceOrder = async (req, res) => {
     const user = await User.findOne({ _id: req.session.user_id }).populate(
       "cart.productId"
     );
+    const coupons = await Coupon.find({
+      $and: [
+        { users: { $ne: req.session.user_id } },
+        { isListed: true }
+      ]
+    });
     req.session.originalURL = '/checkout'
     const userCart = await User.findOne({ _id: req.session.user_id });
     // console.log(req.body);
@@ -46,6 +54,7 @@ const loadPlaceOrder = async (req, res) => {
       user: user,
       userCart: userCart,
       categories: categories,
+      coupons : coupons
     });
   } catch (error) {
     console.log(error.message);
@@ -56,15 +65,39 @@ const postOrder = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const userreq = await User.findById(userId, { cart: 1, _id: 0 });
+    // console.log('coupns11111111111'+req.body.coupon);
+    const discount = await Coupon.findOne({_id : req.body.coupon})
+    const GrandTotal = parseInt(req.body.GrandTotal)
+
+    if(GrandTotal > discount.minOrderPrice ){
+      if(GrandTotal > discount.maxDiscount){
+        const percentageDiscount = parseInt(discount.discount)
+        // console.log('percentageDiscount '+ percentageDiscount);
+        const discountCal = Math.floor((GrandTotal * percentageDiscount)/100)
+
+        if(discountCal <discount.maxDiscount){
+          var discountValue = discountCal
+        }else{
+          discountValue =discount.maxDiscount
+        }
+        // console.log('discountValue '+ discountValue);
+        var grandAmount = GrandTotal-discountValue
+      }
+
+    }
+    console.log(grandAmount);
 
     const order = new Order({
       customerId: userId,
       products: userreq.cart,
       quantity: req.body.quantity,
       price: req.body.salePrice,
-      totalAmount: req.body.GrandTotal,
+      totalAmount: grandAmount,
       paymentMethod: req.body.paymentMethod,
       shippingAddress: JSON.parse(req.body.address),
+      coupon : req.body.coupon,
+      discount : discountValue
+
     });
     const orderId = order._id
     const orderSuccess = await order.save();
@@ -87,7 +120,7 @@ const postOrder = async (req, res) => {
         // Order.findByIdAndUpdate(orderId,{orderStatus :"PLACED"})
         await Order.updateOne({_id : new mongoose.Types.ObjectId(orderId)},{ orderStatus :"PLACED"}).lean()
 
-        console.log("razzzz2");
+        // console.log("razzzz2");
         res.status(200).json({
           status: true,
           msg: "Order created for COD",
@@ -99,7 +132,8 @@ const postOrder = async (req, res) => {
         // console.log(req.body);
         console.log(orderId);
 
-        const amount = req.body.GrandTotal * 100;
+        const amount = (req.body.GrandTotal -discountValue)*100
+        console.log('hjgfhgjldgldgfalsh '+amount);
         const options = {
           amount: amount,
           currency: "INR",
@@ -195,97 +229,35 @@ const orderSuccessPage = async (req, res) => {
   }
 };
 
+const returnProduct = async (req, res) => {
+  try {
+    const reason = req.body.reason;
+    const id = req.body.id;
+    const order = await Order.findById({
+      _id: new mongoose.Types.ObjectId(id),
+    });
+    console.log(reason);
+    console.log("order ID" + req.body.id);
+    await Order.findByIdAndUpdate(
+      { _id: new mongoose.Types.ObjectId(id) },
+      { $set: { returnReason: reason, orderStatus: "RETURNED" } }
+    ).lean();
+    for (const item of order.products) {
+      const product = await Product.findById(item.productId);
 
-// exports.cancelOrder = async (req, res, next) => {
-//   try{
-//       console.log(req.body);
-//       if(req.body){
-//       const {orderId, reason} = req.body;
-//       if(!orderId){
-//           return res.status(500).render('error', {
-//               message: "Error while updating order status!",
-//               errStatus : 500
-//           });
-//       }
-//       await Orderdb.findById(orderId)
-//           .then( async (order)=>{
-//               if(order !== null){
-//                   //re-stock ordered products
-//                   const updateOperations = [];
-//                   let i = 0;
-//                   for(const item of order.products) {
-//               updateOperations.push({
-//                 updateOne: {
-//                   filter: { _id: item.productId.toString() },
-//                   update: { $inc: { stock: item.quantity } },
-//                 },
-//               });
-//                       i++;
-//             }
-//                   const result = await Productdb.bulkWrite(updateOperations);
-//                   if (result.modifiedCount !== order.products.length) {
-//                       return res.status(500).render('error', {
-//                           message: "Unable to return the order",
-//                           errStatus : 500
-//                       });
-//                   }
-//                   //refund payment
-//                   const editOrder = {
-//                       _id: orderId,
-//                       orderStatus: "CANCELLED",
-//                       reason: reason
-//                   };
-//                   if(order.paymentStatus === "PAID"){
-//                       const amount = order.finalAmount*100;
-//                       const remarks = "Refund of order"
-//                       await addWalletTransactionToDb(req.session.user._id, amount, "C", remarks)
-//                           .then((data)=>{
-//                               console.log(`Refund of amount "₹${data.amount}" is successful!`);
-//                               // res.json({status:true, data: data});
-//                               editOrder.paymentStatus = "REFUNDED";
-//                           })
-//                           .catch((err)=>{
-//                               console.log(`Refund of amount failed!`);
-//                               console.log(err);
-//                               // res.json({status: false, errMsg:'Payment failed!'});
-//                           });
-//                   } else{
-//                       editOrder.paymentStatus = "NOT PAID";
-//                   }                    
-//                   await Orderdb.findByIdAndUpdate(orderId, editOrder)
-//                           .then(data => {
-//                               if (!data) {
-//                                   res.status(500).render('error', {
-//                                       message: "Unable to cancel the order",
-//                                       errStatus : 500
-//                                   });
-//                               }
-//                               else {
-//                                   //res.send(data);   
-//                                   console.log("Order cancelled successfully!");
-//                                   res.redirect('back');
-//                               }
-//                           })
-//                           .catch(err => {
-//                               res.status(500).render('error', {
-//                                   message: "Error cancelling the order",
-//                                   errStatus : 500
-//                               });
-//                               console.log(err.message);
-//                           });                  
-//               }
-//           }).catch(err =>{
-//                   console.log(err);
-//           });
-//       }
-//   } catch(err){
-//       res.status(500).render('error', {
-//           message: "Error while updating order status!",
-//           errStatus : 500
-//       });
-//       console.log(err);
-//   }
-// };
+      if (product) {
+        product.stock += item.quantity;
+        await product.save();
+      }
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", msg: "Cannot return product" });
+  }
+};
+
 
 module.exports = {
   orderSuccessPage,
@@ -293,5 +265,6 @@ module.exports = {
   loadPlaceOrder,
   orderCancellation,
   loadOrderDetails,
-  verifyPayment
+  verifyPayment,
+  returnProduct
 };

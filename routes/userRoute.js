@@ -22,12 +22,13 @@ user_route.use(express.json());
 user_route.use(express.urlencoded({ extended: true }));
 
 //user registration
-
 user_route.get("/register",userController.loadSignup)
 user_route.post('/register',userController.sendOtpAndRenderRegistration)
 user_route.get('/',userController.loadHome)
 user_route.get('/register/verify', userController.loadSignup)
 user_route.post('/register/verify', userController.verifyAndRegisterUser)
+user_route.post('/resend-otp',userController.resendOtp)
+
 
 //forgot password
 user_route.get('/forgot-password',userController.loadForgotPassword)
@@ -68,16 +69,17 @@ user_route.post('/edit-address',auth.isLogin,userController.editAddress)
 user_route.get('/order-details/:id',auth.isLogin, orderController.loadOrderDetails)
 user_route.get('/order-cancel/:id',auth.isLogin, orderController.orderCancellation)
 user_route.post('/reset-password',auth.isLogin,userController.resetPassword)
-user_route.post('/return',auth.isLogin,userController.returnProduct)
+user_route.post('/return',auth.isLogin,orderController.returnProduct)
 
 
 
 user_route.get('/priceLowTohigh/:id',userController.priceLowTohigh)
 user_route.get('/priceHighToLow/:id',userController.priceHighToLow)
 user_route.post('/search-items', userController.searchResult )
-// user_route.get('/search-items', userController.searchResult )
+user_route.post('/apply-coupon',auth.isLogin, userController.applyCoupon )
 
 
 
+// user_route.get("*",userController.errorPage)
 
 module.exports = user_route;

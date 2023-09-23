@@ -648,3 +648,8 @@
 
 })(jQuery);
 
+
+$(document).ready(function(){
+	$('#dataTable').DataTable();
+});
+

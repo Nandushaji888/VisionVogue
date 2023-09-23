@@ -8,6 +8,9 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const twilio = require("twilio");
 const phoneUtil = require("libphonenumber-js");
+const Coupon = require("../../models/couponModel");
+
+
 
 //for bcypting password
 const securePassword = async (password) => {
@@ -92,6 +95,25 @@ const sendOtpAndRenderRegistration = async (req, res) => {
     console.log(error.message);
   }
 };
+
+
+
+
+const resendOtp = async (req,res) => {
+  try {
+      console.log(req.body);
+      const userData = req.body;
+     const resentOtp = await sendVerificationMail(userData.name, userData.email);
+     console.log('old'+req.session.otp);
+     console.log('old'+req.session.id);
+     req.session.otp = resentOtp
+     req.session.save();
+     console.log(req.session.otp);
+     console.log(resentOtp);
+  } catch (error) {
+   console.log(error.message);
+  }
+}
 
 const verifyAndRegisterUser = async (req, res) => {
   try {
@@ -238,7 +260,7 @@ function paginateQuery(query, page, limit) {
     return query.skip(skip).limit(limit);
   } catch (error) {
     console.error("Error in paginateQuery:", error);
-    throw error; 
+    throw error;
   }
 }
 
@@ -375,9 +397,6 @@ const categoryWiseProducts = async (req, res) => {
     console.log(error.message);
   }
 };
-
-
-
 
 const priceLowTohigh = async (req, res) => {
   try {
@@ -672,32 +691,44 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const returnProduct = async (req, res) => {
+
+
+const applyCoupon = async (req, res) => {
   try {
-    const reason = req.body.reason;
-    const id = req.body.id;
-    const order = await Order.findByIdAndUpdate({
-      _id: new mongoose.Types.ObjectId(id),
-    });
-    console.log(reason);
-    console.log("order ID" + req.body.id);
-    await Order.findByIdAndUpdate(
-      { _id: new mongoose.Types.ObjectId(id) },
-      { $set: { returnReason: reason, orderStatus: "RETURNED" } }
-    ).lean();
-    for (const item of order.products) {
-      const product = await Product.findById(item.productId);
+    // console.log(req.body);
+    const couponDataUpdate = await Coupon.findByIdAndUpdate(
+      { _id: req.body.couponId },
+      { $push: { users: req.body.userId } },
+      { new: true }
+    );
 
-      if (product) {
-        product.stock += item.quantity;
-        await product.save();
-      }
+    const coupon = await Coupon.findOne({ _id: req.body.couponId });
+
+    // if (coupon) {
+    //   console.log("coupon", coupon);
+    //   console.log(coupon.couponCode);
+    // } else {
+    //   console.log("No coupon found");
+    // }
+
+    if (couponDataUpdate) {
+      console.log(coupon.discount);
+
+      // console.log("success");
+      res
+        .status(200)
+        .json({
+          success: true,
+          couponValue: coupon.discount,
+          maxDiscount : coupon.maxDiscount,
+          msg: "Coupon applied successfully",
+        });
+    } else {
+      res.status(500).json({ status: "error", msg: "Cannot apply coupon" });
     }
-
-    return res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "error", msg: "Cannot return product" });
+    res.status(500).json({ status: "error", msg: "Cannot apply coupon" });
   }
 };
 
@@ -722,6 +753,8 @@ module.exports = {
   priceLowTohigh,
   priceHighToLow,
   resetPassword,
-  returnProduct,
   searchResult,
+  applyCoupon,
+  resendOtp,
+ 
 };
