@@ -34,7 +34,7 @@ user_route.post('/resend-otp',userController.resendOtp)
 user_route.get('/forgot-password',userController.loadForgotPassword)
 user_route.post('/forgot-password',userController.otpForForgotPass)
 user_route.get('/password-change',userController.loadForgotPassword)
-user_route.post('/password-change',userController.passwordChange)
+user_route.post('/password-change',userController.forgotPassword)
 
 //login and logout
 user_route.get('/login',auth.isLogout,userController.loadLogin)
@@ -56,7 +56,7 @@ user_route.get('/remove-cart/:id',auth.isLogin,cartController.deleteCartItem)
 //check out
 user_route.get('/checkout',auth.isLogin,orderController.loadPlaceOrder)
 user_route.post('/checkout',auth.isLogin,orderController.postOrder)
-user_route.get('/order-success',auth.isLogin,orderController.orderSuccessPage)
+// user_route.get('/order-success',auth.isLogin,orderController.orderSuccessPage)
 user_route.post('/verify-payment',auth.isLogin,orderController.verifyPayment)
 
 

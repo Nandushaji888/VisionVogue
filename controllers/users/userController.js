@@ -530,7 +530,7 @@ const otpForForgotPass = async (req, res) => {
   }
 };
 
-const passwordChange = async (req, res) => {
+const forgotPassword = async (req, res) => {
   try {
     // console.log(req.body.otp);
     console.log(req.session.otp);
@@ -565,7 +565,8 @@ const passwordChange = async (req, res) => {
 
 const loadAddAddress = async (req, res) => {
   try {
-    res.render("addAddress");
+    const user = await User.findById(req.session.user_id)
+    res.render("addAddress",{user:user});
   } catch (error) {
     console.log(error.message);
   }
@@ -756,7 +757,7 @@ module.exports = {
   categoryWiseProducts,
   otpForForgotPass,
   loadForgotPassword,
-  passwordChange,
+  forgotPassword,
   loadAccount,
   loadAddAddress,
   addAddress,

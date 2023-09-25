@@ -1,5 +1,7 @@
 <%- include('../partials/home/home-header.ejs') %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 
 
     <main class="main">
@@ -45,20 +47,26 @@
                                                             <%= userCart.cart[i].productId.brand %>
                                                         </p>
                                                     </td>
+                                                    <input type="hidden" name="stock" id="stock"
+                                                        value="<%=userCart.cart[i].productId.stock%>">
                                                     <td class="price" data-title="Price"><span>₹ <%=
                                                                 userCart.cart[i].productId.price %> </span></td>
                                                     <td class="text-center" data-title="Stock">
                                                         <div class=" radius  m-auto">
                                                             <a class="btn px-2 py-0"
                                                                 id="decrease-<%=userCart.cart[i].productId._id%>"
-                                                                onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',-1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')">-</a>
-                                                            <span id="qty-<%= userCart.cart[i].productId._id %>"
-                                                                class="qty-val mx-3">
-                                                                <%= userCart.cart[i].quantity %>
-                                                            </span>
+                                                                onclick="changeQuantity('<%=userCart.cart[i].productId._id%>', -1, '<%= userCart.cart[i].productId.price %>', 'subtot-<%= i %>', 'qty-<%= userCart.cart[i].productId._id %>')">-</a>
+                                                               
+                                                               
+                                                                <span id="qty-<%= userCart.cart[i].productId._id %>" class="qty-val mx-3">
+                                                                    <%= userCart.cart[i].quantity %>
+                                                                </span>
+                                                                
+
+                                                            
                                                             <a class="btn px-2 py-0"
                                                                 id="increase-<%=userCart.cart[i].productId._id%>"
-                                                                onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')">+</a>
+                                                                onclick="changeQuantity('<%=userCart.cart[i].productId._id%>', 1, '<%= userCart.cart[i].productId.price %>', 'subtot-<%= i %>', 'qty-<%= userCart.cart[i].productId._id %>')">+</a>
 
                                                             <!-- <a  class="btn px-2 py-0" onclick="changeQuantity('<%=userCart.cart[i].productId._id%>',-1,'<%= userCart.cart[i].productId.price %>','subtot-<%= i %>','cartSubTotal','total','qty-<%= userCart.cart[i].productId._id %>')" >-</a>
                                                
@@ -93,7 +101,7 @@
                         </div>
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                         <div class="d-flex mb-50 ">
-                            
+
                             <div class="col-lg-6 col-md-12 ">
 
                                 <div class="border p-md-4 p-30 border-radius cart-totals">
@@ -115,7 +123,7 @@
                                                     <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free
                                                         Shipping</td>
                                                 </tr>
-                          
+
                                                 <tr>
                                                     <td class="cart_total_label">Total</td>
                                                     <td class="cart_total_amount"><strong><span id="total"
@@ -142,7 +150,7 @@
     </main>
 
 
-    <script>
+    <!-- <script>
         function changeQuantity(productId, count, price, subTotal, cartSubTotal, total, quantity) {
 
 
@@ -205,9 +213,155 @@
 
 
 
-        
-    </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </script> -->
+   <script>
+    function changeQuantity(productId, count1, price, subTotal, quantity) {
+    const decreaseButton = document.getElementById(`decrease-${productId}`);
+    const increaseButton = document.getElementById(`increase-${productId}`);
+    const quantityElement =parseInt( document.getElementById(quantity).innerHTML)
 
-    <%- include('../partials/home/home-footer.ejs') %>
+    const stock = document.getElementById('stock').value;
+        const count = parseInt(count1)
+
+    if (quantityElement + count < 1) {
+        // alert('are you sure')
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to delete this from cart!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/remove-cart/' + productId,
+                    method: 'get',
+                    success: function (response) {
+                        console.log('Item removed from cart');
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                        window.location.reload();
+
+                    }
+                });
+            }
+        });
+        return;
+    }else if (quantityElement + count > parseInt(stock)) {
+        Swal.fire(
+            'Alert',
+            'Insufficient Stock',
+            'error'
+        );
+        increaseButton.disabled = true;
+        return;
+    } else {
+        increaseButton.disabled = false;
+        console.log('After quantity update');
+        document.getElementById(quantity).innerHTML = parseInt(quantityElement) + parseInt(count);
+        const subtotalValue = document.getElementById(subTotal).innerHTML;
+        const totalValue = parseInt(subtotalValue) + (count * parseInt(price));
+        document.getElementById(subTotal).innerHTML = totalValue;
+
+    }
+
+
+    // if (quantityElement + count === 0) {
+    //     Swal.fire({
+    //         title: 'Remove Item',
+    //         text: 'The quantity will become 0. Do you want to remove this item from the cart?',
+    //         icon: 'question',
+    //         showCancelButton: true,
+    //         confirmButtonText: 'Yes',
+    //         cancelButtonText: 'No'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $.ajax({
+    //                 url: '/remove-cart/' + productId,
+    //                 method: 'get',
+    //                 success: function (response) {
+    //                     if (response.success) {
+    //                         console.log('Item removed from cart');
+    //                         Swal.fire(
+    //                             'Item Removed',
+    //                             'The item has been successfully removed from your cart.',
+    //                             'success'
+    //                         );
+    //                         window.location.reload();
+    //                     } else {
+    //                         console.log('Error removing item from cart');
+    //                         Swal.fire(
+    //                             'Error',
+    //                             'An error occurred while removing the item from your cart.',
+    //                             'error'
+    //                         );
+    //                     }
+    //                 },
+    //                 error: function (error) {
+    //                     console.log('Error removing item from cart');
+    //                     Swal.fire(
+    //                         'Error',
+    //                         'An error occurred while removing the item from your cart.',
+    //                         'error'
+    //                     );
+    //                 }
+    //             });
+    //         } else {
+    //             quantityElement.innerHTML = '1';
+    //         }
+    //     });
+    // } else {
+    //     console.log('After quantity update');
+    //     document.getElementById(quantity).innerHTML = parseInt(quantityElement) + parseInt(count);
+    //     const subtotalValue = document.getElementById(subTotal).innerHTML;
+    //     const totalValue = parseInt(subtotalValue) + (count * parseInt(price));
+    //     document.getElementById(subTotal).innerHTML = totalValue;
+    // }
+
+
+
+
+}
+
+function updateServerOnPageChange(cartData) {
+    $.ajax({
+        url: '/change-quantity',
+        data: {
+            cart: cartData
+        },
+        success: function (response) {
+            console.log('Server updated with cart data');
+        },
+        error: function (error) {
+            console.error('Error updating server with cart data');
+        }
+    });
+}
+
+window.addEventListener('beforeunload', function () {
+    const cartData = [];
+
+    for (let i = 0; i < userCart.cart.length; i++) {
+        const productId = userCart.cart[i].productId._id;
+        const quantityElement = document.getElementById(`qty-${productId}`);
+        const updatedQuantity = parseInt(document.getElementById(`qty-${productId}`).innerHTML);
+
+        cartData.push({
+            productId: productId,
+            quantity: updatedQuantity
+        });
+    }
+
+    updateServerOnPageChange(cartData);
+});
+
+   </script>
+
+
+<%- include('../partials/user/userFooter.ejs') %>
