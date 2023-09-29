@@ -67,10 +67,9 @@ const orderSchema = new mongoose.Schema({
     returnReason : {
         type : String
     },
-    coupon: {
-        type : mongoose.Schema.Types.ObjectId,
-        ref: 'Coupon'
-    },
+    orderId : String,
+    couponCode : String
+
 });
 
 module.exports = mongoose.model('order', orderSchema);

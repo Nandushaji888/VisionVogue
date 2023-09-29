@@ -5,7 +5,7 @@ const Order = require("../../models/orderModel");
 
 const loadOrderList = async(req, res) => {
     try {
-        const order = await Order.find().populate('customerId')
+        const order = await Order.find().populate('customerId').sort({createdAt : 1})
         res.render('orderList', {order : order})
     } catch (error) {
         console.error(error);

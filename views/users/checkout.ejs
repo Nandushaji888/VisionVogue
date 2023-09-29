@@ -413,7 +413,11 @@
                     couponName,
                     grandTotal
                 }, success: function (res) {
-                    if (res.success) {
+                    if(res.success2){
+                        const msg = res.msg
+                        document.getElementById('text').innerHTML = msg
+
+                    }else if(res.success) {
                         const newGrandTotal = res.newGrandTotal 
                         const discount = res.discount
                         const msg = res.msg

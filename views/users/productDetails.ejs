@@ -5,8 +5,8 @@
             <div class="container">
                 <div class="breadcrumb">
                     <a href="index.html" rel="nofollow">Home</a>
-                    <span><%= product.category.name%></span> 
-                    <span><%= product.name%></span>
+                    <span><%= product?.category.name%></span> 
+                    <span><%= product?.name%></span>
                 </div>
             </div>
         </div>
@@ -24,9 +24,9 @@
                                         <!-- MAIN SLIDES -->
                                         <div class="product-image-slider">
 
-                                            <% for (let i = 0; i < product.image.length; i++) { %>   
+                                            <% for (let i = 0; i < product?.image.length; i++) { %>   
                                                 <figure class="border-radius-10">
-                                                    <img src="/assets2/imgs/products/<%=product.image[i]%>"  alt="product image">
+                                                    <img src="/assets2/imgs/products/<%=product?.image[i]%>"  alt="product image">
                                                 </figure>                                               
                                                  <% } %>
 
@@ -35,9 +35,9 @@
                                         </div>
                                         <!-- THUMBNAILS -->
                                         <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <% for (let i = 0; i < product.image.length; i++) { %>   
+                                            <% for (let i = 0; i < product?.image.length; i++) { %>   
 
-                                                <img src="/assets2/imgs/products/<%=product.image[i]%>" alt="product image">
+                                                <img src="/assets2/imgs/products/<%=product?.image[i]%>" alt="product image">
                                                 <% } %>
 
                                             
@@ -48,10 +48,10 @@
                                 <!-- </div> -->
                                 <div class="col-md-6 col-sm-12 col-xs-12">
                                     <div class="detail-info">
-                                        <h2 class="title-detail"><%= product.name%></h2>
+                                        <h2 class="title-detail"><%= product?.name%></h2>
                                         <div class="product-detail-rating">
                                             <div class="pro-details-brand">
-                                                <span> Brand: <a href="shop-grid-right.html"><%= product.brand%></a></span>
+                                                <span> Brand: <a href="shop-grid-right.html"><%= product?.brand%></a></span>
                                             </div>
                                             <!-- <div class="product-rate-cover text-end">
                                                 <div class="product-rate d-inline-block">
@@ -63,15 +63,15 @@
                                         </div>
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
-                                                <ins><span class="text-brand">₹ <%= product.price%></span></ins>
-                                                <ins><span class="old-price font-md ml-15"><%= product.price%></span></ins>
+                                                <ins><span class="text-brand">₹ <%= product?.price%></span></ins>
+                                                <ins><span class="old-price font-md ml-15"><%= product?.price%></span></ins>
                                                 <!-- <span class="save-price  font-md color3 ml-15">20% Off</span> -->
                                             </div>
                                         </div>
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                         <div class="short-desc mb-30">
-                                            <p><%= product.category.name%></p>
-                                            <p><%= product.details%></p>
+                                            <p><%= product?.category.name%></p>
+                                            <p><%= product?.details%></p>
                                             
                                         </div>
                                         <div class="product_sort_info font-xs mb-30">
@@ -99,8 +99,8 @@
                                               <a href="#" class="qty-up" onclick="increaseQuantity()"><i class="fi-rs-angle-small-up"></i></a>
                                             </div>
                                             <div class="product-extra-link2">
-                                                <form method="POST" action="/add-to-cart/<%= product._id %>" id="addToCartForm">
-                                              <input type="hidden" name="productId" id="productId" value="<%= product._id %>">
+                                                <form method="POST" action="/add-to-cart/<%= product?._id %>" id="addToCartForm">
+                                              <input type="hidden" name="productId" id="productId" value="<%= product?._id %>">
                                                     <input type="hidden" name="size" id="size" value="medium"> 
                                                     <input type="hidden" name="quantity" id="quantity" value="1"> 
                                       
@@ -114,10 +114,10 @@
                                             <form action="/add-to-cart" method="post" class="d-flex align-items-center">
                                                 <div class="form-outline" style="width: 70px;">
                                          
-                                                  <input value="1" min="1" max="<%= product.stock%>" type="number" id="quantity" name="quantity" class="qty-val" />
+                                                  <input value="1" min="1" max="<%= product?.stock%>" type="number" id="quantity" name="quantity" class="qty-val" />
                                                 </div>
                                               
-                                                <input type="hidden" class="productId" name="productId" value="<%= product._id %>">
+                                                <input type="hidden" class="productId" name="productId" value="<%= product?._id %>">
                                               
                                                 <button type="submit" class="button button-add-to-cart mx-2">Add to cart</button>
                                               </form>
@@ -127,7 +127,7 @@
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">Clarity in style</a>, <a href="#" rel="tag">vision in frames</a>, <a href="#" rel="tag">eyewear</a> </li>
-                                            <% if( product.stock > 15){%>
+                                            <% if( product?.stock > 15){%>
                                             <li>Availability:<span class="in-stock text-primary ml-5">In Stock</span></li>
 
                                             <%}else{%>
@@ -144,7 +144,7 @@
                                 <div class="col-lg-10 m-auto entry-main-content">
                                     <h2 class="section-title style-1 mb-30">Description</h2>
                                     <div class="description mb-50">
-                                        <p><%= product.description%></p>
+                                        <p><%= product?.description%></p>
 
                                         <hr class="wp-block-separator is-style-dots">
                                         <p>Laconic overheard dear woodchuck wow this outrageously taut beaver hey hello far meadowlark imitatively egregiously hugged that yikes minimally unanimous pouted flirtatiously as beaver beheld above forward

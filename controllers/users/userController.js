@@ -9,8 +9,7 @@ require("dotenv").config();
 const twilio = require("twilio");
 const phoneUtil = require("libphonenumber-js");
 const Coupon = require("../../models/couponModel");
-
-
+const Banner = require("../../models/bannerModel");
 
 //for bcypting password
 const securePassword = async (password) => {
@@ -68,6 +67,8 @@ const sendVerificationMail = async (name, email) => {
     console.log(error.message);
   }
 };
+
+//
 //for loading signup page
 const loadSignup = async (req, res) => {
   try {
@@ -96,24 +97,21 @@ const sendOtpAndRenderRegistration = async (req, res) => {
   }
 };
 
-
-
-
-const resendOtp = async (req,res) => {
+const resendOtp = async (req, res) => {
   try {
-      console.log(req.body);
-      const userData = req.body;
-     const resentOtp = await sendVerificationMail(userData.name, userData.email);
-     console.log('old'+req.session.otp);
-     console.log('old'+req.session.id);
-     req.session.otp = resentOtp
-     req.session.save();
-     console.log(req.session.otp);
-     console.log(resentOtp);
+    console.log(req.body);
+    const userData = req.body;
+    const resentOtp = await sendVerificationMail(userData.name, userData.email);
+    console.log("old" + req.session.otp);
+    console.log("old" + req.session.id);
+    req.session.otp = resentOtp;
+    req.session.save();
+    console.log(req.session.otp);
+    console.log(resentOtp);
   } catch (error) {
-   console.log(error.message);
+    console.log(error.message);
   }
-}
+};
 
 const verifyAndRegisterUser = async (req, res) => {
   try {
@@ -214,11 +212,13 @@ const loadHome = async (req, res) => {
     if (userData) {
       console.log(userData.cart.length);
     }
+    const banner = await Banner.find()
 
     res.render("home", {
       products: filteredProducts,
       user: userData,
       categories: categoryData,
+      banner : banner
     });
   } catch (error) {
     console.log(error.message);
@@ -266,7 +266,12 @@ function paginateQuery(query, page, limit) {
 
 const searchResult = async (req, res) => {
   try {
-    const search = req.body.search;
+    // const search = req.body.search;
+    if (req.body.search) {
+      req.session.search = req.body.search;
+    }
+
+    let search = req.session.search
     const categoryList = await Category.find({ isListed: true });
     const categoryName = await Category.find({
       name: { $regex: search, $options: "i" },
@@ -315,6 +320,7 @@ const searchResult = async (req, res) => {
       totalPages: Math.ceil(count / limit),
       count: count,
       page: page,
+      search : search
     });
 
     // console.log(req.body);
@@ -565,8 +571,8 @@ const forgotPassword = async (req, res) => {
 
 const loadAddAddress = async (req, res) => {
   try {
-    const user = await User.findById(req.session.user_id)
-    res.render("addAddress",{user:user});
+    const user = await User.findById(req.session.user_id);
+    res.render("addAddress", { user: user });
   } catch (error) {
     console.log(error.message);
   }
@@ -593,15 +599,37 @@ const addAddress = async (req, res) => {
 
 const loadAccount = async (req, res) => {
   try {
-    const orderData = await Order.find({ customerId: req.session.user_id });
+    let search = null;
+    if (req.query.orderSearch) {
+      search = req.query.orderSearch;
+    }
+    var page = 1;
+    if (req.query.page) {
+      page = req.query.page;
+    }
+    const limit = 5;
+    const count = await Order.find({
+      customerId: req.session.user_id,
+    }).countDocuments();
+
+    const orderData = Order.find({ customerId: req.session.user_id }).sort({
+      createdAt: -1,
+    });
+    const orders = await paginateQuery(orderData, page, limit).exec();
+
     const userData = await User.findById(req.session.user_id);
     const categories = await Category.find();
     // console.log(userData.address[0].city);
 
     res.render("userProfile", {
       user: userData,
-      order: orderData,
+      order: orders,
       categories: categories,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      page: parseInt(page),
+      limit: limit,
+      search: search,
     });
   } catch (error) {
     console.log(error.message);
@@ -668,16 +696,16 @@ const resetPassword = async (req, res) => {
     // console.log("dataaaaa22222 " + req.body.newPass);
     const password = req.body.oldPass.toString();
     const newPass = req.body.newPass.toString();
-    if(password === newPass) {
+    if (password === newPass) {
       return res.status(200).json({ success1: true });
-    }else{
+    } else {
       console.log(newPass);
       const userData = await User.findById(req.session.user_id);
       // console.log('user'+userData);
       const passwordMatch = await bcrypt.compare(password, userData.password);
       if (passwordMatch) {
         const spassword = await securePassword(newPass);
-  
+
         await User.updateOne(
           { _id: req.session.user_id },
           { password: spassword }
@@ -688,7 +716,6 @@ const resetPassword = async (req, res) => {
         return res.status(200).json({ success: false });
       }
     }
-    
   } catch (error) {
     console.error(error);
     res
@@ -696,8 +723,6 @@ const resetPassword = async (req, res) => {
       .json({ status: "error", msg: "Cannot proceed reset password" });
   }
 };
-
-
 
 const applyCoupon = async (req, res) => {
   try {
@@ -707,41 +732,95 @@ const applyCoupon = async (req, res) => {
     //   { $push: { users: req.body.userId } },
     //   { new: true }
     // );
-    
-    const coupon = await Coupon.findOne({couponCode :req.body.couponName })
-      const grandTotal = req.body.grandTotal
-    const percentageDiscount = parseInt(coupon.discount)
-    if(coupon.minOrderPrice > grandTotal){
-      res
-      .status(200)
-      .json({
-        success1: true,
-        msg: `minimun Order Price should be ${coupon.minOrderPrice}`,
+    const couponCode = req.body.couponName;
+    console.log(couponCode);
+    const user = await Coupon.findOne({
+      couponCode: couponCode,
+      users: { $in: req.session.user_id },
+    });
+    if (user) {
+      res.status(200).json({
+        success2: true,
+        msg: "Coupon already applied",
       });
-    }else{
-      const discountCal = Math.floor((grandTotal * percentageDiscount)/100)
-      let discount;
-      if(discountCal > coupon.maxDiscount) {
-        discount = coupon.maxDiscount
-      }else{
-        discount = discountCal
-      }
-      const newGrandTotal = grandTotal - discount;
-      console.log("success");
-      res
-        .status(200)
-        .json({
+    } else {
+      const coupon = await Coupon.findOne({ couponCode: couponCode });
+      const grandTotal = req.body.grandTotal;
+      const percentageDiscount = parseInt(coupon.discount);
+      if (coupon.minOrderPrice > grandTotal) {
+        res.status(200).json({
+          success1: true,
+          msg: `minimun Order Price should be ${coupon.minOrderPrice}`,
+        });
+      } else {
+        const discountCal = Math.floor((grandTotal * percentageDiscount) / 100);
+        let discount;
+        if (discountCal > coupon.maxDiscount) {
+          discount = coupon.maxDiscount;
+        } else {
+          discount = discountCal;
+        }
+        const newGrandTotal = grandTotal - discount;
+        console.log("success");
+        res.status(200).json({
           success: true,
           newGrandTotal: newGrandTotal,
-          discount : discount,
+          discount: discount,
           msg: `Coupon applied successfully... You will get ${coupon.discount}% upto ₹${coupon.maxDiscount} coupon discount on this order !!!`,
         });
+      }
     }
-  
-  
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "error", msg: "Cannot apply coupon" });
+  }
+};
+
+const orderSearch = async (req, res) => {
+  try {
+    if (req.query.orderSearch) {
+      req.session.orderSearch = req.query.orderSearch;
+    }
+
+    let search = req.session.orderSearch;
+
+    console.log("search:", search);
+
+    // console.log("vxcvcxvxxzcbzzzzzzzz" + search);
+    var page = 1;
+    if (req.query.page) {
+      page = req.query.page;
+    }
+    const limit = 5;
+    const orderData = Order.find({
+      customerId: req.session.user_id,
+      $or: [
+        { orderId: { $regex: new RegExp(search, "i") } },
+        { orderStatus: { $regex: new RegExp(search, "i") } },
+      ],
+    });
+
+    const count = await Order.countDocuments({
+      customerId: req.session.user_id,
+      orderId: { $regex: new RegExp(search, "i") },
+    });
+    console.log("orderDataaaaaa" + orderData);
+
+    const orders = await paginateQuery(orderData, page, limit).exec();
+    const userData = await User.findById(req.session.user_id);
+    const categories = await Category.find();
+    res.render("userProfile", {
+      user: userData,
+      order: orders,
+      categories: categories,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      page: page,
+      limit: limit,
+      search: search,
+    });
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -769,5 +848,5 @@ module.exports = {
   searchResult,
   applyCoupon,
   resendOtp,
- 
+  orderSearch,
 };

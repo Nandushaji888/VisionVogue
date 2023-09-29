@@ -254,7 +254,7 @@
                                                         <div class="col-md-4  mb-3">
                                                             <label for="product_sku" class="form-label">Brand</label>
                                                             <input type="text" placeholder="Type here"
-                                                                class="form-control" id="brand" name="brand"
+                                                                class="form-control" id="brand" name="brand" required
                                                                 value="<%=product.brand%>">
                                                         </div>
 
@@ -274,7 +274,7 @@
                                                     <div class="mb-4">
                                                         <label for="product_brand" class="form-label">Details</label>
                                                         <input type="text" placeholder="Type here" class="form-control"
-                                                            id="details" name="details" value="<%=product.details%>">
+                                                        required id="details" name="details" value="<%=product.details%>">
                                                     </div>
                                                 </div>
                                             </div> <!-- card end// -->
@@ -284,7 +284,7 @@
                                                         <label class="form-label">Description</label>
                                                         <textarea placeholder="Type here" class="form-control" rows="4"
                                                             id="description"
-                                                            name="description"><%=product.description%></textarea>
+                                                            name="description" required><%=product.description%></textarea>
                                                     </div>
                                                 </div>
                                             </div> <!-- card end// -->
@@ -307,7 +307,7 @@
                                                             </div>
                                                                     <div>
                                                                         <label class="form-label">Change Images</label>
-                                                                        <input class="form-control" type="file"
+                                                                        <input class="form-control" type="file" 
                                                                             name="image" multiple accept="image/*"
                                                                             onchange="viewImages(event)">
                                                                     </div>

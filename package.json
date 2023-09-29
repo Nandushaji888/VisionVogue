@@ -31,7 +31,7 @@
     "nodemailer": "^6.9.4",
     "path": "^0.12.7",
     "razorpay": "^2.9.2",
-    "sweetalert2": "^11.6.13",
+    "sweetalert2": "^11.7.31",
     "twilio": "^4.16.0"
   },
   "devDependencies": {

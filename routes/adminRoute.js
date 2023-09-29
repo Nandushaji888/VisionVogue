@@ -5,6 +5,7 @@ const productController = require('../controllers/admin/productController')
 const userController = require('../controllers/admin/userController')
 const orderController = require('../controllers/admin/orderController')
 const couponController = require('../controllers/admin/couponController')
+const bannerController = require('../controllers/admin/bannerController')
 const session = require('express-session'); 
 const admin_route = express()
 const config = require('../config/config');
@@ -31,6 +32,17 @@ const productStorage = multer.diskStorage({
   }
 })
 const productUpload = multer({storage :productStorage})
+
+
+const bannerStorage = multer.diskStorage({
+  destination :(req,file,cb) => {
+    cb(null,path.join(__dirname, '../public/assets2/imgs/banners'))
+  },
+  filename : (req, file, cb) => {
+    cb(null, Date.now() +'-'+ file.originalname)
+  }
+})
+const bannerUpload = multer({storage :bannerStorage})
 
 admin_route.use(session({
     secret: config.sessionSecret,
@@ -83,5 +95,10 @@ admin_route.get('/add-coupon',auth.isLogin,couponController.loadAddCoupon)
 admin_route.post('/add-coupon',auth.isLogin,couponController.addCoupon)
 admin_route.get('/coupon',auth.isLogin,couponController.loadCouponList)
 admin_route.get('/coupon-status/:id',auth.isLogin,couponController.couponStatus)
+
+
+admin_route.get('/add-banner',auth.isLogin,bannerController.loadAddBanner)
+admin_route.post('/add-banner',auth.isLogin,bannerUpload.single("image"),bannerController.addBanner)
+admin_route.get('/banners',auth.isLogin,bannerController.loadBannerList)
 
 module.exports = admin_route;

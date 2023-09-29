@@ -285,9 +285,12 @@
                                         Payment Type : <%= order.paymentMethod%>
                                     </p>
                                     <%if(order.paymentMethod == 'razorpay'){%>
+                                        <%if(order.paymentOrderId ){%>
+
                                     <p class="mb-1">
                                         Transaction ID :<%=String(order.paymentOrderId).slice(6,20)%> 
                                     </p>
+                                    <%}%>
                                     <%}%>
                                 </div>
                             </article>

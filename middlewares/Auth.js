@@ -12,6 +12,8 @@ const isLogin = async(req, res, next)=> {
             }else{
                 req.session.user_id = null;
                 res.render("login", {
+                    user : user,
+                    categories: null,
                     message:
                       "Your access has been restricted by the administrator. Please reach out to the administrator at admin@gmail.com for further assistance.",
                   });

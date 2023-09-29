@@ -4,8 +4,9 @@ const loadAddCoupon = async (req, res) => {
   try {
     res.render("addCoupon");
   } catch (error) {
-    console.error(error);
-  }
+    console.error(error.message);
+    res.status(500).json({ message: 'Internal server error' });
+}
 };
 
 const loadCouponList = async (req, res) => {
@@ -13,8 +14,9 @@ const loadCouponList = async (req, res) => {
     const coupon = await Coupondb.find();
     res.render("couponList", { coupon: coupon });
   } catch (error) {
-    console.error(error);
-  }
+    console.error(error.message);
+    res.status(500).json({ message: 'Internal server error' });
+}
 };
 
 const addCoupon = async (req, res) => {
@@ -39,8 +41,9 @@ const addCoupon = async (req, res) => {
       res.redirect("/admin/coupon");
     }
   } catch (error) {
-    console.error(error);
-  }
+    console.error(error.message);
+    res.status(500).json({ message: 'Internal server error' });
+}
 };
 
 const couponStatus = async (req, res) => {

@@ -966,29 +966,31 @@ button.submit:hover, button[type='submit']:hover {
 }
 
 .btn.btn-brush, .button.btn-brush {
-  background-color: transparent;
-  color: #088178;
+  background-color: white;
+  color: #032c29;
   border: 0;
-  padding: 14px 80px 14px 65px;
+  padding: 10px 25px 10px 25px;
   background-repeat: no-repeat;
-  font-family: "Spartan", sans-serif;
+  margin-top: 70px;
+  margin-right: 205px;
+  /* font-family: "Spartan", sans-serif; */
 }
 
 .btn.btn-brush i, .button.btn-brush i {
   margin: 3px 0 0 5px;
 }
 
-.btn.btn-brush.btn-brush-1, .button.btn-brush.btn-brush-1 {
+/* .btn.btn-brush.btn-brush-1, .button.btn-brush.btn-brush-1 {
   background-image: url(../imgs/theme/btn-brush-bg-1.png);
-}
+} */
 
 .btn.btn-brush.btn-brush-2, .button.btn-brush.btn-brush-2 {
   background-image: url(../imgs/theme/btn-brush-bg-2.png);
 }
 
-.btn.btn-brush.btn-brush-3, .button.btn-brush.btn-brush-3 {
+/* .btn.btn-brush.btn-brush-3, .button.btn-brush.btn-brush-3 {
   background-image: url(../imgs/theme/btn-brush-bg-3.png);
-}
+} */
 
 .comments-area .btn-reply {
   display: -webkit-box !important;

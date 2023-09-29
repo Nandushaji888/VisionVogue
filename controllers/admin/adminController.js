@@ -1,59 +1,162 @@
-const User = require('../../models/userModel')
-const bcrypt = require('bcrypt');
-
+const User = require("../../models/userModel");
+const bcrypt = require("bcrypt");
+const Category = require("../../models/categoryModel");
+const Product = require("../../models/productModel");
+const Order = require("../../models/orderModel");
 
 //admin login
 
-const loadLogin = async(req, res) => {
-    try {
-        res.render('adminLogin')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-
+const loadLogin = async (req, res) => {
+  try {
+    res.render("adminLogin");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 //verify login
 
-const verifyLogin = async(req, res) => {
-    try {
-        const email = req.body.email;
+const verifyLogin = async (req, res) => {
+  try {
+    const email = req.body.email;
     const password = req.body.password;
 
+    const adminData = await User.findOne({ email: email });
 
-    const adminData = await User.findOne({email:email})
+    if (adminData) {
+      const passwordMatch = await bcrypt.compare(password, adminData.password);
 
-    if(adminData) {
-      const passwordMatch = await bcrypt.compare(password,adminData.password)
-
-      if(passwordMatch && adminData.is_admin === 1) {
-        
-        req.session.admin = adminData._id
-        res.redirect('/admin')
-      }else{
-        res.render('adminLogin', {message :'Email or password incorrect'})
-
+      if (passwordMatch && adminData.is_admin === 1) {
+        req.session.admin = adminData._id;
+        res.redirect("/admin");
+      } else {
+        res.render("adminLogin", { message: "Email or password incorrect" });
       }
-    }else{
-        res.render('adminLogin', {message :'Email or password incorrect'})
+    } else {
+      res.render("adminLogin", { message: "Email or password incorrect" });
     }
-    } catch (error) {
-        console.log(error.message);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const loadHome = async (req, res) => {
+  try {
+    const adminData = await User.findById({ _id: req.session.admin });
+    const category = await Category.find();
+    const products = await Product.find();
+
+    const orders = await Order.find({ orderStatus: { $ne: "PENDING" } });
+    console.log(orders);
+    let total1 = 0;
+    for (let i = 0; i < orders.length; i++) {
+      let sum = parseInt(orders[i].paidAmount);
+      total1 += sum;
     }
-}
+    const total = total1.toLocaleString("en-IN");
+    const monthlyRevenue = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            $lt: new Date(
+              new Date().getFullYear(),
+              new Date().getMonth() + 1,
+              1
+            ),
+          },
+          orderStatus: { $ne: "PENDING" },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$paidAmount" },
+        },
+      },
+    ]);
+    const mRevenue = monthlyRevenue[0].total.toLocaleString("en-IN");
 
+    const monthlySales = await Order.aggregate([
+      {
+        $project: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" },
+        },
+      },
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          totalOrders: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
+    console.log("monthlySales");
+    console.log(monthlySales);
 
+    const graphDataSales = [];
 
-
-const loadHome = async(req, res) => {
-    try {
-        const adminData = await User.findById({_id:req.session.admin}) 
-        res.render('adminHome', {adminData: adminData})
-    } catch (error) {
-        console.log(error.message);
+    // Loop through the 12 months (1 to 12)
+    for (let month = 1; month <= 12; month++) {
+      const resultForMonth = monthlySales.find(
+        (result) => result._id.month === month
+      );
+      if (resultForMonth) {
+        graphDataSales.push(resultForMonth.totalOrders);
+      } else {
+        graphDataSales.push(0);
+      }
     }
-}
+
+    const productCountData = await Product.aggregate([
+        {
+          $lookup: {
+            from: 'categories', // Replace 'categories' with the actual name of your category collection
+            localField: 'category',
+            foreignField: '_id',
+            as: 'categoryData',
+          },
+        },
+        {
+          $unwind: '$categoryData',
+        },
+        {
+          $group: {
+            _id: {
+              categoryId: '$categoryData._id',
+              categoryName: '$categoryData.name', // Assuming 'name' is the field with category names
+            },
+            count: { $sum: 1 }, // Count the documents in each category
+          },
+        },
+      ]);
+      const user  =await User.find()
+      const categoryNames = productCountData.map(item => item._id.categoryName);
+      
+    const categoryCounts = productCountData.map(item=>item.count);
+
+    res.render("adminHome", {
+      adminData: adminData,
+      category: category,
+      products: products,
+      orders: orders,
+      total: total,
+      user : user,
+      mRevenue: mRevenue,
+      graphDataSales : graphDataSales,
+      categoryNames : categoryNames,
+      categoryCounts, categoryCounts
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 // const productList = async(req, res) => {
 //     try {
@@ -71,25 +174,18 @@ const loadHome = async(req, res) => {
 //     }
 // }
 
-const adminLogout = async(req, res) => {
-    try {
-        req.session.destroy()
-        res.redirect('/admin')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-
-
-
-
-
+const adminLogout = async (req, res) => {
+  try {
+    req.session.destroy();
+    res.redirect("/admin");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 module.exports = {
-    loadLogin,
-    loadHome,
-    verifyLogin,
-    adminLogout,
-  
-}
+  loadLogin,
+  loadHome,
+  verifyLogin,
+  adminLogout,
+};

@@ -16,10 +16,11 @@ const productList = async (req, res) => {
 //load add to product page
 const LoadAddProduct = async (req, res) => {
   try {
-    const filenames = req.files.map((file) => file.filename);
+    console.log('hai hello');
+    // const filenames = req.files.map((file) => file.filename);
 
     const categoryList = await Category.find({isListed : true});
-    res.render("addProduct", { category: categoryList, filenames: filenames, });
+    res.render("addProduct", { category: categoryList, });
   } catch (error) {
     console.log(error.mess);
   }

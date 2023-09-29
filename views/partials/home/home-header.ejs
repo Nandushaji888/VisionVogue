@@ -210,7 +210,7 @@
 
                                             <% if(user) {%>
                                                 <li><i class="fi-rs-user"></i><a href="/user-account">
-                                                        <%=user.name%>
+                                                        <%=user?.name%>
                                                     </a>
                                                     <ul class="language-dropdown">
                                                         <li><a href="/user-account">Account</a></li>
@@ -312,9 +312,9 @@
                             </a>
                             <div class="categori-dropdown-wrap categori-dropdown-active-large">
                                 <ul>
-                                    <% for(let i = 0; i < categories.length; i++) {%>
+                                    <% for(let i = 0; i < categories?.length; i++) {%>
                                   
-                                    <li><a href="/category/<%=categories[i].name%>"></i> <%=categories[i].name%></a></li>
+                                    <li><a href="/category/<%=categories[i]?.name%>"></i> <%=categories[i]?.name%></a></li>
                                     <!-- <li><a href="shop-grid-right.html">Consumer
                                             Electronics</a></li>
                                     <li><a href="shop-grid-right.html"><i class="evara-font-diamond"></i>Jewelry &

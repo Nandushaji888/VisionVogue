@@ -70,12 +70,15 @@ user_route.get('/order-details/:id',auth.isLogin, orderController.loadOrderDetai
 user_route.get('/order-cancel/:id',auth.isLogin, orderController.orderCancellation)
 user_route.post('/reset-password',auth.isLogin,userController.resetPassword)
 user_route.post('/return',auth.isLogin,orderController.returnProduct)
+user_route.get('/search-orderid',auth.isLogin,userController.orderSearch)
 
 
 
 user_route.get('/priceLowTohigh/:id',userController.priceLowTohigh)
 user_route.get('/priceHighToLow/:id',userController.priceHighToLow)
 user_route.post('/search-items', userController.searchResult )
+
+//coupon
 user_route.post('/apply-coupon',auth.isLogin, userController.applyCoupon )
 
 

@@ -31,63 +31,33 @@
         <section class="home-slider position-relative pt-25 pb-20">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-9">
+                    <div class="col-lg-12">
                         <div class="position-relative">
                             <div class="hero-slider-1 style-3 dot-style-1 dot-style-1-position-1">
+                                <%for(let i=0;i<banner.length;i++) {%>
                                 <div class="single-hero-slider single-animation-wrap">
                                     <div class="container">
-                                        <div class="slider-1-height-3 slider-animated-1">
-                                            <div class="hero-slider-content-2">
-                                                <h4 class="animated">Trade-In Offer</h4>
+                                        <div class="slider-1-height-3 slider-animated-1 d-flex justify-content-end">
+                                            <div class="hero-slider-content-2" style="text-align: right;">
+                                                <%if(banner[i]?.name) {%>
+                                                <h4 class="animated"><%=banner[i]?.name%></h4>
+                                                <!-- <p class="animated"><%=banner[i]?.description%></p> -->
                                                 <h2 class="animated fw-900">Supper Value Deals</h2>
                                                 <h1 class="animated fw-900 text-brand">On All Products</h1>
-                                                <p class="animated">Save more with coupons & up to 70% off</p>
-                                                <a class="animated btn btn-brush btn-brush-3"
-                                                    href="shop-product-right.html"> Shop Now </a>
+                                                <p class="animated">Save more with coupons & up to 70% off</p> 
+                                                <%}%>
+                                                <a class="" href=""></a>
+                                                <a class="animated btn btn-brush btn-brush-3" href="<%=banner[i]?.link%>"> Shop Now </a>
                                             </div>
-                                            <div class="slider-img">
-                                                <img src="/assets/imgs/slider/slider-4.png" alt="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="single-hero-slider single-animation-wrap">
-                                    <div class="container">
-                                        <div class="slider-1-height-3 slider-animated-1">
-                                            <div class="hero-slider-content-2">
-                                                <h4 class="animated">Tech Promotions</h4>
-                                                <h2 class="animated fw-900">Tech Trending</h2>
-                                                <h1 class="animated fw-900 text-brand">Great Collection</h1>
-                                                <p class="animated">Save more with coupons & up to 20% off</p>
-                                                <a class="animated btn btn-brush btn-brush-3"
-                                                    href="shop-product-right.html"> Shop Now </a>
-                                            </div>
-                                            <div class="slider-img">
-                                                <img src="/assets/imgs/slider/slider-5.png" alt="">
+                                            <div style="min-width: 100;" class="slider-img">
+                                                <img src="/assets2/imgs/banners/<%=banner[i]?.image%>" alt="">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <%}%>
                             </div>
                             <div class="slider-arrow hero-slider-1-arrow style-3"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 d-md-none d-lg-block">
-                        <div class="banner-img banner-1 wow fadeIn  animated home-3">
-                            <img class="border-radius-10" src="/assets/imgs/banner/banner-5.jpg" alt="">
-                            <div class="banner-text">
-                                <span>Accessories</span>
-                                <h4>Save 17% on <br>Autumn Hat</h4>
-                                <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                            </div>
-                        </div>
-                        <div class="banner-img banner-2 wow fadeIn  animated mb-0">
-                            <img class="border-radius-10" src="/assets/imgs/banner/banner-7.jpg" alt="">
-                            <div class="banner-text">
-                                <span>Smart Offer</span>
-                                <h4>Save 20% on <br>Eardrop</h4>
-                                <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -103,7 +73,6 @@
                                 data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one"
                                 aria-selected="true">Featured</button>
                         </li>
-                        <a href="/user-account#orders">order</a>
                         
                     </ul>
                     <!-- <a href="#" class="view-more d-none d-md-flex">View More<i
@@ -193,7 +162,7 @@
         </section>
       
      
-        <section class="banners mb-20">
+        <section class="banner mb-20">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4 col-md-6">
