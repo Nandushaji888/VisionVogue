@@ -5,12 +5,13 @@ const adminRoute = require('./routes/adminRoute')
 const nocache = require('nocache')
 const path = require('path')
 const logger = require('morgan')
+require("dotenv").config();
     
 
 const app = express();
 
 app.set('view engine', 'ejs')
-mongoose.connect("mongodb://127.0.0.1:27017/ecommerce")
+mongoose.connect(process.env.MONGODBURL)
 app.use(nocache())
 app.use('/assets',express.static(path.resolve(__dirname,'public/assets')))
 app.use('/assets2',express.static(path.resolve(__dirname,'public/assets2')))
