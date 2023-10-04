@@ -1,8 +1,8 @@
-
 <%- include('../partials/home/home-header.ejs') %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
 
 
-   
+
     <main class="main">
         <section class="popular-categories section-padding mt-15">
             <div class="container wow fadeIn animated">
@@ -23,7 +23,7 @@
                             </div>
                             <% } %>
 
-                           
+
                     </div>
                 </div>
             </div>
@@ -35,27 +35,30 @@
                         <div class="position-relative">
                             <div class="hero-slider-1 style-3 dot-style-1 dot-style-1-position-1">
                                 <%for(let i=0;i<banner.length;i++) {%>
-                                <div class="single-hero-slider single-animation-wrap">
-                                    <div class="container">
-                                        <div class="slider-1-height-3 slider-animated-1 d-flex justify-content-end">
-                                            <div class="hero-slider-content-2" style="text-align: right;">
-                                                <%if(banner[i]?.name) {%>
-                                                <h4 class="animated"><%=banner[i]?.name%></h4>
-                                                <!-- <p class="animated"><%=banner[i]?.description%></p> -->
-                                                <h2 class="animated fw-900">Supper Value Deals</h2>
-                                                <h1 class="animated fw-900 text-brand">On All Products</h1>
-                                                <p class="animated">Save more with coupons & up to 70% off</p> 
-                                                <%}%>
-                                                <a class="" href=""></a>
-                                                <a class="animated btn btn-brush btn-brush-3" href="<%=banner[i]?.link%>"> Shop Now </a>
-                                            </div>
-                                            <div style="min-width: 100;" class="slider-img">
-                                                <img src="/assets2/imgs/banners/<%=banner[i]?.image%>" alt="">
+                                    <div class="single-hero-slider single-animation-wrap">
+                                        <div class="container">
+                                            <div class="slider-1-height-3 slider-animated-1 d-flex justify-content-end">
+                                                <div class="hero-slider-content-2" style="text-align: right;">
+                                                    <%if(banner[i]?.name) {%>
+                                                        <h4 class="animated">
+                                                            <%=banner[i]?.name%>
+                                                        </h4>
+                                                        <!-- <p class="animated"><%=banner[i]?.description%></p> -->
+                                                        <!-- <h2 class="animated fw-900">Supper Value Deals</h2>
+                                                        <h1 class="animated fw-900 text-brand">On All Products</h1>
+                                                        <p class="animated">Save more with coupons & up to 70% off</p> -->
+                                                        <%}%>
+                                                            <a class="" href=""></a>
+                                                            <a class="animated btn btn-brush btn-brush-3"
+                                                                href="<%=banner[i]?.linkToProduct%>"> Shop Now </a>
+                                                </div>
+                                                <div style="min-width: 100;" class="slider-img">
+                                                    <img src="/assets2/imgs/banners/<%=banner[i]?.image%>" alt="">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <%}%>
+                                    <%}%>
                             </div>
                             <div class="slider-arrow hero-slider-1-arrow style-3"></div>
                         </div>
@@ -63,7 +66,7 @@
                 </div>
             </div>
         </section>
-        
+
         <section class="product-tabs section-padding wow fadeIn animated">
             <div class="container">
                 <div class="tab-header">
@@ -73,7 +76,7 @@
                                 data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one"
                                 aria-selected="true">Featured</button>
                         </li>
-                        
+
                     </ul>
                     <!-- <a href="#" class="view-more d-none d-md-flex">View More<i
                             class="fi-rs-angle-double-small-right"></i></a> -->
@@ -88,14 +91,19 @@
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
                                                 <a href="/product/<%=products[i]?._id%>">
-                                                    <img class="" src="/assets2/imgs/products/<%=products[i]?.image[0]%>"
-                                                        alt="">
-                                                        <img class="hover-img" src="/assets2/imgs/products/<%=products[i]?.image[0]%>"
-                                                        alt="">
+                                                    <img class=""
+                                                        src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
+                                                    <img class="hover-img"
+                                                        src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
                                                     <!-- <img class="hover-img" src="/assets/imgs/shop/product-1-2.jpg" alt=""> -->
                                                 </a>
                                             </div>
-                                          
+                                            <div class="product-action-1">
+                                                <a aria-label="Add To Wishlist"
+                                                    onclick="addToWishlist('<%=products[i]._id%>','<%=user?._id%>')"
+                                                    class="action-btn hover-up"><i class="fi-rs-heart"></i></a>
+                                            </div>
+
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <% if(i<=2){ %> <span class="hot">Hot</span>
                                                     <%}else{}%>
@@ -115,21 +123,21 @@
                                                     <span>90%</span>
                                                 </span>
                                             </div>
-                                      
-                                                <span>
-                                                    <% if(products[i]?.stock > 0) {%>
-                                                        <% if( products[i]?.stock > 15){%>
-                                                 <span class="in-stock text-success ml-2">In Stock</span>
-                
-                                                            <%}else{%>
-                                                             <span class="in-stock text-danger ml-2">Only few left</span>
-                                                                <%}%>
-                                                 
-                                                    <%}else{%>
-                                                    <span class="text-danger">Out of Stock</span>
-                                                    <%}%>
-                                                </span>
-                                         
+
+                                            <span>
+                                                <% if(products[i]?.stock> 0) {%>
+                                                    <% if( products[i]?.stock> 15){%>
+                                                        <span class="in-stock text-success ml-2">In Stock</span>
+
+                                                        <%}else{%>
+                                                            <span class="in-stock text-danger ml-2">Only few left</span>
+                                                            <%}%>
+
+                                                                <%}else{%>
+                                                                    <span class="text-danger">Out of Stock</span>
+                                                                    <%}%>
+                                            </span>
+
                                             <div class="product-price">
                                                 <span>
                                                     ₹ <%=products[i]?.price%>
@@ -145,23 +153,23 @@
                                         </div>
                                     </div>
                                 </div>
-                         <% } %>
-                                 
+                                <% } %>
+
                         </div>
                         <!--End product-grid-4-->
                     </div>
                     <!--En tab one (Featured)-->
 
-                   
+
                     <!--En tab two (Popular)-->
-                 
+
                     <!--En tab three (New added)-->
                 </div>
                 <!--End tab-content-->
             </div>
         </section>
-      
-     
+
+
         <section class="banner mb-20">
             <div class="container">
                 <div class="row">
@@ -208,66 +216,72 @@
 
 
 
-                        <% for( let i =8; i > 0; i--){%>
-                        <div class="product-cart-wrap small hover-up">
-                            <div class="product-img-action-wrap">
-                                <div class="product-img product-img-zoom">
-                                    <a href="/product/<%=products[i]?._id%>">
-                                        <img class="default-img" src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
-                                        <img class="hover-img" src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
-                                    </a>
-                                </div>
-                                <!-- <div class="product-action-1">
-                                    <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal"
-                                        data-bs-target="#quickViewModal">
-                                        <i class="fi-rs-eye"></i></a>
-                                    <a aria-label="Add To Wishlist" class="action-btn small hover-up"
-                                        href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                    <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"
-                                        tabindex="0"><i class="fi-rs-shuffle"></i></a>
-                                </div> -->
-                                <div class="product-badges product-badges-position product-badges-mrg">
-                                 <%if(i > 7 ){%>
-                                    <span class="new">New</span>
-                                    <%}else{%>
+                        <% for( let i=8; i> 0; i--){%>
+                            <div class="product-cart-wrap small hover-up">
+                                <div class="product-img-action-wrap">
+                                    <div class="product-img product-img-zoom">
+                                        <a href="/product/<%=products[i]?._id%>">
+                                            <img class="default-img"
+                                                src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
+                                            <img class="hover-img"
+                                                src="/assets2/imgs/products/<%=products[i]?.image[0]%>" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="product-action-1">
 
-                                        <%if(i % 2 === 0){%>
-                                            <span class="hot">Hot</span>
+                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up"
+                                            onclick="addToWishlist('<%=products[i]._id%>','<%=user?._id%>')"
+                                            tabindex="0"><i class="fi-rs-heart"></i></a>
+
+                                    </div>
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                        <%if(i> 7 ){%>
+                                            <span class="new">New</span>
                                             <%}else{%>
-                                        <span class="sale">Trending</span>
-                                             <%}%>
 
-                                <%}%>
+                                                <%if(i % 2===0){%>
+                                                    <span class="hot">Hot</span>
+                                                    <%}else{%>
+                                                        <span class="sale">Trending</span>
+                                                        <%}%>
+
+                                                            <%}%>
+                                    </div>
+                                </div>
+                                <div class="product-content-wrap">
+                                    <h2><a href="/product/<%=products[i]?._id%>">
+                                            <%=products[i]?.name%>
+                                        </a></h2>
+                                    <div class="rating-result" title="90%">
+                                        <span>
+                                        </span>
+                                    </div>
+                                    <div class="product-price">
+                                        <span>
+                                            <%=products[i]?.price%>
+                                        </span>
+                                        <span class="old-price">
+                                            <%=products[i]?.price%>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="product-content-wrap">
-                                <h2><a href="/product/<%=products[i]?._id%>"><%=products[i]?.name%></a></h2>
-                                <div class="rating-result" title="90%">
-                                    <span>
-                                    </span>
-                                </div>
-                                <div class="product-price">
-                                    <span><%=products[i]?.price%> </span>
-                                    <span class="old-price"><%=products[i]?.price%></span>
-                                </div>
-                            </div>
-                        </div>
-                        <%}%>
+                            <%}%>
 
 
 
 
-                        <!--End product-cart-wrap-2-->
-                      
-                        <!--End product-cart-wrap-2-->
-                        
+                                <!--End product-cart-wrap-2-->
+
+                                <!--End product-cart-wrap-2-->
 
 
 
 
 
-                        
-                        <!--End product-cart-wrap-2-->
+
+
+                                <!--End product-cart-wrap-2-->
                     </div>
                 </div>
             </div>
@@ -320,10 +334,60 @@
                 </div>
             </div>
         </section>
-       
+
+
     </main>
 
+    <script>
+        function addToWishlist(productId, userId) {
+            if (!userId) {
+                Swal.fire(
+                    'Login',
+                    'User need to Login for further proceeding',
+                    'warning'
+                ).then(() => {
+
+                    window.location.href = "/login"
+                })
+
+            }
+
+            $.ajax({
+                url: `/add-to-wishlist?productId=${productId}`,
+                method: 'get',
+                success: function (res) {
+                    if (res.success1) {
+                        Swal.fire(
+                            'Done!',
+                            'Item added to your wishlist.',
+                            'success'
+                        )
+                        
+                        .then(() => {
+                            if (res.length && res.length == 1) {
+                                // alert('res.length')
+                                window.location.reload()
+                                document.getElementById('wishlistLength').innerHTML = 1;
+                            } else {
+                                // alert(res.length)
+                                const number = document.getElementById('wishlistLength').innerHTML
+                                document.getElementById('wishlistLength').innerHTML = parseInt(number) + 1;
+                            }
+                        })
+
+
+                    } else if (res.success) {
+                        Swal.fire(
+                            'Alert',
+                            'Item already exists in wishlist',
+                            'question'
+                        );
+                    }
+                }
+            })
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
 
     <%- include('../partials/home/home-footer.ejs') %>
-
-   

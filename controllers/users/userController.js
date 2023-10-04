@@ -152,6 +152,7 @@ const loadLogin = async (req, res) => {
   try {
     const categories = await Category.find();
     const user = req.session.user_id;
+    console.log('hereeeee4');
     res.render("login", { user: user, categories: categories });
   } catch (error) {
     console.log(error.message);
@@ -212,13 +213,13 @@ const loadHome = async (req, res) => {
     if (userData) {
       console.log(userData.cart.length);
     }
-    const banner = await Banner.find()
+    const banner = await Banner.find({ isListed: true });
 
     res.render("home", {
       products: filteredProducts,
       user: userData,
       categories: categoryData,
-      banner : banner
+      banner: banner,
     });
   } catch (error) {
     console.log(error.message);
@@ -271,7 +272,8 @@ const searchResult = async (req, res) => {
       req.session.search = req.body.search;
     }
 
-    let search = req.session.search
+    let search = req.session.search || "";
+    console.log("search " + search);
     const categoryList = await Category.find({ isListed: true });
     const categoryName = await Category.find({
       name: { $regex: search, $options: "i" },
@@ -303,14 +305,15 @@ const searchResult = async (req, res) => {
     })
       .populate("category")
       .countDocuments();
+    // console.log("productsQuery is" + productsQuery.getFilter());
 
     const products = await paginateQuery(productsQuery, page, limit).exec();
-
-    console.log("productsQuery is" + productsQuery);
+    console.log("products", products);
 
     console.log("count is " + count);
 
     const user = await User.findById(req.session.user_id);
+    
 
     res.render("categoryWiseProducts", {
       products: products,
@@ -320,34 +323,8 @@ const searchResult = async (req, res) => {
       totalPages: Math.ceil(count / limit),
       count: count,
       page: page,
-      search : search
+      search: search,
     });
-
-    // console.log(req.body);
-
-    // const userData = req.session.user_id;
-    // const search = req.body.search;
-    // const categoryList = await Category.find({ isListed: true });
-    // const categoryName = await Category.find({
-    //   name: { $regex: search, $options: "i" },
-    // });
-
-    // const products = await Product.find({
-    //   isListed: true,
-    //   $or: [
-    //     { name: { $regex: search, $options: "i" } },
-    //     { category: { $in: categoryName } },
-    //     { brand: { $regex: search, $options: "i" } },
-    //   ],
-    // }).populate("category");
-
-    // res.render("categoryWiseProducts", {
-    //   products: products,
-    //   user: userData,
-    //   categories: categoryList,
-    //   pathurl: null,
-
-    // });
   } catch (error) {
     console.log(error.message);
   }
@@ -360,7 +337,7 @@ const categoryWiseProducts = async (req, res) => {
     const categoryName = decodeURIComponent(req.params.id);
 
     req.session.originalURL = `/category/${categoryName}`;
-    const pathurl = `/${categoryName}`;
+    const pathurl = `${categoryName}`;
     // console.log(categoryName);
     const category = await Category.findOne({ name: categoryName });
 
@@ -394,6 +371,7 @@ const categoryWiseProducts = async (req, res) => {
         totalPages: Math.ceil(count / limit),
         count: count,
         page: page,
+        search: undefined,
       });
     } else {
       console.log("Category not found");
@@ -406,45 +384,48 @@ const categoryWiseProducts = async (req, res) => {
 
 const priceLowTohigh = async (req, res) => {
   try {
+    console.log(req.query.url);
     const categoryName = decodeURIComponent(req.params.id);
-    const pathurl = `/${categoryName}`;
+
+    // const pathurl = `${categoryName}`;
     const category = await Category.findOne({ name: categoryName });
 
-    if (category) {
-      console.log(category);
-      var page = 1;
-      if (req.query.page) {
-        page = req.query.page;
-      }
-
-      const limit = 3;
-      const productsQuery = Product.find({ category: category._id })
-        .populate("category")
-        .sort({ price: -1 });
-
-      const products = await paginateQuery(productsQuery, page, limit).exec();
-
-      // const products = await paginateQuery(productsQuery, page, limit).exec();
-      const count = await Product.find({ category: category._id })
-        .populate("category")
-        .countDocuments();
-      console.log("count is " + count);
-
-      console.log(products);
-      const categoryList = await Category.find({ isListed: true });
-
-      const user = await User.findById(req.session.user_id);
-
-      res.render("categoryWiseProducts", {
-        products: products,
-        categories: categoryList,
-        user: user,
-        pathurl: pathurl,
-        totalPages: Math.ceil(count / limit),
-        count: count,
-        page: page,
-      });
+    // if (category) {
+    console.log(category);
+    var page = 1;
+    if (req.query.page) {
+      page = req.query.page;
     }
+
+    const limit = 3;
+    const productsQuery = Product.find({ category: category._id })
+      .populate("category")
+      .sort({ price: -1 });
+
+    const products = await paginateQuery(productsQuery, page, limit).exec();
+
+    // const products = await paginateQuery(productsQuery, page, limit).exec();
+    const count = await Product.find({ category: category._id })
+      .populate("category")
+      .countDocuments();
+    console.log("count is " + count);
+
+    console.log(products);
+    const categoryList = await Category.find({ isListed: true });
+
+    const user = await User.findById(req.session.user_id);
+    let search = req.session.search || "";
+
+    res.render("categoryWiseProducts", {
+      products: products,
+      categories: categoryList,
+      user: user,
+      pathurl: pathurl,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      page: page,
+      search: search,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "error", msg: "Internal server error" });
@@ -481,6 +462,7 @@ const priceHighToLow = async (req, res) => {
       const categoryList = await Category.find({ isListed: true });
 
       const user = await User.findById(req.session.user_id);
+      let search = req.session.search || "";
 
       res.render("categoryWiseProducts", {
         products: products,
@@ -490,6 +472,7 @@ const priceHighToLow = async (req, res) => {
         totalPages: Math.ceil(count / limit),
         count: count,
         page: page,
+        search: search,
       });
     }
   } catch (error) {
@@ -610,9 +593,17 @@ const loadAccount = async (req, res) => {
     const limit = 5;
     const count = await Order.find({
       customerId: req.session.user_id,
-    }).countDocuments();
+      orderStatus: { $ne: "PENDING" },
+    })
+      .sort({
+        createdAt: -1,
+      })
+      .countDocuments();
 
-    const orderData = Order.find({ customerId: req.session.user_id }).sort({
+    const orderData = Order.find({
+      customerId: req.session.user_id,
+      orderStatus: { $ne: "PENDING" },
+    }).sort({
       createdAt: -1,
     });
     const orders = await paginateQuery(orderData, page, limit).exec();
@@ -692,8 +683,6 @@ const editAddress = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    // console.log("dataaaaa " + req.body.oldPass);
-    // console.log("dataaaaa22222 " + req.body.newPass);
     const password = req.body.oldPass.toString();
     const newPass = req.body.newPass.toString();
     if (password === newPass) {
@@ -726,12 +715,6 @@ const resetPassword = async (req, res) => {
 
 const applyCoupon = async (req, res) => {
   try {
-    // console.log(req.body);
-    // const couponDataUpdate = await Coupon.findByIdAndUpdate(
-    //   { couponCode: req.body.couponName },
-    //   { $push: { users: req.body.userId } },
-    //   { new: true }
-    // );
     const couponCode = req.body.couponName;
     console.log(couponCode);
     const user = await Coupon.findOne({
@@ -824,6 +807,109 @@ const orderSearch = async (req, res) => {
   }
 };
 
+const loadWishlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.user_id).populate('wishlist.productId')
+    const categories = await Category.find({ isListed: true });
+    res.render("wishlist", { user: user, categories: categories });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", msg: "Cannot load wishlist" });
+  }
+};
+
+const addToWishlist = async (req, res) => {
+  try {
+    // console.log('req.query');
+    // console.log(req.query);
+    const userId = req.session.user_id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ message: "user not found" });
+    }
+    const productId = req.query.productId;
+    const product = await Product.findById(productId);
+
+    const existingItem = user.wishlist.find((item) =>
+      item.productId.equals(productId)
+    );
+
+    if (existingItem) {
+      res.status(200).json({success : true ,msg : 'Product already exists'})
+    } else {
+      user.wishlist.push({ productId });
+      await user.save();
+      res.status(200).json({success1 : true ,length : user?.wishlist.length,msg : 'Product added to your Wishlist'})
+
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", msg: "Cannot add to wishlist" });
+  }
+};
+
+const removeWiishlist = async(req,res) => {
+  try {
+    const id = req.query.id;
+    console.log('id '+id );
+    const userId = req.session.user_id;
+    const user = await User.findById(userId);
+    user.wishlist = user.wishlist.filter(
+      (item)=> !item._id.equals(id)
+    ) 
+    await user.save()
+    console.log(user.wishlist);
+    res.status(200).json({ success: true });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", msg: "Cannot delete item from wishlist" });
+  }
+}
+
+
+const cartFromWishlist = async (req, res) => {
+  try {
+    const productId = req.query.productId;
+    const product = await Product.findById(productId)
+    const price = product.price
+    const wishId = req.query.wishId;
+    const userId = req.session.user_id;
+    const user = await User.findById(userId);
+
+    const quantity = 1;
+    if (user.cart && Array.isArray(user.cart)) {
+      const existingItem = user.cart.find((item) =>
+        item.productId && item.productId.equals(productId)
+      );
+    
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
+        user.cart.push({ productId, quantity,price });
+      }
+    } else {
+      console.error('user.cart is not valid');
+    }
+    
+
+    // Remove the item from the wishlist based on wishId
+    user.wishlist = user.wishlist.filter((item) => !item._id.equals(wishId));
+
+    await user.save();
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ status: "error", msg: "Cannot move item from wishlist to cart" });
+  }
+};
+
+
+
+
 module.exports = {
   loadSignup,
   sendOtpAndRenderRegistration,
@@ -849,4 +935,8 @@ module.exports = {
   applyCoupon,
   resendOtp,
   orderSearch,
+  loadWishlist,
+  addToWishlist,
+  removeWiishlist,
+  cartFromWishlist
 };

@@ -234,6 +234,27 @@ const deleteImage = async (req, res) => {
       res.status(500).json({ message: 'An error occurred while deleting the element' });
   }
 };
+const productStatus = async (req, res) => {
+  try {
+      const id = req.params.id;
+      let updateData = {};
+
+      const productData = await Product.findById(id);
+      if (productData.isListed) {
+          updateData.isListed = false;
+      } else {
+          updateData.isListed = true;
+      }
+      const updatedProduct = await Product.findByIdAndUpdate(id, updateData, { new: true });
+      if (!updatedProduct) {
+          return res.status(404).json({ message: 'Product not found' });
+      }
+      res.status(200).json({ message: 'Product status updated successfully', product: updatedProduct });
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 module.exports = {
   productList,
@@ -242,6 +263,7 @@ module.exports = {
   loadEditProduct,
   updateProduct,
   deleteProduct,
-  deleteImage
+  deleteImage,
+  productStatus,
   
 };

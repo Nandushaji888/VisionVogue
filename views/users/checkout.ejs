@@ -90,8 +90,8 @@
                                             <div class="card-header">
                                                 <!-- <input class="form-check-input" value="<%= JSON.stringify(user.address[i]) %>" type="radio" name="address" id="address"> -->
                                                 <input class="form-check-input" required
-                                                    value='<%= JSON.stringify(user.address[i]) %>' type="radio"
-                                                    name="address" id="address<%= i %>">
+                                                    value='<%= JSON.stringify(user.address[i]) %>' type="radio" 
+                                                    name="address" id="address<%= i %>" <%= i === 0 ? 'checked' : '' %>>
 
 
                                                 <label class="form-check-label" for="flexRadioDefault1">
@@ -191,30 +191,32 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            
 
-                                    <div class="mb-30 mt-50">
-                                        <div class="heading_s1 mb-3">
-                                            <h4>Apply Coupon</h4>
-                                        </div>
-                                        <div class="total-amount">
-                                            <div class="left">
-                                                <div class="coupon">
-                                                    <form action="#" target="_blank" id="coupon-apply">
+
+                                <div class="mb-30 mt-50">
+                                    <div class="heading_s1 mb-3">
+                                        <h4>Apply Coupon</h4>
+                                    </div>
+                                    <div class="total-amount">
+                                        <div class="left">
+                                            <div class="coupon">
+                                                <form action="#" target="_blank" id="coupon-apply">
                                                     <div class="form-row row justify-content-center">
                                                         <div class="form-group col-lg-6">
-                                                            <input id="couponName" class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
+                                                            <input id="couponName" class="font-medium" name="Coupon"
+                                                                placeholder="Enter Your Coupon">
                                                         </div>
                                                         <div class="form-group col-lg-6">
-                                                            <button onclick="couponApply(event)" class="btn btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                            <button onclick="couponApply(event)" class="btn btn-sm"><i
+                                                                    class="fi-rs-label mr-10"></i>Apply</button>
                                                         </div>
                                                         <div class="text-danger" id="text"></div>
                                                     </div>
                                                 </form>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                 <div class="payment_method">
                                     <div class="mb-25">
@@ -236,7 +238,7 @@
                                                 aria-controls="checkPayment">Razorpay</label>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- <div class="payment_option">
                   
                                     <div class="custome-radio">
@@ -264,45 +266,7 @@
     </main>
 
 
-    <!-- <script>
-        $(document).ready(function () {
-          $('#your-new-button-id').click(function (e) {
-            e.preventDefault();
-            $.ajax({
-              url: '/get-razorpay-order',
-              method: 'POST',
-              dataType: 'json',
-              success: function (data) {
-                if (data.orderId) {
-                  const options = {
-                    key: 'rzp_test_U8Im7tdpfcXFYz', 
-                    amount: data.amount,
-                    currency: 'INR',
-                    name: 'Vision Vogue',
-                    description: 'Payment for Order',
-                    order_id: data.orderId,
-                    handler: function (response) {
-                      if (response.razorpay_payment_id) {
-                        window.location.href = '/order-success';
-                      } else {
-                        alert('Payment failed or canceled');
-                      }
-                    },
-                  };
-      
-                  const rzp = new Razorpay(options);
-                  rzp.open();
-                } else {
-                  alert('Failed to fetch Razorpay order ID');
-                }
-              },
-              error: function () {
-                alert('Error fetching Razorpay order ID');
-              },
-            });
-          });
-        });
-      </script> -->
+
 
 
     <script>
@@ -328,7 +292,7 @@
                                 "name": "Vision Vogue",
                                 "order_id": "" + res.order_id + "",
                                 "receipt": "" + res.receipt + "",
-                                "products": ""+res.products+"",
+                                "products": "" + res.products + "",
                                 "handler": function (response) {
 
                                     verifyPayment(response, res.order_id, res.receipt, res.products);
@@ -367,6 +331,17 @@
                             // window.open("/order-success", "_self")
                         } else {
                             // alert(res.msg)
+                        }
+
+                        if (res.status1) {
+                            Swal.fire(
+                                'Cart Changed!',
+                                'Items in your cart has been changed!',
+                                'error'
+                            ).then(function(){
+                                window.location.href = "http://localhost:3000/cart"
+
+                            })
                         }
                     },
 
@@ -413,19 +388,19 @@
                     couponName,
                     grandTotal
                 }, success: function (res) {
-                    if(res.success2){
+                    if (res.success2) {
                         const msg = res.msg
                         document.getElementById('text').innerHTML = msg
 
-                    }else if(res.success) {
-                        const newGrandTotal = res.newGrandTotal 
+                    } else if (res.success) {
+                        const newGrandTotal = res.newGrandTotal
                         const discount = res.discount
                         const msg = res.msg
-                      
+
                         document.getElementById('total').innerHTML = newGrandTotal
                         document.getElementById('discount').innerHTML = discount
                         document.getElementById('text').innerHTML = msg
-                    }else if(res.success1) {
+                    } else if (res.success1) {
                         const msg = res.msg
                         document.getElementById('text').innerHTML = msg
 

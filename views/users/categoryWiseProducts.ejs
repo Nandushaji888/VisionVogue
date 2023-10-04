@@ -40,8 +40,8 @@
                                     </div>
                                     <div class="sort-by-dropdown">
                                         <ul>
-                                            <li><a href="/priceLowTohigh<%=pathurl%>">Price: Low to High</a></li>
-                                            <li><a href="/priceHighToLow<%=pathurl%>">Price: High to Low</a></li>
+                                            <li><a href="/priceLowTohigh?url=<%=pathurl%>">Price: Low to High</a></li>
+                                            <li><a href="/priceHighToLow?url=<%=pathurl%>">Price: High to Low</a></li>
 
                                         </ul>
                                     </div>
@@ -64,7 +64,7 @@
                                             <div class="product-action-1">
                                                 
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                    href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                    href="/add-to-wishlist?productId=<%=products[i]._id%>"><i class="fi-rs-heart"></i></a>
                                                 
                                             </div>
                                             <!-- <div class="product-badges product-badges-position product-badges-mrg">
@@ -206,8 +206,14 @@
                 <ul class="pagination">
                     <% if (page> 1) { %>
                         <li class="page-item">
-                            <a class="page-link green-pagination-link"
-                                href="?page=<%= page - 1 %>&orderSearch=<%=search%>">Previous</a>
+                            <%if(search){%>
+                                <a class="page-link green-pagination-link"
+                                    href="?page=<%= page - 1 %>&orderSearch=<%=search%>">Previous</a>
+
+                                    <%}else{%>
+                                        <a class="page-link green-pagination-link"
+                                        href="?page=<%= page - 1 %>">Previous</a>
+                                        <%}%>
                         </li>
                         <% } %>
 
@@ -228,8 +234,14 @@
 
                                     <% if (page < totalPages) { %>
                                         <li class="page-item">
+                                            <%if(search){%>
                                             <a class="page-link green-pagination-link"
                                                 href="?page=<%= page + 1 %>&orderSearch=<%=search%>">Next</a>
+
+                                                <%}else{%>
+                                                    <a class="page-link green-pagination-link"
+                                                    href="?page=<%= page + 1 %>">Next</a>
+                                                    <%}%>
                                         </li>
                                         <% } %>
                 </ul>

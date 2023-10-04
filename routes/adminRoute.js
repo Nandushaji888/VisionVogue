@@ -76,7 +76,8 @@ admin_route.get('/add-product', auth.isLogin, productController.LoadAddProduct)
 admin_route.post('/add-product',productUpload.array("image") ,productController.addProduct)
 admin_route.get('/edit-product/:id', auth.isLogin,productController.loadEditProduct)
 admin_route.post('/edit-product/:id',productUpload.array("image"),productController.updateProduct)
-admin_route.get('/delete-product/:id', auth.isLogin,productController.deleteProduct)
+// admin_route.get('/delete-product/:id', auth.isLogin,productController.deleteProduct)
+admin_route.get('/product-status/:id',auth.isLogin,productController.productStatus)
 admin_route.get('/delete-image/:id/:img',productController.deleteImage)
 
 
@@ -100,5 +101,7 @@ admin_route.get('/coupon-status/:id',auth.isLogin,couponController.couponStatus)
 admin_route.get('/add-banner',auth.isLogin,bannerController.loadAddBanner)
 admin_route.post('/add-banner',auth.isLogin,bannerUpload.single("image"),bannerController.addBanner)
 admin_route.get('/banners',auth.isLogin,bannerController.loadBannerList)
+admin_route.get('/banner-status/:id',auth.isLogin,bannerController.bannerStatus)
+
 
 module.exports = admin_route;

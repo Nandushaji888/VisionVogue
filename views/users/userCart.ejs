@@ -89,7 +89,7 @@
                                                             userCart.cart[i].quantity)%>
                                                     </td>
                                                     <td class="action" data-title="Remove"><a
-                                                            href="/remove-cart/<%=userCart.cart[i].productId._id%>"
+                                                            onclick="removeCart('<%=userCart.cart[i].productId._id%>')"
                                                             class="text-muted"><i class="fi-rs-trash"></i></a></td>
                                                 </tr>
 
@@ -128,7 +128,7 @@
                                                                 <tbody>
                                                                     <tr>
                                                                         <td class="cart_total_label">Cart Subtotal</td>
-                                                                        <td class="cart_total_amount">₹<span
+                                                                        <td class="cart_total_amount"><span class="font-xl fw-900 text-brand">₹ </span><span
                                                                                 id="grandTotal"
                                                                                 class="font-lg fw-900 text-brand">
                                                                                 <%=grandTotal%>
@@ -143,10 +143,12 @@
 
                                                                     <tr>
                                                                         <td class="cart_total_label">Total</td>
-                                                                        <td class="cart_total_amount"><strong><span
+                                                                        <td class="cart_total_amount">
+                                                                            <strong><span class="font-xl fw-900 text-brand">₹ </span>
+                                                                                    <span
                                                                                     id="total"
-                                                                                    class="font-xl fw-900 text-brand">₹
-                                                                                    <%= grandTotal %>
+                                                                                    class="font-xl fw-900 text-brand">
+                                                                                    <%=grandTotal %>
                                                                                 </span></strong></td>
                                                                     </tr>
                                                                 </tbody>
@@ -193,15 +195,18 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: '/remove-cart/' + productId,
-                            method: 'get',
+                            url: '/remove-cart',
+                            method: 'post',
+                            data: {
+                                id: productId
+                            },
                             success: function (response) {
                                 console.log('Item removed from cart');
-                                Swal.fire(
-                                    'Deleted!',
-                                    'Your file has been deleted.',
-                                    'success'
-                                );
+                                // Swal.fire(
+                                //     'Deleted!',
+                                //     'Your file has been deleted.',
+                                //     'success'
+                                // );
                                 window.location.reload();
 
                             }
@@ -277,51 +282,46 @@
 
         }
 
+        function removeCart(id) {
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to delete this item from cart !',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: '/remove-cart',
+                        method: 'post',
+                        data: {
+                            id: id
+                        },
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire(
+                                    'Done!',
+                                    'Item has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload()
+                                })
+                            }
+                        }
+                    })
+
+                }
+            })
+
+        }
 
 
 
-        // window.addEventListener('beforeunload', function (event) {
 
-        //     function sssss(){
-        //             alert('Debugging message');
-
-        //     const cartData = [];
-
-        //     for (let i = 0; i < userCart.cart.length; i++) {
-        //         const productId = userCart.cart[i].productId._id;
-        //         const quantityElement = document.getElementById(`qty-${productId}`);
-        //         const updatedQuantity = parseInt(document.getElementById(`qty-${productId}`).innerHTML);
-
-        //         cartData.push({
-        //             productId: productId,
-        //             quantity: updatedQuantity
-        //         });
-        //     }
-
-        //     updateServerOnPageChange(cartData);}
-
-
-        // // });
-
-
-        // window.addEventListener('beforeunload', function (event) {
-        //     // Perform your operations here (e.g., send data to the server)
-        //     alert('hhhhhhhhhhh')
-        //     const cartData = [];
-
-        //     for (let i = 0; i < userCart.cart.length; i++) {
-        //         const productId = userCart.cart[i].productId._id;
-        //         const quantityElement = document.getElementById(`qty-${productId}`);
-        //         const updatedQuantity = parseInt(document.getElementById(`qty-${productId}`).innerHTML);
-
-        //         cartData.push({
-        //             productId: productId,
-        //             quantity: updatedQuantity
-        //         });
-        //     }
-
-        //     updateServerOnPageChange(cartData);
-        // });
 
 
 

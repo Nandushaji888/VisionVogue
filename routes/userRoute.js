@@ -51,7 +51,7 @@ user_route.get('/category/:id',userController.categoryWiseProducts)
 user_route.get('/cart',auth.isLogin,cartController.loadCart)
 user_route.post('/add-to-cart',auth.isLogin,cartController.addToCart)
 user_route.post('/change-quantity',auth.isLogin,cartController.changeQuantity)
-user_route.get('/remove-cart/:id',auth.isLogin,cartController.deleteCartItem)
+user_route.post ('/remove-cart',auth.isLogin,cartController.deleteCartItem)
 
 //check out
 user_route.get('/checkout',auth.isLogin,orderController.loadPlaceOrder)
@@ -74,14 +74,19 @@ user_route.get('/search-orderid',auth.isLogin,userController.orderSearch)
 
 
 
-user_route.get('/priceLowTohigh/:id',userController.priceLowTohigh)
-user_route.get('/priceHighToLow/:id',userController.priceHighToLow)
+user_route.get('/priceLowTohigh',userController.priceLowTohigh)
+user_route.get('/priceHighToLow',userController.priceHighToLow)
 user_route.post('/search-items', userController.searchResult )
+user_route.get('/search-items', userController.searchResult )
 
 //coupon
 user_route.post('/apply-coupon',auth.isLogin, userController.applyCoupon )
 
-
+//wishlist
+user_route.get('/wishlist',auth.isLogin,userController.loadWishlist)
+user_route.get('/add-to-wishlist',auth.isLogin,userController.addToWishlist)
+user_route.get('/remove-wishlist',auth.isLogin,userController.removeWiishlist)
+user_route.get('/addcart-from-wishlist',auth.isLogin,userController.cartFromWishlist)
 
 // user_route.get("*",userController.errorPage)
 

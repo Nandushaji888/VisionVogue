@@ -233,7 +233,7 @@
             <div class="container">
                 <div class="header-wrap">
                     <div class="logo  logo-width-1 ">
-                        <a href="index.html"><img src="/assets/imgs/theme/Vision Vogue-logos_transparent.png"   alt="logo"></a>
+                        <a href="/"><img src="/assets/imgs/theme/Vision Vogue-logos_transparent.png"   alt="logo"></a>
                         
                         <!-- <a href="index.html"><img src="/assets/imgs/theme/Clarity in Style, Vision in Frames-logos_transparent.png" alt="logo" class="logo-image" ></a> -->
                     </div>
@@ -248,10 +248,14 @@
                         <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
+                                    <a href="/wishlist">
                                         <img class="svgInject" alt="Evara"
                                             src="/assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class=""></span>
+                                            <%if(user && user.wishlist?.length > 0){%>
+                                                <span value="<%=user.wishlist?.length%>" id="wishlistLength"  class="pro-count blue"><%=user.wishlist?.length%></span>
+                                                <%}%>
+                                                    <!-- <span id="wishlistLength"></span> -->
+                                               
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">

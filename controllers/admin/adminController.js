@@ -47,13 +47,15 @@ const loadHome = async (req, res) => {
     const products = await Product.find();
 
     const orders = await Order.find({ orderStatus: { $ne: "PENDING" } });
-    console.log(orders);
+    // console.log(orders);
     let total1 = 0;
     for (let i = 0; i < orders.length; i++) {
       let sum = parseInt(orders[i].paidAmount);
       total1 += sum;
     }
-    const total = total1.toLocaleString("en-IN");
+    
+    console.log('total '+ total1);
+    const totalPaid = total1.toLocaleString("en-IN");
     const monthlyRevenue = await Order.aggregate([
       {
         $match: {
@@ -75,7 +77,7 @@ const loadHome = async (req, res) => {
         },
       },
     ]);
-    const mRevenue = monthlyRevenue[0].total.toLocaleString("en-IN");
+const mRevenue = monthlyRevenue.length > 0 ? monthlyRevenue[0].total.toLocaleString("en-IN") : "0";
 
     const monthlySales = await Order.aggregate([
       {
@@ -97,8 +99,8 @@ const loadHome = async (req, res) => {
         },
       },
     ]);
-    console.log("monthlySales");
-    console.log(monthlySales);
+    // console.log("monthlySales");
+    // console.log(monthlySales);
 
     const graphDataSales = [];
 
@@ -146,7 +148,7 @@ const loadHome = async (req, res) => {
       category: category,
       products: products,
       orders: orders,
-      total: total,
+      total: totalPaid,
       user : user,
       mRevenue: mRevenue,
       graphDataSales : graphDataSales,

@@ -6,7 +6,7 @@ const Order = require("../../models/orderModel");
 // item adding to cart
 const addToCart = async (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const productId = req.body.productId;
     const quantity = parseInt(req.body.quantity);
 
@@ -16,7 +16,7 @@ const addToCart = async (req, res) => {
     const product = await Product.findById(productId);
     const price = product.price;
     const userId = req.session.user_id;
-    console.log("userId------" + userId);
+    // console.log("userId------" + userId);
     const user = await User.findById(userId);
 
     if (!user) {
@@ -35,7 +35,7 @@ const addToCart = async (req, res) => {
 
     await user.save();
 
-    console.log("product added to cart");
+    // console.log("product added to cart");
 
     res.redirect("/cart");
     // res.redirect('/product/'+productId);
@@ -58,7 +58,7 @@ const loadCart = async (req, res) => {
         parseInt(userCart.cart[i].productId.price) *
           parseInt(userCart.cart[i].quantity);
     }
-    console.log(grandTotal);
+    // console.log(grandTotal);
     // const coupons = await Coupon.find({ users: { $ne: req.session.user_id}});
 
     // console.log('ckfjkhsg'+coupons);
@@ -66,10 +66,10 @@ const loadCart = async (req, res) => {
     const user = await User.findById(req.session.user_id);
     const categories = await Category.find();
 
-    console.log("req.session.cartErrorMessage" + req.session.cartErrorMessage);
+    // console.log("req.session.cartErrorMessage" + req.session.cartErrorMessage);
 
     let cartErrorMessage = req.session.cartErrorMessage;
-    console.log("cartErrorMessage" + cartErrorMessage);
+    // console.log("cartErrorMessage" + cartErrorMessage);
     delete req.session.cartErrorMessage;
 
     res.render("userCart", {
@@ -112,16 +112,15 @@ const changeQuantity = async (req, res) => {
 const deleteCartItem = async (req, res) => {
   try {
     const userId = req.session.user_id;
-    const productIdToDelete = req.params.id;
+    const productIdToDelete = req.body.id;
+    
 
-    console.log("productId to remove" + productIdToDelete);
     const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
 
-    console.log("user" + user);
     user.cart = user.cart.filter(
       (item) => !item.productId.equals(productIdToDelete)
     );
@@ -129,8 +128,7 @@ const deleteCartItem = async (req, res) => {
     await user.save();
 
     console.log("Product removed from cart");
-
-    res.redirect("/cart");
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ message: "Internal server error" });

@@ -35,42 +35,42 @@ const loadOrderDetails = async (req, res) => {
   }
 };
 
-const loadPlaceOrder1 = async (req, res) => {
-  try {
-    const categories = await Category.find();
-    const coupons = await Coupon.find({
-      $and: [{ users: { $ne: req.session.user_id } }, { isListed: true }],
-    });
-    req.session.originalURL = "/checkout";
-    const userCart = await User.findOne({ _id: req.session.user_id });
-    const user = await User.findOne({ _id: req.session.user_id }).populate(
-      "cart.productId"
-    );
-    console.log("user.cart");
-    console.log(user.cart);
-    for (const cartItem of user.cart) {
-      console.log(
-        "jhkgfgjhgklfagkljhsdjklhjklsahjklsfhdajklghsfdakljgsfdkljgsfdal"
-      );
-      const product = await Product.findById(cartItem.productId);
-      console.log("product");
-      console.log(product);
-      console.log(cartItem.quantity);
-      if (product && product.stock < cartItem.quantity) {
-        res.redirect("/cart");
-      }
-    }
-    // console.log(req.body);
-    res.render("checkout.ejs", {
-      user: user,
-      userCart: userCart,
-      categories: categories,
-      coupons: coupons,
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-};
+// const loadPlaceOrder1 = async (req, res) => {
+//   try {
+//     const categories = await Category.find();
+//     const coupons = await Coupon.find({
+//       $and: [{ users: { $ne: req.session.user_id } }, { isListed: true }],
+//     });
+//     req.session.originalURL = "/checkout";
+//     const userCart = await User.findOne({ _id: req.session.user_id });
+//     const user = await User.findOne({ _id: req.session.user_id }).populate(
+//       "cart.productId"
+//     );
+//     console.log("user.cart");
+//     console.log(user.cart);
+//     for (const cartItem of user.cart) {
+//       console.log(
+//         "jhkgfgjhgklfagkljhsdjklhjklsahjklsfhdajklghsfdakljgsfdkljgsfdal"
+//       );
+//       const product = await Product.findById(cartItem.productId);
+//       console.log("product");
+//       console.log(product);
+//       console.log(cartItem.quantity);
+//       if (product && product.stock < cartItem.quantity) {
+//         res.redirect("/cart");
+//       }
+//     }
+//     // console.log(req.body);
+//     res.render("checkout.ejs", {
+//       user: user,
+//       userCart: userCart,
+//       categories: categories,
+//       coupons: coupons,
+//     });
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
 
 const loadPlaceOrder = async (req, res) => {
   try {
@@ -84,22 +84,26 @@ const loadPlaceOrder = async (req, res) => {
     });
     req.session.originalURL = "/checkout";
     const userCart = await User.findOne({ _id: req.session.user_id });
-console.log('checkkkkkkkkk');
-console.log(user.cart);
 
-for (const cartItem of user.cart) {
-  const product = await Product.findById(cartItem.productId);
-  if (product && product.stock < cartItem.quantity) {
-    console.log('checkkkkkkkkk222');
+    // console.log("checkkkkkkkkk");
+    // console.log(userCart.cart);
+
+    req.session.cart = userCart.cart;
+
+    for (const cartItem of user.cart) {
+      const product = await Product.findById(cartItem.productId);
+      if (product && product.stock < cartItem.quantity) {
+        // console.log('checkkkkkkkkk222');
         shouldRedirect = true;
         break;
-      }   
+      }
     }
 
     if (shouldRedirect) {
-      req.session.cartErrorMessage = 'Some items in your cart are out of stock. Please review your cart.';
-      return res.redirect('/cart');
-    }else{
+      req.session.cartErrorMessage =
+        "Some items in your cart are out of stock. Please review your cart.";
+      return res.redirect("/cart");
+    } else {
       res.render("checkout.ejs", {
         user: user,
         userCart: userCart,
@@ -107,10 +111,8 @@ for (const cartItem of user.cart) {
         coupons: coupons,
       });
     }
-    
+
     // console.log(req.body);
-
-
   } catch (error) {
     console.log(error.message);
   }
@@ -118,7 +120,7 @@ for (const cartItem of user.cart) {
 
 const postOrder = async (req, res) => {
   try {
-    console.log(req.body.Coupon);
+    // console.log(req.body.Coupon);
     let couponCode;
     const consumedUser = await Coupon.findOne({
       couponCode: req.body.Coupon,
@@ -127,135 +129,156 @@ const postOrder = async (req, res) => {
     if (!consumedUser) {
       couponCode = req.body.Coupon;
     }
-    console.log("couponCode" + couponCode);
+    // console.log("couponCode" + couponCode);
 
     // const couponCode = req.body.Coupon
     const userId = req.session.user_id;
     const userreq = await User.findById(userId, { cart: 1, _id: 0 });
-    const discountCoupon = await Coupon.findOne({
-      couponCode: couponCode,
-    });
-    let grandAmount;
-    let discountValue;
+    const oldCart = req.session.cart;
+    // console.log("userreq");
+    // console.log(userreq.cart);
+    // console.log("oldCart");
+    // console.log(oldCart);
 
-    console.log(discountCoupon);
-    const GrandTotal = parseInt(req.body.GrandTotal);
-    console.log("this is grand total " + GrandTotal);
-    if (discountCoupon) {
-      console.log(GrandTotal > discountCoupon.minOrderPrice);
 
-      if (GrandTotal > discountCoupon.minOrderPrice) {
-        const percentageDiscount = parseInt(discountCoupon.discount);
-        const discountCal = Math.floor((GrandTotal * percentageDiscount) / 100);
-        console.log("discountCal", discountCal);
+    if (JSON.stringify(oldCart) !== JSON.stringify(userreq.cart)) {
+      delete req.session.cart;
+      res.status(200).json({
+        status1: true,
+        msg: "Your Cart has been changed",
+      });
 
-        if (discountCal < discountCoupon.maxDiscount) {
-          discountValue = discountCal;
-          console.log("discountValue1111" + discountValue);
+      // console.log("cart is changed");
+    } else {
+      const discountCoupon = await Coupon.findOne({
+        couponCode: couponCode,
+      });
+
+      let grandAmount;
+      let discountValue;
+
+      // console.log(discountCoupon);
+      const GrandTotal = parseInt(req.body.GrandTotal);
+      // console.log("this is grand total " + GrandTotal);
+      if (discountCoupon) {
+        // console.log(GrandTotal > discountCoupon.minOrderPrice);
+
+        if (GrandTotal > discountCoupon.minOrderPrice) {
+          const percentageDiscount = parseInt(discountCoupon.discount);
+          const discountCal = Math.floor(
+            (GrandTotal * percentageDiscount) / 100
+          );
+          // console.log("discountCal", discountCal);
+
+          if (discountCal < discountCoupon.maxDiscount) {
+            discountValue = discountCal;
+            // console.log("discountValue1111" + discountValue);
+          } else {
+            discountValue = discountCoupon.maxDiscount;
+            // console.log("discountValue22222" + discountValue);
+          }
+          // console.log("GrandTotal" + GrandTotal);
+          // console.log("discountValue" + discountValue);
+          grandAmount = GrandTotal - discountValue;
         } else {
-          discountValue = discountCoupon.maxDiscount;
-          console.log("discountValue22222" + discountValue);
+          grandAmount = GrandTotal;
         }
-        console.log("GrandTotal" + GrandTotal);
-        console.log("discountValue" + discountValue);
-        grandAmount = GrandTotal - discountValue;
       } else {
         grandAmount = GrandTotal;
       }
-    } else {
-      grandAmount = GrandTotal;
-    }
-    console.log(grandAmount);
-    const order = new Order({
-      customerId: userId,
-      products: userreq.cart,
-      quantity: req.body.quantity,
-      price: req.body.salePrice,
-      paidAmount: grandAmount,
-      paymentMethod: req.body.paymentMethod,
-      shippingAddress: JSON.parse(req.body.address),
-      couponDiscount: discountValue,
+      // console.log(grandAmount);
+      // console.log(userreq.cart);
+      const order = new Order({
+        customerId: userId,
+        products: userreq.cart,
+        quantity: req.body.quantity,
+        price: req.body.salePrice,
+        paidAmount: grandAmount,
+        paymentMethod: req.body.paymentMethod,
+        shippingAddress: JSON.parse(req.body.address),
+        couponDiscount: discountValue,
 
-      // orderId :
-    });
+        // orderId :
+      });
 
-    console.log(order);
-    const orderId = order._id;
-    const orderSuccess = await order.save();
-    const orderIdentity = "ODR" + order._id.toString().slice(0, 13);
-    await Order.findByIdAndUpdate(
-      { _id: order._id },
-      { orderId: orderIdentity }
-    );
-    if (couponCode) {
+      // console.log(order);
+      const orderId = order._id;
+      const orderSuccess = await order.save();
+      const orderIdentity = "ODR" + order._id.toString().slice(0, 13);
       await Order.findByIdAndUpdate(
         { _id: order._id },
-        { couponCode: couponCode }
+        { orderId: orderIdentity }
       );
-      await Coupon.updateOne(
-        { couponCode: couponCode },
-        { $push: { users: req.session.user_id } },
-        { new: true }
-      );
-    }
+      if (couponCode) {
+        await Order.findByIdAndUpdate(
+          { _id: order._id },
+          { couponCode: couponCode }
+        );
+        await Coupon.updateOne(
+          { couponCode: couponCode },
+          { $push: { users: req.session.user_id } },
+          { new: true }
+        );
+      }
 
-    if (orderSuccess) {
-      //<......for COD delovery....>
-      if (req.body.paymentMethod === "COD") {
-        console.log("usercart" + userreq.cart);
-        for (const cartItem of userreq.cart) {
-          const product = await Product.findById(cartItem.productId);
+      if (orderSuccess) {
+        //<......for COD delovery....>
+        if (req.body.paymentMethod === "COD") {
+          // console.log("usercart" + userreq.cart);
+          for (const cartItem of userreq.cart) {
+            const product = await Product.findById(cartItem.productId);
 
-          if (product) {
-            product.stock -= cartItem.quantity;
-            await product.save();
+            if (product) {
+              product.stock -= cartItem.quantity;
+              await product.save();
+            }
           }
+          await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
+
+          await Order.updateOne(
+            { _id: new mongoose.Types.ObjectId(orderId) },
+            { orderStatus: "PLACED" }
+          ).lean();
+          res.status(200).json({
+            status: true,
+            msg: "Order created for COD",
+          });
+
+          // FOR ONLINE PAYMENT
+        } else if (req.body.paymentMethod === "razorpay") {
+          console.log("online");
+
+          const amount = grandAmount * 100;
+          console.log("amount" + amount);
+          const options = {
+            amount: amount,
+            currency: "INR",
+            receipt: orderId,
+          };
+          console.log("checking.......");
+          razorpay.orders.create(options, (err, order) => {
+            // console.log(err);
+            if (!err) {
+              // console.log("order sending");
+              res.status(200).send({
+                success: true,
+                msg: "Order created",
+                order_id: order.id,
+                amount: amount,
+                products: userreq.cart,
+                receipt: orderId,
+                key_id: RAZORPAY_ID_KEY,
+                contact: "9998887776",
+                name: "admin",
+                email: "admin@gmail.com",
+              });
+            } else {
+              res
+                .status(400)
+                .send({ success: false, msg: "Something went wrong!" });
+            }
+          });
         }
-        await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
-
-        await Order.updateOne(
-          { _id: new mongoose.Types.ObjectId(orderId) },
-          { orderStatus: "PLACED" }
-        ).lean();
-        res.status(200).json({
-          status: true,
-          msg: "Order created for COD",
-        });
-
-        // FOR ONLINE PAYMENT
-      } else if (req.body.paymentMethod === "razorpay") {
-        console.log("online");
-
-        const amount = grandAmount * 100;
-        console.log("amount" + amount);
-        const options = {
-          amount: amount,
-          currency: "INR",
-          receipt: orderId,
-        };
-        console.log("checking.......");
-        razorpay.orders.create(options, (err, order) => {
-          console.log(err);
-          if (!err) {
-            console.log("order sending");
-            res.status(200).send({
-              success: true,
-              msg: "Order created",
-              order_id: order.id,
-              amount: amount,
-              products: userreq.cart,
-              receipt: orderId,
-              key_id: RAZORPAY_ID_KEY,
-              contact: "9998887776",
-              name: "admin",
-              email: "admin@gmail.com",
-            });
-          } else {
-            res
-              .status(400)
-              .send({ success: false, msg: "Something went wrong!" });
-          }
-        });
       }
     }
   } catch (error) {
@@ -266,12 +289,12 @@ const crypto = require("crypto");
 
 const verifyPayment = async (req, res) => {
   try {
-    console.log("this is id:", req.body.orderId);
+    // console.log("this is id:", req.body.orderId);
     const kk = await Order.find({
       _id: new mongoose.Types.ObjectId(req.body.orderId),
     }).lean();
-    if (kk) console.log(kk);
-    console.log(req.body.orderId);
+    // if (kk) console.log(kk);
+    // console.log(req.body.orderId);
     const hmac = crypto.createHmac("sha256", RAZORPAY_SECRET_KEY);
     hmac.update(
       req.body.payment.razorpay_order_id +
@@ -291,10 +314,10 @@ const verifyPayment = async (req, res) => {
     const calculatedSignature = hmac.digest("hex");
 
     if (calculatedSignature === req.body.payment.razorpay_signature) {
-      console.log(typeof req.body.orderId);
+      // console.log(typeof req.body.orderId);
 
       const products = req.body.products;
-      console.log(products);
+      // console.log(products);
       for (const cartItem of products) {
         const product = await Product.findById(cartItem.productId);
 
@@ -311,7 +334,7 @@ const verifyPayment = async (req, res) => {
         { _id: new mongoose.Types.ObjectId(req.body.orderId) },
         { $set: { paymentStatus: "COMPLETED", orderStatus: "PLACED" } }
       ).lean();
-      console.log("order placedddddd");
+      // console.log("order placedddddd");
 
       res.status(200).json({ status: "success", msg: "Payment verified" });
     } else {
@@ -329,7 +352,7 @@ const orderCancellation = async (req, res) => {
   try {
     const id = req.params.id;
     const order = await Order.findById(id);
-    console.log(order.products[0]);
+    // console.log(order.products[0]);
     for (const item of order.products) {
       const product = await Product.findById(item.productId);
 
@@ -339,6 +362,26 @@ const orderCancellation = async (req, res) => {
       }
     }
     await order.updateOne({ orderStatus: "CANCELLED" });
+    
+    const user = await User.findById(req.session.user_id)
+    const wallet = order.paidAmount; 
+    if(user.wallet > 0){
+      await User.findOneAndUpdate({_id : req.session.user_id},{$inc : {wallet : wallet}})
+    }else{
+
+      await User.findOneAndUpdate({_id : req.session.user_id},{$set : {wallet : wallet}})
+    }
+
+    const orderId = order._id;
+    const amount = order.paidAmount;
+    const transcationType = 'CREDIT';
+    const reasonType = 'CANCELLED';
+
+    user.walletTranscation.push({orderId,amount,transcationType,reasonType})
+    await user.save();
+
+    // console.log(user.wallet);
+
     res.redirect("/user-account");
   } catch (error) {
     console.error(error);
@@ -361,8 +404,8 @@ const returnProduct = async (req, res) => {
     const order = await Order.findById({
       _id: new mongoose.Types.ObjectId(id),
     });
-    console.log(reason);
-    console.log("order ID" + req.body.id);
+    // console.log(reason);
+    // console.log("order ID" + req.body.id);
     await Order.findByIdAndUpdate(
       { _id: new mongoose.Types.ObjectId(id) },
       {
@@ -373,6 +416,22 @@ const returnProduct = async (req, res) => {
         },
       }
     ).lean();
+
+    const user = await User.findById(req.session.user_id)
+    const wallet = order.paidAmount; 
+    if(user.wallet > 0){
+      await User.findOneAndUpdate({_id : req.session.user_id},{$inc : {wallet : wallet}})
+    }else{
+
+      await User.findOneAndUpdate({_id : req.session.user_id},{$set : {wallet : wallet}})
+    }
+    const orderId = order._id;
+    const amount = order.paidAmount;
+    const transcationType = 'CREDIT';
+    const reasonType = 'RETURNED';
+
+    user.walletTranscation.push({orderId,amount,transcationType,reasonType})
+    await user.save();
     for (const item of order.products) {
       const product = await Product.findById(item.productId);
 
@@ -381,6 +440,7 @@ const returnProduct = async (req, res) => {
         await product.save();
       }
     }
+    
 
     return res.status(200).json({ success: true });
   } catch (error) {

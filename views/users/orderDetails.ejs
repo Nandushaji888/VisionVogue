@@ -190,8 +190,7 @@
                                     data-bs-orderid="<%= order?._id %>" id="orderCancel">Return Product</a>
 
                                 <%}%>
-                                    <%}else if(order.orderStatus=="PLACED" || order.orderStatus=="SHIPPED" ||
-                                        order.orderStatus=="PENDING" ){%>
+                                    <%}else if(order.orderStatus=="PLACED" || order.orderStatus=="SHIPPED" ){%>
                                         <button  class="button my-4" onclick="orderCancel('<%=order._id%>')">Cancel this
                                             Order</button>
                                         <%}%>

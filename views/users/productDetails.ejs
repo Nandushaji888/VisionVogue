@@ -1,4 +1,7 @@
 <%- include('../partials/home/home-header.ejs') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+
                  
     <main class="main">
         <div class="page-header breadcrumb-wrap">
@@ -77,7 +80,7 @@
                                         <div class="product_sort_info font-xs mb-30">
                                             <ul>
                                                 <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
-                                                <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 7 Day Return Policy</li>
+                                                <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 3 Day Return Policy</li>
                                                 <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                             </ul>
                                         </div>
@@ -112,14 +115,27 @@
                                           <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                           <div class="detail-extralink">
                                             <form action="/add-to-cart" method="post" class="d-flex align-items-center">
-                                                <div class="form-outline" style="width: 70px;">
+                                                <!-- <div class="form-outline" style="width: 70px;">
                                          
                                                   <input value="1" min="1" max="<%= product?.stock%>" type="number" id="quantity" name="quantity" class="qty-val" />
-                                                </div>
+                                                </div> -->
                                               
                                                 <input type="hidden" class="productId" name="productId" value="<%= product?._id %>">
-                                              
-                                                <button type="submit" class="button button-add-to-cart mx-2">Add to cart</button>
+                                                <input type="hidden" class="quantity" name="quantity" value="1">
+                                              <%if( product?.stock > 0){%>
+                                                <div class="product-extra-link2">
+                                                    <button type="submit" class="button button-add-to-cart">Add to cart</button>
+                                                    
+                                                    <a onclick="addToWishlist('<%=product?._id%>','<%=user?._id%>')" aria-label="Add To Wishlist" class="action-btn hover-up" ><i class="fi-rs-heart"></i></a>
+                                                </div>
+
+                                                <%}else{%>
+                                                    <div class="product-extra-link2">
+                                                        <button disabled class="btn btn-disabled">Add to cart</button>
+                                                        <a onclick="addToWishlist('<%=product?._id%>','<%=user?._id%>')" aria-label="Add To Wishlist" class="action-btn hover-up" ><i class="fi-rs-heart"></i></a>
+                                                    </div>
+                                                    <%}%>
+                                                    
                                               </form>
                                               
                                             </div>
@@ -130,9 +146,12 @@
                                             <% if( product?.stock > 15){%>
                                             <li>Availability:<span class="in-stock text-primary ml-5">In Stock</span></li>
 
-                                            <%}else{%>
-                                                <li>Availability:<span class="in-stock text-danger ml-5">Only few left</span></li>
-                                                <%}%>
+                                            <%}else if( product?.stock < 1){%>
+                                                <li>Availability:<span class="in-stock text-danger ml-5">Out of Stock</span></li>
+                                                <%}else{%>
+                                                    <li>Availability:<span class="in-stock text-danger ml-5">Only few left</span></li>
+
+                                                    <%}%>
                                         </ul>
                                     </div>
                                     <!-- Detail Info -->
@@ -162,4 +181,58 @@
                                   
         </section>
     </main>
+
+
+    <script>
+        function addToWishlist(productId, userId) {
+            if (!userId) {
+                Swal.fire(
+                    'Login',
+                    'User need to Login for further proceeding',
+                    'warning'
+                ).then(() => {
+
+                    window.location.href = "/login"
+                })
+
+            }
+
+            $.ajax({
+                url: `/add-to-wishlist?productId=${productId}`,
+                method: 'get',
+                success: function (res) {
+                    if (res.success1) {
+                        Swal.fire(
+                            'Done!',
+                            'Item added to your wishlist.',
+                            'success'
+                        )
+                        
+                        .then(() => {
+                            // alert(res.length)
+                            if (res.length && res.length == 1) {
+                                // alert('res.length')
+                                window.location.reload()
+                                document.getElementById('wishlistLength').innerHTML = 1;
+                            } else {
+                                // alert(res.length)
+                                const number = document.getElementById('wishlistLength').innerHTML
+                                document.getElementById('wishlistLength').innerHTML = parseInt(number) + 1;
+                            }
+                        })
+
+
+                    } else if (res.success) {
+                        Swal.fire(
+                            'Alert',
+                            'Item already exists in wishlist',
+                            'question'
+                        );
+                    }
+                }
+            })
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
     <%- include('../partials/home/home-footer.ejs') %>
