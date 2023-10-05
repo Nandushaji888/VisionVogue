@@ -253,7 +253,9 @@
                                             src="/assets/imgs/theme/icons/icon-heart.svg">
                                             <%if(user && user.wishlist?.length > 0){%>
                                                 <span value="<%=user.wishlist?.length%>" id="wishlistLength"  class="pro-count blue"><%=user.wishlist?.length%></span>
-                                                <%}%>
+                                                <%}else{%>
+                                                    <span  id="wishlistLength"  class="pro-count blue">0</span>
+                                                    <%}%>
                                                     <!-- <span id="wishlistLength"></span> -->
                                                
                                     </a>
@@ -263,9 +265,9 @@
                                         <img alt="Evara" src="/assets/imgs/theme/icons/icon-cart.svg">
                                         
                                         <%if(user && user.cart?.length > 0){%>
-                                        <span class="pro-count blue"><%=user.cart?.length%></span>
+                                        <span class="pro-count blue" id="cartLength"><%=user.cart?.length%></span>
                                         <%}else{%>
-                                            <!-- <span class="pro-count blue"></span> -->
+                                            <span class="pro-count blue" id="cartLength">0</span>
                                             <%}%>
                                     </a>
                                     <!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">

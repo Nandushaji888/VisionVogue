@@ -49,7 +49,7 @@ user_route.get('/category/:id',userController.categoryWiseProducts)
 
 //user cart
 user_route.get('/cart',auth.isLogin,cartController.loadCart)
-user_route.post('/add-to-cart',auth.isLogin,cartController.addToCart)
+user_route.get('/add-to-cart',auth.isLogin,cartController.addToCart)
 user_route.post('/change-quantity',auth.isLogin,cartController.changeQuantity)
 user_route.post ('/remove-cart',auth.isLogin,cartController.deleteCartItem)
 

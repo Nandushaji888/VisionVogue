@@ -6,39 +6,29 @@ const Order = require("../../models/orderModel");
 // item adding to cart
 const addToCart = async (req, res) => {
   try {
-    // console.log(req.body);
-    const productId = req.body.productId;
-    const quantity = parseInt(req.body.quantity);
-
-    if (isNaN(quantity) || quantity <= 0) {
-      res.status(400).json({ message: "Invalid quantity" });
-    }
+    console.log(req.query);
+    const productId = req.query.productId;
+    const quantity = 1;
     const product = await Product.findById(productId);
     const price = product.price;
-    const userId = req.session.user_id;
-    // console.log("userId------" + userId);
-    const user = await User.findById(userId);
-
-    if (!user) {
-      res.status(404).json({ message: "user not found" });
-    }
-
+    const user = await User.findById(req.session.user_id);
+    let nonrepeat;
     const existingItem = user.cart.find((item) =>
       item.productId.equals(productId)
     );
 
     if (existingItem) {
       existingItem.quantity += quantity;
+      nonrepeat = false;
     } else {
+      nonrepeat = true;
       user.cart.push({ productId, quantity, price });
     }
 
     await user.save();
 
-    // console.log("product added to cart");
 
-    res.redirect("/cart");
-    // res.redirect('/product/'+productId);
+    res.status(200).json({success : true,nonrepeat : nonrepeat})
   } catch (error) {
     console.log(error.message);
   }

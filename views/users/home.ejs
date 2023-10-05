@@ -146,10 +146,11 @@
                                                     ₹ <%=products[i]?.price%>
                                                 </span>
                                             </div>
-                                            <!-- <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                    href="/add-to-cart/<%=products[i]?._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
-                                            </div> -->
+                                            <div class="product-action-1 show">
+                                                <a onclick="addToCart('<%=products[i]?._id%>','<%=user?._id%>')"
+                                                    aria-label="Add To Cart" class="action-btn hover-up"><i
+                                                        class="fi-rs-shopping-bag-add"></i></a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -362,18 +363,19 @@
                             'Item added to your wishlist.',
                             'success'
                         )
-                        
-                        .then(() => {
-                            if (res.length && res.length == 1) {
-                                // alert('res.length')
-                                window.location.reload()
-                                document.getElementById('wishlistLength').innerHTML = 1;
-                            } else {
+
+                            .then(() => {
+
+                                // if (res.length) {
+                                //     // alert('res.length')
+                                //     window.location.reload()
+                                //     document.getElementById('wishlistLength').innerHTML = 1;
+                                // } else {
                                 // alert(res.length)
                                 const number = document.getElementById('wishlistLength').innerHTML
                                 document.getElementById('wishlistLength').innerHTML = parseInt(number) + 1;
-                            }
-                        })
+                                // }
+                            })
 
 
                     } else if (res.success) {
@@ -386,7 +388,44 @@
                 }
             })
         }
+
+
+        function addToCart(productId, userId) {
+            if (!userId) {
+                Swal.fire(
+                    'Login',
+                    'User need to Login for further proceeding',
+                    'warning'
+                ).then(() => {
+
+                    window.location.href = "/login"
+                })
+
+            }
+
+            $.ajax({
+                url: `/add-to-cart?productId=${productId}`,
+                method: 'get',
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire(
+                            'Done!',
+                            'Item added to your wishlist.',
+                            'success'
+                        )
+           
+
+                    }
+                    if(res.nonrepeat) {
+                        const number = document.getElementById('cartLength').innerHTML
+                        document.getElementById('cartLength').innerHTML = parseInt(number) + 1;
+                    }
+                }
+
+            })
+        }
     </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
 
