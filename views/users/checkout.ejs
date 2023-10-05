@@ -90,8 +90,8 @@
                                             <div class="card-header">
                                                 <!-- <input class="form-check-input" value="<%= JSON.stringify(user.address[i]) %>" type="radio" name="address" id="address"> -->
                                                 <input class="form-check-input" required
-                                                    value='<%= JSON.stringify(user.address[i]) %>' type="radio" 
-                                                    name="address" id="address<%= i %>" <%= i === 0 ? 'checked' : '' %>>
+                                                    value='<%= JSON.stringify(user.address[i]) %>' type="radio"
+                                                    name="address" id="address<%= i %>" <%=i===0 ? 'checked' : '' %>>
 
 
                                                 <label class="form-check-label" for="flexRadioDefault1">
@@ -281,6 +281,18 @@
                     method: "post",
                     data: formData,
                     success: function (res) {
+                        if (res.status2) {
+                            Swal.fire(
+                                'Stock Changed!',
+                                'Stock of some of the items in the cart have been decreased.',
+                                'error'
+                            ).then(() => {
+                                window.location.href = "http://localhost:3000/cart"
+                            })
+                        }
+
+
+
                         // alert('before call')
                         if (res.success) {
                             // alert('after call')
@@ -338,7 +350,7 @@
                                 'Cart Changed!',
                                 'Items in your cart has been changed!',
                                 'error'
-                            ).then(function(){
+                            ).then(function () {
                                 window.location.href = "http://localhost:3000/cart"
 
                             })

@@ -120,6 +120,26 @@ const loadPlaceOrder = async (req, res) => {
 
 const postOrder = async (req, res) => {
   try {
+    const user = await User.findById(req.session.user_id).populate("cart.productId");
+
+    if (user && user.cart) {
+      let allItemsInStock = true;
+    
+      for (const cartItem of user.cart) {
+        const product = await Product.findById(cartItem.productId);
+    
+        if (!product || cartItem.quantity > product.stock) {
+          allItemsInStock = false;
+          break;
+        }
+      }
+    if(!allItemsInStock) {
+      return res.status(200).json({status2:true})
+    }
+    
+    }
+
+
     // console.log(req.body.Coupon);
     let couponCode;
     const consumedUser = await Coupon.findOne({

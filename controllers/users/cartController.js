@@ -58,10 +58,7 @@ const loadCart = async (req, res) => {
         parseInt(userCart.cart[i].productId.price) *
           parseInt(userCart.cart[i].quantity);
     }
-    // console.log(grandTotal);
-    // const coupons = await Coupon.find({ users: { $ne: req.session.user_id}});
 
-    // console.log('ckfjkhsg'+coupons);
 
     const user = await User.findById(req.session.user_id);
     const categories = await Category.find();
@@ -87,6 +84,27 @@ const loadCart = async (req, res) => {
 //changing quntity in
 const changeQuantity = async (req, res) => {
   try {
+
+    console.log("quantity");
+    console.log(req.body);
+    const productId = req.body.productId 
+    const product = await Product.findById(req.body.productId)
+    console.log(product.stock);
+    const user =await User.findById(req.session.user_id).populate("cart.productId")
+    console.log(user.cart);
+    if (user && user.cart) {
+      const cartProduct = user.cart.find(item => item.productId.equals(productId));
+      if (cartProduct) {
+        console.log("cartProduct.quantity");
+        console.log(cartProduct.quantity);
+
+        if(cartProduct.quantity >= product.stock){
+          res.status(200).json({ status: false });
+        }
+      }}
+
+
+
     const data = await User.updateOne(
       {
         _id: req.session.user_id,
@@ -102,7 +120,7 @@ const changeQuantity = async (req, res) => {
       }
     );
 
-    res.status(200).json({ status: "success" });
+    res.status(200).json({ status: true });
   } catch (error) {
     console.log(error.message);
   }
