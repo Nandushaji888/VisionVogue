@@ -207,9 +207,15 @@
 
                                     <div class="tab-pane fade " id="wallet" role="tabpanel"
                                         aria-labelledby="wallet-tab">
-                                       <div> <h5>Wallet Balance : <span style="font-size: 20px;">₹ <%=user.wallet%> </span></h5></div>
+                                        <div>
+                                            <h5>Wallet Balance : <span style="font-size: 20px;">₹ <%=user.wallet%>
+                                                </span></h5>
+                                        </div>
                                         <div class="col-lg-12 d-flex justify-content-end">
-                                            
+                                            <!-- <input style="width: 200px;" type="text" id="searchInput"
+                                                placeholder="Search">
+                                            <button id="searchButton"
+                                                class="btn btn-fill-out submit btn-medium ms-4 mb-4 ">Search</button> -->
                                             <form action="/search-orderid?id">
                                                 <%if(search){var searchvalue=search;}%>
                                                     <input style="width: 200px;" type="text" name="Search"
@@ -217,8 +223,8 @@
                                                         class="form-control bg-white mb-4">
                                             </form>
 
-                                            <a class="btn btn-fill-out submit btn-medium ms-4 mb-4 "
-                                                href="/user-wallet">Refresh</a>
+                                            <!-- <a class="btn btn-fill-out submit btn-medium ms-4 mb-4 "
+                                                href="/user-wallet">Refresh</a> -->
                                         </div>
                                         <div class="card">
                                             <div>
@@ -250,21 +256,23 @@
                                                                                 <%= rowNumber %>
                                                                         </td>
                                                                         <td>
-                                                                            <%=String(user?.walletTranscation[i].createdAt).slice(4,16)%>                                                                        </td>
+                                                                            <%=String(user?.walletTranscation[i]?.createdAt).slice(4,16)%>
+                                                                        </td>
                                                                         <td>
-                                                                            <%= user?.walletTranscation[i].orderId%>
+                                                                            <%= user?.walletTranscation[i]?.orderId%>
 
                                                                         </td>
                                                                         <td>
-                                                                            <%= user?.walletTranscation[i].reasonType%>
+                                                                            <%= user?.walletTranscation[i]?.reasonType%>
                                                                         </td>
-                                                                        <td>                                                                            
-                                                                            <%= user?.walletTranscation[i].transcationType%>
+                                                                        <td>
+                                                                            <%=
+                                                                                user?.walletTranscation[i]?.transcationType%>
 
                                                                         </td>
                                                                         <td>
-                                                                            ₹ <%= user?.walletTranscation[i].amount%>
-  
+                                                                            ₹ <%= user?.walletTranscation[i]?.amount%>
+
                                                                         </td>
                                                                     </tr>
                                                                     <%}%>
@@ -500,6 +508,76 @@
 
             });
         }
+
+
+
+        // JavaScript for handling the AJAX request
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const searchButton = document.getElementById('searchButton');
+        //     const searchInput = document.getElementById('searchInput');
+
+        //     searchButton.addEventListener('click', () => {
+        //         const searchValue = searchInput.value.trim();
+        //         searchOrders(searchValue);
+        //     });
+
+        //     // Function to send the AJAX request
+        //     function searchOrders(query) {
+        //         // Make an AJAX request to your server
+        //         fetch(`/search-order?search=${query}`)
+        //             .then((response) => response.json())
+        //             .then((data) => {
+        //                 if (data.error) {
+        //                     // Handle the error (e.g., display an error message on your page)
+        //                     console.error(data.error);
+        //                     return;
+        //                 }
+
+        //                 updateOrderTable(data);
+        //             })
+        //             .catch((error) => {
+        //                 console.error(error);
+        //             });
+        //     }
+
+        //     // Function to update the order table with new data
+        //     function updateOrderTable(data) {
+        //         // Update the table with the filtered order data
+        //         // You may need to modify this part according to your page structure
+        //     }
+        // });
+
+
+        // function updateOrderTable(data) {
+        //     const tableBody = document.querySelector('#orderTable tbody');
+
+        //     // Clear existing table rows
+        //     tableBody.innerHTML = '';
+
+        //     // Check if there are any matching orders
+        //     if (data.length === 0) {
+        //         const noResultsRow = document.createElement('tr');
+        //         noResultsRow.innerHTML = '<td colspan="6">No matching orders found.</td>';
+        //         tableBody.appendChild(noResultsRow);
+        //         return;
+        //     }
+
+        //     // Loop through the filtered orders and populate the table
+        //     data.forEach((order, index) => {
+        //         const row = document.createElement('tr');
+        //         row.innerHTML = `
+        //      <td>${index + 1}</td>
+        //       <td>${String(order.createdAt).slice(4, 16)}</td>
+        //      <td>${order.orderId}</td>
+        //       <td>${order.reasonType}</td>
+        //       <td>${order.transcationType}</td>
+        //       <td>₹ ${order.amount}</td>
+        //          `;
+        //         tableBody.appendChild(row);
+        //     });
+        // }
+
+
 
     </script>
     <%- include('../partials/user/userFooter.ejs') %>

@@ -1,9 +1,11 @@
 <%- include('../partials/home/home-header.ejs') %>
 
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+    <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+
 
 
 
@@ -51,14 +53,14 @@
                             <p class="mb-1">
                                 Payment Type : <%= order.paymentMethod%>
                             </p>
-                            <%if(order.paymentMethod == 'razorpay'){%>
+                            <%if(order.paymentMethod=='razorpay' ){%>
                                 <%if(order.paymentOrderId ){%>
 
-                            <p class="mb-1">
-                                Transaction ID :<%=String(order.paymentOrderId).slice(6,20)%> 
-                            </p>
-                            <%}%>
-                            <%}%>
+                                    <p class="mb-1">
+                                        Transaction ID :<%=String(order.paymentOrderId).slice(6,20)%>
+                                    </p>
+                                    <%}%>
+                                        <%}%>
                         </div>
                     </article>
                 </div> <!-- col// -->
@@ -106,94 +108,105 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% let subtotal = 0%>
-                                <%for(let i=0; i < order.products.length; i++){%>
-                                    <tr>
-                                        <td>
-                                            <%= i+1%>
-                                        </td>
-
-                                        <td>
-                                            <%=String(order.createdAt).slice(4,16)%>
-                                        </td>
-                                        <td>
-                                            <a class="itemside" href="#">
-                                                <div class="left">
-                                                    <img src="/assets2/imgs/products/<%=order.products[i].productId.image[0]%>"
-                                                        width="40" height="40" class="img-xs" alt="Item">
-                                                </div>
-                                                <div class="info"><a
-                                                        href="/product/<%=order.products[i].productId._id%>">
-                                                        <%=order.products[i].productId.name%>
-                                                    </a> </div>
-                                            </a>
-                                        </td>
-                                        <td>₹ <%=order.products[i].productId.price%>
-                                        </td>
-                                        <td>
-                                            <%=order.products[i].quantity%>
-                                        </td>
-                                        <td id="payment-status">
-                                            <%=order.paymentStatus%>
-                                        </td>
-
-
-                                        <td class="text-end">₹ <%=order.products[i].productId.price
-                                                *order.products[i].quantity %>
-                                        </td>
-                                        <% subtotal=subtotal+(order.products[i].productId.price *
-                                        order.products[i].quantity )%>
-                                    </tr>
-                                    <%}%>
+                                <% let subtotal=0%>
+                                    <%for(let i=0; i < order.products.length; i++){%>
                                         <tr>
-                                            <td colspan="12">
-                                                <article class="float-end">
-                                                    <dl class="dlist d-flex">
-                                                        <dt>Subtotal:</dt>
-                                                        <dd> <span>₹ </span>
-                                                            <%=subtotal%>
-                                                        </dd>
-                                                    </dl>
-                                                    <dl class="dlist d-flex">
-                                                        <dt>Discount:</dt>
-                                                        <dd><%= subtotal - order.paidAmount  %></dd>
-                                                    </dl>
-                                                    <dl class="dlist d-flex">
-                                                        <dt>Shipping cost:</dt>
-                                                        <dd>0</dd>
-                                                    </dl>
-                                                    <dl class="dlist d-flex">
-                                                        <dt>Grand total:</dt>
-                                                        <dd> <b class="h5">
-                                                                <span>₹ </span>
-                                                                <%=order.paidAmount%>
-                                                            </b> </dd>
-                                                    </dl>
-                                                    <!-- <dl class="dlist d-flex">
+                                            <td>
+                                                <%= i+1%>
+                                            </td>
+
+                                            <td>
+                                                <%=String(order.createdAt).slice(4,16)%>
+                                            </td>
+                                            <td>
+                                                <a class="itemside" href="#">
+                                                    <div class="left">
+                                                        <img src="/assets2/imgs/products/<%=order.products[i].productId.image[0]%>"
+                                                            width="40" height="40" class="img-xs" alt="Item">
+                                                    </div>
+                                                    <div class="info"><a
+                                                            href="/product/<%=order.products[i].productId._id%>">
+                                                            <%=order.products[i].productId.name%>
+                                                        </a> </div>
+                                                </a>
+                                            </td>
+                                            <td>₹ <%=order.products[i].productId.price%>
+                                            </td>
+                                            <td>
+                                                <%=order.products[i].quantity%>
+                                            </td>
+                                            <td id="payment-status">
+                                                <%=order.paymentStatus%>
+                                            </td>
+
+
+                                            <td class="text-end">₹ <%=order.products[i].productId.price
+                                                    *order.products[i].quantity %>
+                                            </td>
+                                            <% subtotal=subtotal+(order.products[i].productId.price *
+                                                order.products[i].quantity )%>
+                                        </tr>
+                                        <%}%>
+                                            <tr>
+                                                <td colspan="12">
+                                                    <article class="float-end">
+                                                        <dl class="dlist d-flex">
+                                                            <dt>Subtotal:</dt>
+                                                            <dd> <span>₹ </span>
+                                                                <%=subtotal%>
+                                                            </dd>
+                                                        </dl>
+                                                        <dl class="dlist d-flex">
+                                                            <dt>Discount:</dt>
+                                                            <dd>
+                                                                <%= subtotal - order.paidAmount %>
+                                                            </dd>
+                                                        </dl>
+                                                        <dl class="dlist d-flex">
+                                                            <dt>Shipping cost:</dt>
+                                                            <dd>0</dd>
+                                                        </dl>
+                                                        <dl class="dlist d-flex">
+                                                            <dt>Grand total:</dt>
+                                                            <dd> <b class="h5">
+                                                                    <span>₹ </span>
+                                                                    <%=order.paidAmount%>
+                                                                </b> </dd>
+                                                        </dl>
+                                                        <!-- <dl class="dlist d-flex">
                                                 <dt class="text-muted">Status:</dt>
                                                 <dd>
                                                     <span class="badge rounded-pill alert-success text-success">Payment done</span>
                                                 </dd>
                                             </dl> -->
-                                                </article>
-                                            </td>
-                                        </tr>
+                                                    </article>
+                                                </td>
+                                            </tr>
                             </tbody>
                         </table>
+
                     </div> <!-- table-responsive// -->
                     <%if(order.orderStatus=="DELIVERED" ){%>
                         <% const currentDate=new Date(); const threeDaysInMilliseconds=3 * 24 * 60 * 60 * 1000; %>
 
                             <%if(currentDate - order.deliveredDate < threeDaysInMilliseconds){%>
-                                <a class="btn btn-primary m-5" data-bs-toggle="modal" data-bs-target="#reasonModal"
-                                    data-bs-title="return" data-bs-route="/return"
+                                <a class="btn btn-primary mx-3 my-5" data-bs-toggle="modal"
+                                    data-bs-target="#reasonModal" data-bs-title="return" data-bs-route="/return"
                                     data-bs-orderid="<%= order?._id %>" id="orderCancel">Return Product</a>
 
                                 <%}%>
                                     <%}else if(order.orderStatus=="PLACED" || order.orderStatus=="SHIPPED" ){%>
-                                        <button  class="button my-4" onclick="orderCancel('<%=order._id%>')">Cancel this
+                                        <button class="button my-4" onclick="orderCancel('<%=order._id%>')">Cancel this
                                             Order</button>
                                         <%}%>
+
+
+
+                                            <%if(order.orderStatus=="DELIVERED"){%>
+                                                <button id="invoice" class="btn btn-secondary "
+                                                    onclick="invoice('<%=order._id%>')">Print invoice</button>
+                                                <%}%>
+
 
 
                 </div> <!-- col// -->
@@ -220,7 +233,7 @@
                 <div class="modal-body">
                     <p class="text-center reason-prompt">Are you sure you want to return this product? <br>Please do
                         mention a reason for returning .</p>
-        <form id="reasonForm" action="/return" method="post" onsubmit="returnSubmit(event)">
+                    <form id="reasonForm" action="/return" method="post" onsubmit="returnSubmit(event)">
                         <div class="mb-3">
                             <input type="hidden" class="form-control" id="orderId" name="orderId"
                                 value="<%=order._id%>">
@@ -234,7 +247,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" form="reasonForm" class="btn btn-primary" >Submit &
+                    <button type="submit" form="reasonForm" class="btn btn-primary">Submit &
                         Confirm</button>
                 </div>
                 </form>
@@ -285,9 +298,9 @@
             event.preventDefault()
             const id = document.getElementById('orderId').value
             const reason = document.getElementById('reason').value
-            alert(id)
+            // alert(id)
             try {
-                alert('after try')
+                // alert('after try')
                 $.ajax({
                     url: '/return',
                     method: 'POST',
@@ -296,7 +309,7 @@
                         reason
                     },
                     success: function (res) {
-                        
+
                         if (res.success) {
                             $('#reasonModal').modal('hide');
                             Swal.fire({
@@ -310,6 +323,8 @@
                             document.getElementById('orderStatus').innerHTML = 'Order Status : RETURNED'
                             document.getElementById('payment-status').innerHTML = 'REFUNDED'
                             document.getElementById('orderCancel').style.display = 'none'
+                            document.getElementById('invoice').style.display = 'none'
+
 
                         }
                     }
@@ -363,6 +378,21 @@
             } catch (error) {
                 console.error(error);
             }
+        }
+
+
+
+        function invoice(orderId) {
+            $.ajax({
+                url: '/invoice-download',
+                method: 'post',
+                data : {orderId},
+                success: function (res) {
+                    easyinvoice.createInvoice(res, function (result) {
+                        easyinvoice.download('myInvoice.pdf', result.pdf);
+                    })
+                }
+            })
         }
     </script>
 

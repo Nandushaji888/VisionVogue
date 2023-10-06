@@ -63,6 +63,9 @@ admin_route.post('/login',adminController.verifyLogin)
 admin_route.get('/logout',auth.isLogin, adminController.adminLogout)
 
 
+admin_route.get('/create-report',auth.isLogin,adminController.generateReport)
+
+
 admin_route.get('/category',auth.isLogin,categoryController.categoryLoad)
 admin_route.post('/category',categoryUpload.single("image") , categoryController.addCategory)
 // admin_route.post('/category-search',categoryController.searchCategory)

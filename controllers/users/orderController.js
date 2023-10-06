@@ -120,25 +120,25 @@ const loadPlaceOrder = async (req, res) => {
 
 const postOrder = async (req, res) => {
   try {
-    const user = await User.findById(req.session.user_id).populate("cart.productId");
+    const user = await User.findById(req.session.user_id).populate(
+      "cart.productId"
+    );
 
     if (user && user.cart) {
       let allItemsInStock = true;
-    
+
       for (const cartItem of user.cart) {
         const product = await Product.findById(cartItem.productId);
-    
+
         if (!product || cartItem.quantity > product.stock) {
           allItemsInStock = false;
           break;
         }
       }
-    if(!allItemsInStock) {
-      return res.status(200).json({status2:true})
+      if (!allItemsInStock) {
+        return res.status(200).json({ status2: true });
+      }
     }
-    
-    }
-
 
     // console.log(req.body.Coupon);
     let couponCode;
@@ -159,7 +159,6 @@ const postOrder = async (req, res) => {
     // console.log(userreq.cart);
     // console.log("oldCart");
     // console.log(oldCart);
-
 
     if (JSON.stringify(oldCart) !== JSON.stringify(userreq.cart)) {
       delete req.session.cart;
@@ -382,22 +381,29 @@ const orderCancellation = async (req, res) => {
       }
     }
     await order.updateOne({ orderStatus: "CANCELLED" });
-    
-    const user = await User.findById(req.session.user_id)
-    const wallet = order.paidAmount; 
-    if(user.wallet > 0){
-      await User.findOneAndUpdate({_id : req.session.user_id},{$inc : {wallet : wallet}})
-    }else{
 
-      await User.findOneAndUpdate({_id : req.session.user_id},{$set : {wallet : wallet}})
+    const user = await User.findById(req.session.user_id);
+    const wallet = order.paidAmount;
+    if (user.wallet > 0) {
+      await User.findOneAndUpdate(
+        { _id: req.session.user_id },
+        { $inc: { wallet: wallet } }
+      );
+    } else {
+      await User.findOneAndUpdate(
+        { _id: req.session.user_id },
+        { $set: { wallet: wallet } }
+      );
     }
 
-    const orderId = order._id;
-    const amount = order.paidAmount;
-    const transcationType = 'CREDIT';
-    const reasonType = 'CANCELLED';
+    let transData = {
+      orderId: order._id,
+      amount: order.paidAmount,
+      transcationType: "CREDIT",
+      reasonType: "RETURNED",
+    };
 
-    user.walletTranscation.push({orderId,amount,transcationType,reasonType})
+    user.walletTranscation.push(transData);
     await user.save();
 
     // console.log(user.wallet);
@@ -437,20 +443,27 @@ const returnProduct = async (req, res) => {
       }
     ).lean();
 
-    const user = await User.findById(req.session.user_id)
-    const wallet = order.paidAmount; 
-    if(user.wallet > 0){
-      await User.findOneAndUpdate({_id : req.session.user_id},{$inc : {wallet : wallet}})
-    }else{
-
-      await User.findOneAndUpdate({_id : req.session.user_id},{$set : {wallet : wallet}})
+    const user = await User.findById(req.session.user_id);
+    const wallet = order.paidAmount;
+    if (user.wallet > 0) {
+      await User.findOneAndUpdate(
+        { _id: req.session.user_id },
+        { $inc: { wallet: wallet } }
+      );
+    } else {
+      await User.findOneAndUpdate(
+        { _id: req.session.user_id },
+        { $set: { wallet: wallet } }
+      );
     }
-    const orderId = order._id;
-    const amount = order.paidAmount;
-    const transcationType = 'CREDIT';
-    const reasonType = 'RETURNED';
+    let transData = {
+      orderId: order._id,
+      amount: order.paidAmount,
+      transactionType: "CREDIT",
+      reasonType: "RETURNED",
+    };
 
-    user.walletTranscation.push({orderId,amount,transcationType,reasonType})
+    user.walletTranscation.push(transData);
     await user.save();
     for (const item of order.products) {
       const product = await Product.findById(item.productId);
@@ -460,7 +473,6 @@ const returnProduct = async (req, res) => {
         await product.save();
       }
     }
-    
 
     return res.status(200).json({ success: true });
   } catch (error) {

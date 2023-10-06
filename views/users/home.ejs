@@ -147,7 +147,7 @@
                                                 </span>
                                             </div>
                                             <div class="product-action-1 show">
-                                                <a onclick="addToCart('<%=products[i]?._id%>','<%=user?._id%>')"
+                                                <a onclick="addToCart('<%=products[i]?._id%>','<%=user?._id%>','<%=products[i]?.stock%>')"
                                                     aria-label="Add To Cart" class="action-btn hover-up"><i
                                                         class="fi-rs-shopping-bag-add"></i></a>
                                             </div>
@@ -390,7 +390,7 @@
         }
 
 
-        function addToCart(productId, userId) {
+        function addToCart(productId, userId,stock) {
             if (!userId) {
                 Swal.fire(
                     'Login',
@@ -410,12 +410,13 @@
                     if (res.success) {
                         Swal.fire(
                             'Done!',
-                            'Item added to your wishlist.',
+                            'Item added to your Cart.',
                             'success'
                         )
            
 
                     }
+                    
                     if(res.nonrepeat) {
                         const number = document.getElementById('cartLength').innerHTML
                         document.getElementById('cartLength').innerHTML = parseInt(number) + 1;

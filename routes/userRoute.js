@@ -72,6 +72,8 @@ user_route.post('/reset-password',auth.isLogin,userController.resetPassword)
 user_route.post('/return',auth.isLogin,orderController.returnProduct)
 user_route.get('/search-orderid',auth.isLogin,userController.orderSearch)
 
+user_route.post('/invoice-download',auth.isLogin,userController.downloadInvoice)
+
 
 
 user_route.get('/priceLowTohigh',userController.priceLowTohigh)

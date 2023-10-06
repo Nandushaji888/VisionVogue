@@ -26,6 +26,8 @@ const addToCart = async (req, res) => {
     }
 
     await user.save();
+    // console.log('for checkingggg');
+    // console.log(user.cart);
 
 
     res.status(200).json({success : true,nonrepeat : nonrepeat})

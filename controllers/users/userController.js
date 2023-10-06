@@ -11,6 +11,8 @@ const phoneUtil = require("libphonenumber-js");
 const Coupon = require("../../models/couponModel");
 const Banner = require("../../models/bannerModel");
 
+var easyinvoice = require("easyinvoice");
+
 //for bcypting password
 const securePassword = async (password) => {
   try {
@@ -152,7 +154,7 @@ const loadLogin = async (req, res) => {
   try {
     const categories = await Category.find();
     const user = req.session.user_id;
-    console.log('hereeeee4');
+    console.log("hereeeee4");
     res.render("login", { user: user, categories: categories });
   } catch (error) {
     console.log(error.message);
@@ -313,7 +315,6 @@ const searchResult = async (req, res) => {
     console.log("count is " + count);
 
     const user = await User.findById(req.session.user_id);
-    
 
     res.render("categoryWiseProducts", {
       products: products,
@@ -608,7 +609,7 @@ const loadAccount = async (req, res) => {
     });
     const orders = await paginateQuery(orderData, page, limit).exec();
 
-    const userData = await User.findById(req.session.user_id)
+    const userData = await User.findById(req.session.user_id);
     const categories = await Category.find();
     // console.log(userData.address[0].city);
 
@@ -807,9 +808,50 @@ const orderSearch = async (req, res) => {
   }
 };
 
+// Add this to your Express routes
+// const orderSearch = async (req, res) => {
+//   try {
+//     const searchQuery = req.query.search;
+//     const customerId = req.session.user_id;
+
+//     // Implement your search logic here
+//     // Query the database to filter orders based on the searchQuery and customerId
+//     // You can use the searchQuery to filter orders in your Mongoose query
+//     var page = 1;
+//     if (req.query.page) {
+//       page = req.query.page;
+//     }
+//     const limit = 5;
+//     const filteredOrders = await Order.find({
+//       customerId,
+//       $or: [
+//         { reasonType: { $regex: new RegExp(searchQuery, "i") } },
+//         { amount: { $regex: new RegExp(searchQuery, "i") } },
+//       ],
+//     }).sort({ createdAt: -1 });
+
+//     const count = await Order.countDocuments({
+//       customerId,
+//       orderId: { $regex: new RegExp(search, "i") },
+//     });
+
+//     const orders = await paginateQuery(orderData, page, limit).exec();
+//     const userData = await User.findById(req.session.user_id);
+//     const categories = await Category.find();
+
+//     // Send the filtered orders as JSON response
+//     res.json(filteredOrders);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
 const loadWishlist = async (req, res) => {
   try {
-    const user = await User.findById(req.session.user_id).populate('wishlist.productId')
+    const user = await User.findById(req.session.user_id).populate(
+      "wishlist.productId"
+    );
     const categories = await Category.find({ isListed: true });
     res.render("wishlist", { user: user, categories: categories });
   } catch (error) {
@@ -836,12 +878,15 @@ const addToWishlist = async (req, res) => {
     );
 
     if (existingItem) {
-      res.status(200).json({success : true ,msg : 'Product already exists'})
+      res.status(200).json({ success: true, msg: "Product already exists" });
     } else {
       user.wishlist.push({ productId });
       await user.save();
-      res.status(200).json({success1 : true ,length : user?.wishlist.length,msg : 'Product added to your Wishlist'})
-
+      res.status(200).json({
+        success1: true,
+        length: user?.wishlist.length,
+        msg: "Product added to your Wishlist",
+      });
     }
   } catch (error) {
     console.error(error);
@@ -849,50 +894,47 @@ const addToWishlist = async (req, res) => {
   }
 };
 
-const removeWiishlist = async(req,res) => {
+const removeWiishlist = async (req, res) => {
   try {
     const id = req.query.id;
-    console.log('id '+id );
+    console.log("id " + id);
     const userId = req.session.user_id;
     const user = await User.findById(userId);
-    user.wishlist = user.wishlist.filter(
-      (item)=> !item._id.equals(id)
-    ) 
-    await user.save()
+    user.wishlist = user.wishlist.filter((item) => !item._id.equals(id));
+    await user.save();
     console.log(user.wishlist);
     res.status(200).json({ success: true });
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: "error", msg: "Cannot delete item from wishlist" });
+    res
+      .status(500)
+      .json({ status: "error", msg: "Cannot delete item from wishlist" });
   }
-}
-
+};
 
 const cartFromWishlist = async (req, res) => {
   try {
     const productId = req.query.productId;
-    const product = await Product.findById(productId)
-    const price = product.price
+    const product = await Product.findById(productId);
+    const price = product.price;
     const wishId = req.query.wishId;
     const userId = req.session.user_id;
     const user = await User.findById(userId);
 
     const quantity = 1;
     if (user.cart && Array.isArray(user.cart)) {
-      const existingItem = user.cart.find((item) =>
-        item.productId && item.productId.equals(productId)
+      const existingItem = user.cart.find(
+        (item) => item.productId && item.productId.equals(productId)
       );
-    
+
       if (existingItem) {
         existingItem.quantity += quantity;
       } else {
-        user.cart.push({ productId, quantity,price });
+        user.cart.push({ productId, quantity, price });
       }
     } else {
-      console.error('user.cart is not valid');
+      console.error("user.cart is not valid");
     }
-    
 
     // Remove the item from the wishlist based on wishId
     user.wishlist = user.wishlist.filter((item) => !item._id.equals(wishId));
@@ -907,11 +949,91 @@ const cartFromWishlist = async (req, res) => {
   }
 };
 
+const downloadInvoice = async (req, res) => {
+  try {
+    const orderId = req.body.orderId;
+    // console.log(orderId);
+    const order = await Order.findById(orderId).populate("products.productId");
 
+    // console.log("order");
+    // console.log(order);
+    // console.log(productId);
 
+    const product = order.products.map((item, i) => {
+      return {
+        quantity: parseInt(item.quantity),
+        discount: parseInt(order.couponDiscount),
+        total: parseInt(order.paidAmount),
+        description: item.productId.name,
+        price: parseInt(item.productId.price),
+        "tax-rate": 0,
+      };
+    });
 
+    // console.log("product");
+    // console.log(product);
+    var data = {
+      //   "images": {
+      //       "logo": "/assets/imgs/theme/logo1.png"
+      //  },
+      // Your own data
 
+      sender: {
+        company: "VisionVogue",
+        address: "Vison Nagar, Gandhi Street,78,Kadavanthra",
+        zip: "688535",
+        city: "Ernakulam",
+        state: "Kerala",
+        country: "India",
+      },
+      // Your recipient
+      client: {
+        company: order.shippingAddress.customerName,
+        address: order.shippingAddress.addressLine1,
+        zip: order.shippingAddress.zipcode,
+        city: order.shippingAddress.city,
+        state: order.shippingAddress.state,
+        country: "INDIA",
+      },
 
+      information: {
+        // Invoice number
+        number: order.orderId,
+        // Invoice data
+        date: String(order.createdAt).slice(4, 16),
+        // Invoice due date
+        "due-date":String(order.createdAt).slice(4, 16),
+      },
+      // The products you would like to see on your invoice
+      // Total values are being calculated automatically
+      products: product,
+      // The message you would like to display on the bottom of your invoice
+      "bottom-notice": "Kindly keep your invoice till warranty period.",
+      // Settings to customize your invoice
+      settings: {
+        currency: "INR", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
+        // "locale": "nl-NL", // Defaults to en-US, used for number formatting (See documentation 'Locales and Currency')
+        // "margin-top": 25, // Defaults to '25'
+        // "margin-right": 25, // Defaults to '25'
+        // "margin-left": 25, // Defaults to '25'
+        // "margin-bottom": 25, // Defaults to '25'
+        // "format": "A4", // Defaults to A4, options: A3, A4, A5, Legal, Letter, Tabloid
+        // "height": "1000px", // allowed units: mm, cm, in, px
+        // "width": "500px", // allowed units: mm, cm, in, px
+        // "orientation": "landscape", // portrait or landscape, defaults to portrait
+      },
+    };
+
+    console.log("data");
+    console.log(data);
+    res.json(data);
+  } catch (error) {
+    console.error(error.message);
+    res
+      .status(500)
+      .json({ status: "error", msg: "Unable to download invoice" });
+  }
+};
 module.exports = {
   loadSignup,
   sendOtpAndRenderRegistration,
@@ -940,5 +1062,6 @@ module.exports = {
   loadWishlist,
   addToWishlist,
   removeWiishlist,
-  cartFromWishlist
+  cartFromWishlist,
+  downloadInvoice,
 };

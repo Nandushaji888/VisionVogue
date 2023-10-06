@@ -159,6 +159,7 @@
                         <table class="table table-hover" id="dataTable">
                             <thead>
                                 <tr>
+                                    <th scope="col">No</th>
                                     <th scope="col">Date</th>
                                     <th>ID</th>
                                     <th scope="col">Name</th>
@@ -174,6 +175,7 @@
 
                                 <%for(let i = order.length-1; i>=0; i--){%>
                                 <tr>
+                                    <td><%=i+1%></td>
                                     <td><%=String(order[i].createdAt).slice(4,16)%></td>
                                     <td><%=order[i].orderId %>
                                     </td>
