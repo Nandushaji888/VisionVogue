@@ -608,7 +608,7 @@ const loadAccount = async (req, res) => {
     });
     const orders = await paginateQuery(orderData, page, limit).exec();
 
-    const userData = await User.findById(req.session.user_id);
+    const userData = await User.findById(req.session.user_id)
     const categories = await Category.find();
     // console.log(userData.address[0].city);
 

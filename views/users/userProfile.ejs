@@ -88,7 +88,7 @@
                                                         <table class="table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Order</th>
+                                                                    <th>No</th>
                                                                     <th>Order ID</th>
                                                                     <th>Date</th>
                                                                     <th>Status</th>
@@ -207,7 +207,9 @@
 
                                     <div class="tab-pane fade " id="wallet" role="tabpanel"
                                         aria-labelledby="wallet-tab">
+                                       <div> <h5>Wallet Balance : <span style="font-size: 20px;">₹ <%=user.wallet%> </span></h5></div>
                                         <div class="col-lg-12 d-flex justify-content-end">
+                                            
                                             <form action="/search-orderid?id">
                                                 <%if(search){var searchvalue=search;}%>
                                                     <input style="width: 200px;" type="text" name="Search"
@@ -224,18 +226,18 @@
                                             <div class="card-header">
                                                 <h5 class="mb-0">Your Orders</h5>
                                             </div>
-                                            <%if(order?.length>0){%>
+                                            <%if(user?.walletTranscation?.length>0){%>
                                                 <div class="card-body">
                                                     <div class="table-responsive">
                                                         <table class="table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Order</th>
-                                                                    <th>Order ID</th>
+                                                                    <th>No</th>
                                                                     <th>Date</th>
-                                                                    <th>Status</th>
-                                                                    <th>Total</th>
-                                                                    <th>Details</th>
+                                                                    <th>Order ID</th>
+                                                                    <th>Reason</th>
+                                                                    <th>Trans Type</th>
+                                                                    <th>Amount</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -248,18 +250,22 @@
                                                                                 <%= rowNumber %>
                                                                         </td>
                                                                         <td>
-                                                                            <%=order[i]?.orderId %>
+                                                                            <%=String(user?.walletTranscation[i].createdAt).slice(4,16)%>                                                                        </td>
+                                                                        <td>
+                                                                            <%= user?.walletTranscation[i].orderId%>
+
                                                                         </td>
                                                                         <td>
-                                                                            <%=String(order[i]?.createdAt).slice(4,16)%>
+                                                                            <%= user?.walletTranscation[i].reasonType%>
+                                                                        </td>
+                                                                        <td>                                                                            
+                                                                            <%= user?.walletTranscation[i].transcationType%>
+
                                                                         </td>
                                                                         <td>
-                                                                            <%= order[i]?.orderStatus%>
+                                                                            ₹ <%= user?.walletTranscation[i].amount%>
+  
                                                                         </td>
-                                                                        <td>₹ <%=order[i]?.paidAmount%>
-                                                                        </td>
-                                                                        <td><a href="/order-details/<%=order[i]._id%>"
-                                                                                class="btn-small d-block">View</a></td>
                                                                     </tr>
                                                                     <%}%>
                                                             </tbody>
