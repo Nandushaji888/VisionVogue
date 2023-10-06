@@ -248,7 +248,7 @@
                                                             </thead>
                                                             <tbody>
 
-                                                                <% for (let i=0; i < order?.length; i++) { %>
+                                                                <% for (let i=0; i < user?.walletTranscation.length; i++) { %>
                                                                     <tr>
                                                                         <td>
                                                                             <% const rowNumber=(page - 1) * limit + i +
@@ -427,7 +427,7 @@
             if (password !== reenteredPassword) {
 
                 Swal.fire(
-                    'New Password doesnt match!',
+                    'New Passwords doesnt match!',
                     'Password should be same',
                     'error'
 

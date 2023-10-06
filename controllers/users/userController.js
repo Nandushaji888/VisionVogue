@@ -718,40 +718,50 @@ const applyCoupon = async (req, res) => {
   try {
     const couponCode = req.body.couponName;
     console.log(couponCode);
-    const user = await Coupon.findOne({
+    const userData = await Coupon.findOne({
       couponCode: couponCode,
-      users: { $in: req.session.user_id },
     });
-    if (user) {
-      res.status(200).json({
-        success2: true,
-        msg: "Coupon already applied",
-      });
+
+    if (!userData) {
+      res.status(200).json({nocoupon : true})
     } else {
-      const coupon = await Coupon.findOne({ couponCode: couponCode });
-      const grandTotal = req.body.grandTotal;
-      const percentageDiscount = parseInt(coupon.discount);
-      if (coupon.minOrderPrice > grandTotal) {
+      const user = await Coupon.findOne({
+        couponCode: couponCode,
+        users: { $in: req.session.user_id },
+      });
+      if (user) {
         res.status(200).json({
-          success1: true,
-          msg: `minimun Order Price should be ${coupon.minOrderPrice}`,
+          success2: true,
+          msg: "Coupon already applied",
         });
       } else {
-        const discountCal = Math.floor((grandTotal * percentageDiscount) / 100);
-        let discount;
-        if (discountCal > coupon.maxDiscount) {
-          discount = coupon.maxDiscount;
+        const coupon = await Coupon.findOne({ couponCode: couponCode });
+        const grandTotal = req.body.grandTotal;
+        const percentageDiscount = parseInt(coupon.discount);
+        if (coupon.minOrderPrice > grandTotal) {
+          res.status(200).json({
+            success1: true,
+            msg: `minimun Order Price should be ${coupon.minOrderPrice}`,
+          });
         } else {
-          discount = discountCal;
+          const discountCal = Math.floor(
+            (grandTotal * percentageDiscount) / 100
+          );
+          let discount;
+          if (discountCal > coupon.maxDiscount) {
+            discount = coupon.maxDiscount;
+          } else {
+            discount = discountCal;
+          }
+          const newGrandTotal = grandTotal - discount;
+          console.log("success");
+          res.status(200).json({
+            success: true,
+            newGrandTotal: newGrandTotal,
+            discount: discount,
+            msg: `Coupon applied successfully... You will get ${coupon.discount}% upto ₹${coupon.maxDiscount} coupon discount on this order !!!`,
+          });
         }
-        const newGrandTotal = grandTotal - discount;
-        console.log("success");
-        res.status(200).json({
-          success: true,
-          newGrandTotal: newGrandTotal,
-          discount: discount,
-          msg: `Coupon applied successfully... You will get ${coupon.discount}% upto ₹${coupon.maxDiscount} coupon discount on this order !!!`,
-        });
       }
     }
   } catch (error) {
@@ -1002,7 +1012,7 @@ const downloadInvoice = async (req, res) => {
         // Invoice data
         date: String(order.createdAt).slice(4, 16),
         // Invoice due date
-        "due-date":String(order.createdAt).slice(4, 16),
+        "due-date": String(order.createdAt).slice(4, 16),
       },
       // The products you would like to see on your invoice
       // Total values are being calculated automatically

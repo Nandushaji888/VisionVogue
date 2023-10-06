@@ -232,6 +232,15 @@
                                         </div>
                                         <div class="custome-radio">
                                             <input class="form-check-input" required="" type="radio"
+                                                name="paymentMethod" id="wallet" value="wallet">
+                                            <label class="form-check-label" for="wallet"
+                                                data-bs-toggle="collapse" data-target="#walletPayment"
+                                                aria-controls="walletTranfer">Wallet</label>
+
+                                                <p>Wallet balance :₹ <span><%=user?.wallet%></span> </p>
+                                        </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required="" type="radio"
                                                 name="paymentMethod" id="razorpay-button" value="razorpay" checked="">
                                             <label class="form-check-label" for="razorpay-button"
                                                 data-bs-toggle="collapse" data-target="#bankTranfer"
@@ -355,6 +364,32 @@
 
                             })
                         }
+
+                        if (res.statuswalletfail) {
+                            Swal.fire(
+                                'insufficient Balance!',
+                                'Your Balance in Wallet is insufficient for this order!',
+                                'error'
+                            )
+                               
+
+                       
+                        }
+                        if (res.statuswallet) {
+                            Swal.fire({
+                                title: 'Order Placed Successfully!',
+                                text: 'View your orders',
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonText: "View order"
+                            }).then(function () {
+                                window.location.href = "http://localhost:3000/user-account"
+
+                            })
+                            // window.open("/order-success", "_self")
+                        } 
+
+                     
                     },
 
                 })
@@ -404,7 +439,17 @@
                         const msg = res.msg
                         document.getElementById('text').innerHTML = msg
 
-                    } else if (res.success) {
+                    }
+                    else if (res.nocoupon) {
+                        Swal.fire(
+                                'Invalid CouponCode!',
+                                'CouponCode you have entered is invalid.. Try Again!',
+                                'error'
+                            )
+                    } 
+                    
+                    
+                    else if (res.success) {
                         const newGrandTotal = res.newGrandTotal
                         const discount = res.discount
                         const msg = res.msg
@@ -421,6 +466,10 @@
             })
 
         }
+
+
+
+
 
     </script>
 

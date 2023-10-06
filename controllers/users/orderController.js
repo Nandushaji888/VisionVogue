@@ -140,7 +140,6 @@ const postOrder = async (req, res) => {
       }
     }
 
-    // console.log(req.body.Coupon);
     let couponCode;
     const consumedUser = await Coupon.findOne({
       couponCode: req.body.Coupon,
@@ -149,16 +148,11 @@ const postOrder = async (req, res) => {
     if (!consumedUser) {
       couponCode = req.body.Coupon;
     }
-    // console.log("couponCode" + couponCode);
 
-    // const couponCode = req.body.Coupon
     const userId = req.session.user_id;
     const userreq = await User.findById(userId, { cart: 1, _id: 0 });
     const oldCart = req.session.cart;
-    // console.log("userreq");
-    // console.log(userreq.cart);
-    // console.log("oldCart");
-    // console.log(oldCart);
+
 
     if (JSON.stringify(oldCart) !== JSON.stringify(userreq.cart)) {
       delete req.session.cart;
@@ -167,7 +161,6 @@ const postOrder = async (req, res) => {
         msg: "Your Cart has been changed",
       });
 
-      // console.log("cart is changed");
     } else {
       const discountCoupon = await Coupon.findOne({
         couponCode: couponCode,
@@ -176,28 +169,20 @@ const postOrder = async (req, res) => {
       let grandAmount;
       let discountValue;
 
-      // console.log(discountCoupon);
       const GrandTotal = parseInt(req.body.GrandTotal);
-      // console.log("this is grand total " + GrandTotal);
       if (discountCoupon) {
-        // console.log(GrandTotal > discountCoupon.minOrderPrice);
 
         if (GrandTotal > discountCoupon.minOrderPrice) {
           const percentageDiscount = parseInt(discountCoupon.discount);
           const discountCal = Math.floor(
             (GrandTotal * percentageDiscount) / 100
           );
-          // console.log("discountCal", discountCal);
 
           if (discountCal < discountCoupon.maxDiscount) {
             discountValue = discountCal;
-            // console.log("discountValue1111" + discountValue);
           } else {
             discountValue = discountCoupon.maxDiscount;
-            // console.log("discountValue22222" + discountValue);
           }
-          // console.log("GrandTotal" + GrandTotal);
-          // console.log("discountValue" + discountValue);
           grandAmount = GrandTotal - discountValue;
         } else {
           grandAmount = GrandTotal;
@@ -205,8 +190,6 @@ const postOrder = async (req, res) => {
       } else {
         grandAmount = GrandTotal;
       }
-      // console.log(grandAmount);
-      // console.log(userreq.cart);
       const order = new Order({
         customerId: userId,
         products: userreq.cart,
@@ -220,7 +203,6 @@ const postOrder = async (req, res) => {
         // orderId :
       });
 
-      // console.log(order);
       const orderId = order._id;
       const orderSuccess = await order.save();
       const orderIdentity = "ODR" + order._id.toString().slice(0, 13);
@@ -264,7 +246,55 @@ const postOrder = async (req, res) => {
           });
 
           // FOR ONLINE PAYMENT
-        } else if (req.body.paymentMethod === "razorpay") {
+        }
+        
+        else if(req.body.paymentMethod === "wallet"){
+          if(user.wallet < grandAmount ) {
+            res.status(200).json({
+              statuswalletfail: true,
+            });
+          }else{
+
+            await User.findOneAndUpdate(
+              { _id: req.session.user_id },
+              { $inc: { wallet: -grandAmount } }
+            );
+          
+
+            let transData = {
+              orderId: order._id,
+              amount: grandAmount,
+              transcationType: "DEBIT",
+              reasonType: "PURCHASE",
+            };
+        
+            user.walletTranscation.push(transData);
+            await user.save();
+
+            for (const cartItem of userreq.cart) {
+              const product = await Product.findById(cartItem.productId);
+  
+              if (product) {
+                product.stock -= cartItem.quantity;
+                await product.save();
+              }
+            }
+            await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
+  
+            await Order.updateOne(
+              { _id: new mongoose.Types.ObjectId(orderId) },
+              { orderStatus: "PLACED" }
+            ).lean();
+            res.status(200).json({
+              statuswallet: true,
+            });
+
+
+
+          }
+        }
+        
+        else if (req.body.paymentMethod === "razorpay") {
           console.log("online");
 
           const amount = grandAmount * 100;
