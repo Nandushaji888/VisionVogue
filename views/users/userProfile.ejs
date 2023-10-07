@@ -216,26 +216,20 @@
                                                 placeholder="Search">
                                             <button id="searchButton"
                                                 class="btn btn-fill-out submit btn-medium ms-4 mb-4 ">Search</button> -->
-                                            <form action="/search-orderid?id">
-                                                <%if(search){var searchvalue=search;}%>
-                                                    <input style="width: 200px;" type="text" name="Search"
-                                                        value="<%=searchvalue%>" placeholder="Search"
-                                                        class="form-control bg-white mb-4">
-                                            </form>
 
                                             <!-- <a class="btn btn-fill-out submit btn-medium ms-4 mb-4 "
                                                 href="/user-wallet">Refresh</a> -->
                                         </div>
-                                        <div class="card">
+                                        <div style=" width: 105vh;" class="card">
                                             <div>
                                             </div>
                                             <div class="card-header">
-                                                <h5 class="mb-0">Your Orders</h5>
+                                                <h5 class="mb-0">Your Wallet Details</h5>
                                             </div>
-                                            <%if(user?.walletTranscation?.length>0){%>
-                                                <div class="card-body">
+                                            <%if(user?.walletTransaction?.length>0){%>
+                                                <div  class="card-body">
                                                     <div class="table-responsive">
-                                                        <table class="table">
+                                                        <table class="table " id="dataTable">
                                                             <thead>
                                                                 <tr>
                                                                     <th>No</th>
@@ -248,30 +242,29 @@
                                                             </thead>
                                                             <tbody>
 
-                                                                <% for (let i=0; i < user?.walletTranscation.length; i++) { %>
+                                                                <% for (let i=user?.walletTransaction?.length- 1; i >=0 ; i--) { %>
                                                                     <tr>
                                                                         <td>
-                                                                            <% const rowNumber=(page - 1) * limit + i +
-                                                                                1; %>
-                                                                                <%= rowNumber %>
+                                                                            
+                                                                                <%= user?.walletTransaction?.length-i %>
                                                                         </td>
                                                                         <td>
-                                                                            <%=String(user?.walletTranscation[i]?.createdAt).slice(4,16)%>
+                                                                            <%=String(user?.walletTransaction[i]?.createdAt).slice(4,16)%>
                                                                         </td>
                                                                         <td>
-                                                                            <%= user?.walletTranscation[i]?.orderId%>
+                                                                            <%= user?.walletTransaction[i]?.orderId%>
 
                                                                         </td>
                                                                         <td>
-                                                                            <%= user?.walletTranscation[i]?.reasonType%>
+                                                                            <%= user?.walletTransaction[i]?.reasonType%>
                                                                         </td>
                                                                         <td>
                                                                             <%=
-                                                                                user?.walletTranscation[i]?.transcationType%>
+                                                                                user?.walletTransaction[i]?.transcationType%>
 
                                                                         </td>
                                                                         <td>
-                                                                            ₹ <%= user?.walletTranscation[i]?.amount%>
+                                                                            ₹ <%= user?.walletTransaction[i]?.amount%>
 
                                                                         </td>
                                                                     </tr>
@@ -280,44 +273,11 @@
                                                         </table>
 
                                                     </div>
-                                                    <div class="pagination justify-content-center m-5">
-                                                        <% if (totalPages> 1) { %>
-                                                            <ul class="pagination">
-                                                                <% if (page> 1) { %>
-                                                                    <li class="page-item">
-                                                                        <a class="page-link green-pagination-link"
-                                                                            href="?page=<%= page - 1 %>&orderSearch=<%=search%>">Previous</a>
-                                                                    </li>
-                                                                    <% } %>
-
-                                                                        <% for (let i=1; i <=totalPages; i++) { %>
-                                                                            <li class="page-item">
-                                                                                <% if (i===page) { %>
-                                                                                    <span class="page-link">
-                                                                                        <%= i %>
-                                                                                    </span>
-                                                                                    <% } else { %>
-                                                                                        <a class="page-link green-pagination-link"
-                                                                                            href="?page=<%= i %>">
-                                                                                            <%= i %>
-                                                                                        </a>
-                                                                                        <% } %>
-                                                                            </li>
-                                                                            <% } %>
-
-                                                                                <% if (page < totalPages) { %>
-                                                                                    <li class="page-item">
-                                                                                        <a class="page-link green-pagination-link"
-                                                                                            href="?page=<%= page + 1 %>&orderSearch=<%=search%>">Next</a>
-                                                                                    </li>
-                                                                                    <% } %>
-                                                            </ul>
-                                                            <% } %>
-                                                    </div>
+                                                    
 
                                                 </div>
                                                 <%}else{%>
-                                                    <h4 class="mb-0 text-danger">No order details available</h4>
+                                                    <h4 class="mb-0 text-danger">No Wallet Transaction details available</h4>
                                                     <%}%>
                                         </div>
                                     </div>

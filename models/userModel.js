@@ -73,12 +73,13 @@ const userSchema = new mongoose.Schema({
     min: 0,
     max: 100000,
   },
-  walletTranscation: [
+  walletTransaction: [
     {
-      orderId: {
+      order: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Order",
       },
+      orderId : String,
       amount: Number,
       transcationType: String,
       reasonType: String,

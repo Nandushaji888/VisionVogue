@@ -95,7 +95,7 @@
                                                 <!-- <input type="hidden" class="quantity" name="quantity" value="1"> -->
                                               <%if( product?.stock > 0){%>
                                                 <div class="product-extra-link2">
-                                                    <button onclick="addToCart('<%= product?._id %>')" class="button button-add-to-cart">Add to cart</button>
+                                                    <button onclick="addToCart('<%= product?._id %>','<%=user?._id%>')" class="button button-add-to-cart">Add to cart</button>
                                                     
                                                     <a onclick="addToWishlist('<%=product?._id%>','<%=user?._id%>')" aria-label="Add To Wishlist" class="action-btn hover-up" ><i class="fi-rs-heart"></i></a>
                                                 </div>
@@ -205,6 +205,17 @@
         }
 
         function addToCart(productId, userId) {
+            if (!userId) {
+                Swal.fire(
+                    'Login',
+                    'User need to Login for further proceeding',
+                    'warning'
+                ).then(() => {
+
+                    window.location.href = "/login"
+                })
+
+            }
             $.ajax({
                 url: `/add-to-cart?productId=${productId}`,
                 method: 'get',

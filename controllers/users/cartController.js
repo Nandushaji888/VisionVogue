@@ -6,6 +6,7 @@ const Order = require("../../models/orderModel");
 // item adding to cart
 const addToCart = async (req, res) => {
   try {
+    
     console.log(req.query);
     const productId = req.query.productId;
     const quantity = 1;

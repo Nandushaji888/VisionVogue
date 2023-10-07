@@ -346,7 +346,7 @@
                                 showConfirmButton: true,
                                 confirmButtonText: "View order"
                             }).then(function () {
-                                window.location.href = "/user-account"
+                                window.location.href = `/order-details/${res.orderD}`
 
                             })
                             // window.open("/order-success", "_self")
@@ -383,7 +383,7 @@
                                 showConfirmButton: true,
                                 confirmButtonText: "View order"
                             }).then(function () {
-                                window.location.href = "/user-account"
+                                window.location.href = `/order-details/${res.orderD}`
 
                             })
                             // window.open("/order-success", "_self")
@@ -417,7 +417,7 @@
                         showConfirmButton: true,
                         confirmButtonText: "View order"
                     }).then(function () {
-                        window.location.href = "/user-account#orders"
+                        window.location.href = `/order-details/${orderId}`
 
                     })
                 }

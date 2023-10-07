@@ -203,6 +203,7 @@ const postOrder = async (req, res) => {
         // orderId :
       });
 
+      const orderD = order._id
       const orderId = order._id;
       const orderSuccess = await order.save();
       const orderIdentity = "ODR" + order._id.toString().slice(0, 13);
@@ -243,11 +244,12 @@ const postOrder = async (req, res) => {
           res.status(200).json({
             status: true,
             msg: "Order created for COD",
+            orderD : orderD
           });
 
-          // FOR ONLINE PAYMENT
+       
         }
-        
+           // PAYMENT THROUGH WALLET
         else if(req.body.paymentMethod === "wallet"){
           if(user.wallet < grandAmount ) {
             res.status(200).json({
@@ -262,13 +264,14 @@ const postOrder = async (req, res) => {
           
 
             let transData = {
-              orderId: order._id,
+              order :order._id,
+              orderId: orderIdentity,
               amount: grandAmount,
               transcationType: "DEBIT",
               reasonType: "PURCHASE",
             };
         
-            user.walletTranscation.push(transData);
+            user.walletTransaction.push(transData);
             await user.save();
 
             for (const cartItem of userreq.cart) {
@@ -281,18 +284,22 @@ const postOrder = async (req, res) => {
             }
             await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
   
+  
             await Order.updateOne(
               { _id: new mongoose.Types.ObjectId(orderId) },
-              { orderStatus: "PLACED" }
+              { $set: { paymentStatus: "COMPLETED", orderStatus: "PLACED" } }
             ).lean();
             res.status(200).json({
               statuswallet: true,
+              orderD : orderD
+
             });
 
 
 
           }
         }
+           // FOR ONLINE PAYMENT
         
         else if (req.body.paymentMethod === "razorpay") {
           console.log("online");
@@ -359,7 +366,7 @@ const verifyPayment = async (req, res) => {
         },
       }
     ).lean();
-
+      const orderD = req.body.orderId
     const calculatedSignature = hmac.digest("hex");
 
     if (calculatedSignature === req.body.payment.razorpay_signature) {
@@ -385,7 +392,7 @@ const verifyPayment = async (req, res) => {
       ).lean();
       // console.log("order placedddddd");
 
-      res.status(200).json({ status: "success", msg: "Payment verified" });
+      res.status(200).json({ status: "success", msg: "Payment verified"});
     } else {
       res
         .status(400)
@@ -410,9 +417,10 @@ const orderCancellation = async (req, res) => {
         await product.save();
       }
     }
-    await order.updateOne({ orderStatus: "CANCELLED" });
-
-    const user = await User.findById(req.session.user_id);
+    if(order.paymentMethod === 'COD') {
+      await order.updateOne({ orderStatus: "CANCELLED" });
+    }else{
+      const user = await User.findById(req.session.user_id);
     const wallet = order.paidAmount;
     if (user.wallet > 0) {
       await User.findOneAndUpdate(
@@ -427,16 +435,30 @@ const orderCancellation = async (req, res) => {
     }
 
     let transData = {
-      orderId: order._id,
+      orderId: order.orderId,
       amount: order.paidAmount,
       transcationType: "CREDIT",
-      reasonType: "RETURNED",
+      reasonType: "ORDER CANCEL",
     };
+    await Order.findByIdAndUpdate(
+      { _id: new mongoose.Types.ObjectId(id) },
+      {
+        $set: {
+          orderStatus: "CANCELLED",
+          paymentStatus: "REFUNDED",
+        },
+      }
+    ).lean();
 
-    user.walletTranscation.push(transData);
-    await user.save();
+    user.walletTransaction.push(transData);
+    await user.save(); 
+    }
+
+    
 
     // console.log(user.wallet);
+
+   
 
     res.redirect("/user-account");
   } catch (error) {
@@ -467,7 +489,7 @@ const returnProduct = async (req, res) => {
       {
         $set: {
           returnReason: reason,
-          orderStatus: "RETURNED",
+          orderStatus: "RETURN",
           paymentStatus: "REFUNDED",
         },
       }
@@ -487,13 +509,13 @@ const returnProduct = async (req, res) => {
       );
     }
     let transData = {
-      orderId: order._id,
+      orderId: order.orderId,
       amount: order.paidAmount,
-      transactionType: "CREDIT",
+      transcationType: "CREDIT",
       reasonType: "RETURNED",
     };
 
-    user.walletTranscation.push(transData);
+    user.walletTransaction.push(transData);
     await user.save();
     for (const item of order.products) {
       const product = await Product.findById(item.productId);

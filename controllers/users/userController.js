@@ -611,7 +611,7 @@ const loadAccount = async (req, res) => {
 
     const userData = await User.findById(req.session.user_id);
     const categories = await Category.find();
-    // console.log(userData.address[0].city);
+   
 
     res.render("userProfile", {
       user: userData,
@@ -723,7 +723,7 @@ const applyCoupon = async (req, res) => {
     });
 
     if (!userData) {
-      res.status(200).json({nocoupon : true})
+      res.status(200).json({ nocoupon: true });
     } else {
       const user = await Coupon.findOne({
         couponCode: couponCode,
