@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>Vision Vogue</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -245,6 +245,7 @@
                                         <table class="table table-hover" id="dataTable">
                                             <thead>
                                                 <tr>
+                                                    <th scope="col">No</th>
                                                     <th scope="col">Created Date</th>
                                                     <th scope="col">Image</th>
                                                     <th scope="col">Name</th>
@@ -257,8 +258,11 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <% for(var i=0; i<products.length; i++) { %>
+                                                <% for(var i=products.length-1; i>=0; i--) { %>
                                                     <tr>
+                                                        <td class="align-middle">
+                                                            <%= products.length-i %>
+                                                        </td>
                                                         <td class="align-middle">
                                                             <%=String(products[i].dateCreated).slice(4,16)%>
 

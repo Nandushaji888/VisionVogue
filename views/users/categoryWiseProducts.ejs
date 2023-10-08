@@ -29,6 +29,8 @@
                                 <div class="sort-by-cover mr-10">
 
                                 </div>
+                                <%if(secret !== undefined){%>
+
                                 <div class="sort-by-cover">
                                     <div class="sort-by-product-wrap">
                                         <div class="sort-by">
@@ -45,7 +47,9 @@
 
                                         </ul>
                                     </div>
+                                    
                                 </div>
+                                <%}%>
                             </div>
                         </div>
                         <div class="row product-grid-3">
@@ -73,7 +77,7 @@
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.html">
+                                                <a >
                                                     <%=products[i].category.name%>
                                                 </a>
                                             </div>
@@ -240,7 +244,7 @@
 
                                                 <%}else{%>
                                                     <a class="page-link green-pagination-link"
-                                                    href="?page=<%= page + 1 %>">Next</a>
+                                                    href="?page=<%= page + 1 %>&url=<%=pathurl%>">Next</a>
                                                     <%}%>
                                         </li>
                                         <% } %>

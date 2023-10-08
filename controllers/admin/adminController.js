@@ -286,6 +286,7 @@ const generateReport = async (req, res) => {
 
 
 
+
 module.exports = {
   loadLogin,
   loadHome,

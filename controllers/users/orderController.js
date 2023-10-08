@@ -489,7 +489,7 @@ const returnProduct = async (req, res) => {
       {
         $set: {
           returnReason: reason,
-          orderStatus: "RETURN",
+          orderStatus: "RETURNED",
           paymentStatus: "REFUNDED",
         },
       }

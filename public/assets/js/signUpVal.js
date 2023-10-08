@@ -54,6 +54,11 @@ function validateInputs(e) {
         firstName.focus();
         return false;
     }  
+    else if(firstNameValue.length <3){
+        setError(firstName, 'Please enter a proper name', e);
+        firstName.focus();
+        return false;
+    }
     else{
         setSuccess(firstName);
     }
@@ -129,7 +134,7 @@ function validateInputs(e) {
 form.addEventListener('submit', function(e) {
     // e.preventDefault()
     console.log('form submit was recorded');
-    if(validateInputs(e)){
+    if( (e)){
         console.log("VALIDATION Success");
 }
 })

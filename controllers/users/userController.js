@@ -242,17 +242,27 @@ const userLogout = async (req, res) => {
 const loadProductDetails = async (req, res) => {
   try {
     const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).render('errorPage');
+      return;
+    }
     req.session.originalURL = `/product/${id}`;
     const productData = await Product.findById(id).populate("category");
     console.log(productData);
-    const categories = await Category.find();
-    const user = await User.findById(req.session.user_id);
-    res.render("productDetails", {
-      product: productData,
-      user: user,
-      categories: categories,
-    });
+    if (!productData) {
+      // Product not found, send a 404 response
+      res.status(404).send("Product not found");
+    } else {
+      const categories = await Category.find();
+      const user = await User.findById(req.session.user_id);
+      res.render("productDetails", {
+        product: productData,
+        user: user,
+        categories: categories,
+      });
+    }
   } catch (error) {
+
     console.log(error.message);
   }
 };
@@ -269,25 +279,26 @@ function paginateQuery(query, page, limit) {
 
 const searchResult = async (req, res) => {
   try {
-    // const search = req.body.search;
+    console.log(req.body);
     if (req.body.search) {
       req.session.search = req.body.search;
     }
 
-    let search = req.session.search || "";
-    console.log("search " + search);
+    let search = req.session.search;
+
+    console.log("search:", search);
     const categoryList = await Category.find({ isListed: true });
+
     const categoryName = await Category.find({
       name: { $regex: search, $options: "i" },
     });
 
-    // Calculate page and limit based on query parameters
+    // console.log("vxcvcxvxxzcbzzzzzzzz" + search);
     var page = 1;
     if (req.query.page) {
       page = req.query.page;
     }
     const limit = 3;
-
     const productsQuery = Product.find({
       isListed: true,
       $or: [
@@ -307,24 +318,23 @@ const searchResult = async (req, res) => {
     })
       .populate("category")
       .countDocuments();
-    // console.log("productsQuery is" + productsQuery.getFilter());
-
-    const products = await paginateQuery(productsQuery, page, limit).exec();
-    console.log("products", products);
-
-    console.log("count is " + count);
 
     const user = await User.findById(req.session.user_id);
 
+    const products = await paginateQuery(productsQuery, page, limit).exec();
+    console.log("products" + products);
+    const secret = undefined;
     res.render("categoryWiseProducts", {
+      user: user,
       products: products,
       categories: categoryList,
-      user: user,
-      pathurl: null,
       totalPages: Math.ceil(count / limit),
       count: count,
       page: page,
+      limit: limit,
       search: search,
+      pathurl: null,
+      secret: secret,
     });
   } catch (error) {
     console.log(error.message);
@@ -357,12 +367,13 @@ const categoryWiseProducts = async (req, res) => {
       const count = await Product.find({ category: category._id })
         .populate("category")
         .countDocuments();
-      console.log("count is " + count);
+      // console.log("count is " + count);
 
       // console.log(products);
       const categoryList = await Category.find({ isListed: true });
 
       const user = await User.findById(req.session.user_id);
+      const secret = true;
 
       res.render("categoryWiseProducts", {
         products: products,
@@ -373,6 +384,7 @@ const categoryWiseProducts = async (req, res) => {
         count: count,
         page: page,
         search: undefined,
+        secret: secret,
       });
     } else {
       console.log("Category not found");
@@ -388,8 +400,8 @@ const priceLowTohigh = async (req, res) => {
     console.log(req.query.url);
     const categoryName = decodeURIComponent(req.params.id);
 
-    // const pathurl = `${categoryName}`;
-    const category = await Category.findOne({ name: categoryName });
+    const pathurl = `${categoryName}`;
+    const category = await Category.findOne({ name: req.query.url });
 
     // if (category) {
     console.log(category);
@@ -406,17 +418,19 @@ const priceLowTohigh = async (req, res) => {
     const products = await paginateQuery(productsQuery, page, limit).exec();
 
     // const products = await paginateQuery(productsQuery, page, limit).exec();
+    // console.log('products');
+    // console.log(products);
     const count = await Product.find({ category: category._id })
       .populate("category")
       .countDocuments();
-    console.log("count is " + count);
+    // console.log("count is " + count);
 
-    console.log(products);
+    // console.log(products);
     const categoryList = await Category.find({ isListed: true });
 
     const user = await User.findById(req.session.user_id);
     let search = req.session.search || "";
-
+    const secret = true;
     res.render("categoryWiseProducts", {
       products: products,
       categories: categoryList,
@@ -425,7 +439,8 @@ const priceLowTohigh = async (req, res) => {
       totalPages: Math.ceil(count / limit),
       count: count,
       page: page,
-      search: search,
+      search: undefined,
+      secret: secret,
     });
   } catch (error) {
     console.error(error);
@@ -435,47 +450,52 @@ const priceLowTohigh = async (req, res) => {
 
 const priceHighToLow = async (req, res) => {
   try {
+    console.log(req.query.url);
     const categoryName = decodeURIComponent(req.params.id);
-    const pathurl = `/${categoryName}`;
-    const category = await Category.findOne({ name: categoryName });
 
-    if (category) {
-      console.log(category);
-      var page = 1;
-      if (req.query.page) {
-        page = req.query.page;
-      }
+    const pathurl = `${categoryName}`;
+    const category = await Category.findOne({ name: pathurl });
 
-      const limit = 3;
-      const productsQuery = Product.find({ category: category._id })
-        .populate("category")
-        .sort({ price: 1 });
-
-      const products = await paginateQuery(productsQuery, page, limit).exec();
-
-      // const products = await paginateQuery(productsQuery, page, limit).exec();
-      const count = await Product.find({ category: category._id })
-        .populate("category")
-        .countDocuments();
-      console.log("count is " + count);
-
-      console.log(products);
-      const categoryList = await Category.find({ isListed: true });
-
-      const user = await User.findById(req.session.user_id);
-      let search = req.session.search || "";
-
-      res.render("categoryWiseProducts", {
-        products: products,
-        categories: categoryList,
-        user: user,
-        pathurl: pathurl,
-        totalPages: Math.ceil(count / limit),
-        count: count,
-        page: page,
-        search: search,
-      });
+    // if (category) {
+    console.log(category);
+    var page = 1;
+    if (req.query.page) {
+      page = req.query.page;
     }
+
+    const limit = 3;
+    const productsQuery = Product.find({ category: category._id })
+      .populate("category")
+      .sort({ price: 1 });
+
+    const products = await paginateQuery(productsQuery, page, limit).exec();
+
+    // const products = await paginateQuery(productsQuery, page, limit).exec();
+    // console.log('products');
+    // console.log(products);
+    const count = await Product.find({ category: category._id })
+      .populate("category")
+      .countDocuments();
+    // console.log("count is " + count);
+
+    // console.log(products);
+    const categoryList = await Category.find({ isListed: true });
+
+    const user = await User.findById(req.session.user_id);
+    let search = req.session.search || "";
+    const secret = true;
+
+    res.render("categoryWiseProducts", {
+      products: products,
+      categories: categoryList,
+      user: user,
+      pathurl: pathurl,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      page: page,
+      search: undefined,
+      secret: secret,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "error", msg: "Internal server error" });
@@ -611,7 +631,6 @@ const loadAccount = async (req, res) => {
 
     const userData = await User.findById(req.session.user_id);
     const categories = await Category.find();
-   
 
     res.render("userProfile", {
       user: userData,
@@ -635,7 +654,7 @@ const loadEditAddress = async (req, res) => {
     console.log(user);
     const address = user.address[id];
     console.log(address);
-    res.render("editAddress", { address: address });
+    res.render("editAddress", { address: address ,user : user});
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "error", msg: "Internal server error" });
@@ -817,45 +836,6 @@ const orderSearch = async (req, res) => {
     console.error(error);
   }
 };
-
-// Add this to your Express routes
-// const orderSearch = async (req, res) => {
-//   try {
-//     const searchQuery = req.query.search;
-//     const customerId = req.session.user_id;
-
-//     // Implement your search logic here
-//     // Query the database to filter orders based on the searchQuery and customerId
-//     // You can use the searchQuery to filter orders in your Mongoose query
-//     var page = 1;
-//     if (req.query.page) {
-//       page = req.query.page;
-//     }
-//     const limit = 5;
-//     const filteredOrders = await Order.find({
-//       customerId,
-//       $or: [
-//         { reasonType: { $regex: new RegExp(searchQuery, "i") } },
-//         { amount: { $regex: new RegExp(searchQuery, "i") } },
-//       ],
-//     }).sort({ createdAt: -1 });
-
-//     const count = await Order.countDocuments({
-//       customerId,
-//       orderId: { $regex: new RegExp(search, "i") },
-//     });
-
-//     const orders = await paginateQuery(orderData, page, limit).exec();
-//     const userData = await User.findById(req.session.user_id);
-//     const categories = await Category.find();
-
-//     // Send the filtered orders as JSON response
-//     res.json(filteredOrders);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
 
 const loadWishlist = async (req, res) => {
   try {

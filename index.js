@@ -25,6 +25,14 @@ app.use('/', userRoute)
 app.use('/admin', adminRoute)
 
 
+
+
+
+
+app.use(function(req,res){
+    res.status(404).render('users/errorPage');
+});
+
 app.listen(3000,() => {
     console.log('server is running in http://localhost:3000');
 })

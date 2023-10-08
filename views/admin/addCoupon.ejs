@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>Vision Vogue</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,8 @@
     <meta property="og:image" content="">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="/assets2/imgs/theme/favicon.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.min.css">
+
     <!-- Template CSS -->
     <link href="/assets2/css/main.css" rel="stylesheet" type="text/css" />
 </head>
@@ -22,10 +24,12 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="index.html" class="brand-wrap">
-                <img src="/assets/imgs/theme/Vision Vogue-logos_transparent.png" width="100px" height="50px" class="logo" alt="Evara Dashboard">
+                <img src="/assets/imgs/theme/Vision Vogue-logos_transparent.png" width="100px" height="50px"
+                    class="logo" alt="Evara Dashboard">
             </a>
             <div>
-                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i>
+                </button>
             </div>
         </div>
         <nav>
@@ -73,8 +77,8 @@
 
 
 
-               
-                
+
+
             </ul>
             <hr>
             <ul class="menu-aside">
@@ -82,9 +86,9 @@
                     <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
                         <span class="text">Settings</span>
                     </a>
-                   
+
                 </li>
-               
+
             </ul>
             <br>
             <br>
@@ -107,7 +111,8 @@
                 </form>
             </div>
             <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i
+                        class="material-icons md-apps"></i> </button>
                 <ul class="nav">
                     <li class="nav-item">
                         <a class="nav-link btn-icon" href="#">
@@ -116,24 +121,31 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                class="material-icons md-cast"></i></a>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                            aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="/assets2/imgs/theme/flag-us.png" alt="English">English</a>
-                       
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets2/imgs/theme/flag-us.png"
+                                    alt="English">English</a>
+
                         </div>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets2/imgs/people/avatar2.jpg" alt="User"></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                            aria-expanded="false"> <img class="img-xs rounded-circle"
+                                src="/assets2/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                        
+
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                            <a class="dropdown-item text-danger" href="#"><i
+                                    class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
                 </ul>
@@ -144,64 +156,70 @@
                 <div class="col-9">
                     <div class="content-header">
                         <h2 class="content-title">Add New Coupon</h2>
-              
+
                     </div>
                 </div>
-                <form action="/admin/add-coupon" method="post">
-                <div class="col-lg-6">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="mb-4">
-                                <label for="product_title" class="form-label">Coupon Code</label>
-                                <input type="text" name="couponCode" required placeholder="Type here" class="form-control" id="product_title">
-                            </div>
-                            <div class="row gx-3">
-                                <div class="col-md-4  mb-3">
-                                    <label for="product_sku" class="form-label">Discount % </label>
-                                    <input name="discount"  type="text" max="100" min="0" required placeholder="Type here" class="form-control" id="product_sku">
+                <form action="/admin/add-coupon" method="post" id="addCouponId">
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <label for="product_title" class="form-label">Coupon Code</label>
+                                    <input type="text" name="couponCode" required placeholder="Type here"
+                                        class="form-control" id="product_title">
                                 </div>
-                                <div class="col-md-4  mb-3">
-                                    <label for="product_color" class="form-label">Max Discount Amount</label>
-                                    <input name="maxDiscount"  type="text" required placeholder="Type here" class="form-control" id="product_color">
-                                 
+                                <div class="row gx-3">
+                                    <div class="col-md-4  mb-3">
+                                        <label for="product_sku" class="form-label">Discount % </label>
+                                        <input name="discount" type="text" max="100" min="0" required
+                                            placeholder="Type here" class="form-control" id="discount">
+                                    </div>
+                                    <div class="col-md-4  mb-3">
+                                        <label for="product_color" class="form-label">Max Discount Amount</label>
+                                        <input name="maxDiscount" type="text" required placeholder="Type here"
+                                            class="form-control" id="maxDiscount">
+
+                                    </div>
+                                    <div class="col-md-4  mb-3">
+                                        <label class="form-label">isListed</label>
+                                        <select class="form-select" name="isListed">
+                                            <option value='true'>True</option>
+                                            <option value='false'>False</option>
+                                        </select>
+                                    </div>
+
                                 </div>
-                                <div class="col-md-4  mb-3">
-                                    <label class="form-label">isListed</label>
-                                    <select class="form-select" name="isListed">
-                                        <option value='true'>True</option>
-                                        <option value='false'>False</option>
-                                    </select>
+                                <div class="mb-4">
+                                    <label for="product_brand" class="form-label">Description</label>
+                                    <input type="text" name="description" required placeholder="Type here"
+                                        class="form-control" id="product_brand">
                                 </div>
-                                
+                                <div class="mb-4">
+                                    <label for="minOrderPrice" class="form-label">Min Order Price</label>
+                                    <input name="minOrderPrice" type="text" required placeholder="Type here"
+                                        class="form-control" id="minOrderPrice">
+                                </div>
+
+                                <% if (typeof message !=='undefined' ) { %>
+                                    <p style="color: rgba(239, 10, 10, 0.836);">
+                                        <%= message %>
+                                            <p>
+                                                <% } %>
+                                                    <button type="submit"
+                                                        class="btn btn-md rounded font-sm hover-up">Publich</button>
                             </div>
-                            <div class="mb-4">
-                                <label for="product_brand" class="form-label">Description</label>
-                                <input type="text" name="description" required placeholder="Type here" class="form-control" id="product_brand">
-                            </div>
-                            <div class="mb-4">
-                                <label for="product_brand" class="form-label">Min Order Price</label>
-                                <input name="minOrderPrice" type="text" required placeholder="Type here" class="form-control" id="product_brand">
-                            </div>
-                           
-                            <% if (typeof message !=='undefined' ) { %>
-                                <p style="color: rgba(239, 10, 10, 0.836);">
-                                    <%= message %>
-                                        <p>
-                                            <% } %>
-                            <button type="submit" class="btn btn-md rounded font-sm hover-up">Publich</button>
-                        </div>
-                       
-                    </div> <!-- card end// -->
-                 
-                </div>
-            </form>
+
+                        </div> <!-- card end// -->
+
+                    </div>
+                </form>
             </div>
         </section>
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
                 <div class="col-sm-6">
                     <script>
-                    document.write(new Date().getFullYear())
+                        document.write(new Date().getFullYear())
                     </script> ©, Evara - HTML Ecommerce Template .
                 </div>
                 <div class="col-sm-6">
@@ -212,6 +230,66 @@
             </div>
         </footer>
     </main>
+
+
+
+    <script>
+        // Get a reference to the form element
+        const form = document.getElementById('addCouponId');
+
+        // Function to validate the form
+        // Function to validate the form
+        function validateForm() {
+            const discountInput = form.querySelector('[name="discount"]');
+            const maxDiscountInput = form.querySelector('[name="maxDiscount"]');
+            const minOrderPriceInput = form.querySelector('[name="minOrderPrice"]');
+
+            // Get the values of the inputs
+            const discountValue = discountInput.value.trim();
+            const maxDiscountValue = maxDiscountInput.value.trim();
+            const minOrderPriceValue = minOrderPriceInput.value.trim();
+
+            // Regular expressions for validation
+            const discountRegex = /^(?:[5-9]|[1-4]\d|50)$/;
+            const maxDiscountRegex = /^(?:1000|[1-9]\d{2,3})$/;
+            const minOrderPriceRegex = /^(?:[5-9]\d{2}|[1-4]\d{3}|5000)$/;
+
+            // Validate discount %
+            if (!discountRegex.test(discountValue)) {
+                Swal.fire('Alert!', 'Discount % should be between 5 and 50.', 'error');
+                discountInput.focus();
+                return false;
+            }
+
+            // Validate maxDiscount
+            if (!maxDiscountRegex.test(maxDiscountValue)) {
+                Swal.fire('Alert!', 'Max Discount should be between 100 and 1000.', 'error');
+                maxDiscountInput.focus();
+                return false;
+            }
+
+            // Validate minOrderPrice
+            if (!minOrderPriceRegex.test(minOrderPriceValue)) {
+                Swal.fire('Alert!', 'Minimum Order Price should be between 500 and 5000.', 'error');
+                minOrderPriceInput.focus();
+                return false;
+            }
+
+            return true;
+        }
+
+
+        form.addEventListener('submit', function (e) {
+            if (!validateForm()) {
+                e.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    </script>
+
+
+
+
+
     <script src="/assets2/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/assets2/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/assets2/js/vendors/select2.min.js"></script>
@@ -219,6 +297,8 @@
     <script src="/assets2/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/assets2/js/main.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js"></script>
+
 </body>
 
 </html>
