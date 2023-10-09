@@ -85,15 +85,28 @@ const sendOtpAndRenderRegistration = async (req, res) => {
   try {
     console.log(req.body);
     const userDetails = req.body;
-    const otp = await sendVerificationMail(userDetails.name, userDetails.email);
-    req.session.otp = otp;
-    console.log("otp for verification is " + otp);
+    console.log(req.body.email);
+    const email = req.body.email;
+    const userExist = await User.findOne({ email: email });
 
-    res.render("registration", {
-      userDetails: userDetails,
-      message: "OTP send, Please check your mail for verification",
-    });
-    console.log("otp for verification is " + otp);
+    if (userExist) {
+      res.render("signup", {
+        message: "This email is already registered with us",
+      });
+    } else {
+      const otp = await sendVerificationMail(
+        userDetails.name,
+        userDetails.email
+      );
+      req.session.otp = otp;
+      console.log("otp for verification is " + otp);
+
+      res.render("registration", {
+        userDetails: userDetails,
+        message: "OTP send, Please check your mail for verification",
+      });
+      console.log("otp for verification is " + otp);
+    }
   } catch (error) {
     console.log(error.message);
   }
@@ -243,7 +256,7 @@ const loadProductDetails = async (req, res) => {
   try {
     const id = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(404).render('errorPage');
+      res.status(404).render("errorPage");
       return;
     }
     req.session.originalURL = `/product/${id}`;
@@ -262,7 +275,6 @@ const loadProductDetails = async (req, res) => {
       });
     }
   } catch (error) {
-
     console.log(error.message);
   }
 };
@@ -654,7 +666,7 @@ const loadEditAddress = async (req, res) => {
     console.log(user);
     const address = user.address[id];
     console.log(address);
-    res.render("editAddress", { address: address ,user : user});
+    res.render("editAddress", { address: address, user: user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: "error", msg: "Internal server error" });
