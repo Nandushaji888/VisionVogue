@@ -134,7 +134,7 @@ function validateInputs(e) {
 form.addEventListener('submit', function(e) {
     // e.preventDefault()
     console.log('form submit was recorded');
-    if( (e)){
+    if( validateInputs(e)){
         console.log("VALIDATION Success");
 }
 })
