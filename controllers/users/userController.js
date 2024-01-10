@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const twilio = require("twilio");
+// const twilio = require("twilio");
 const phoneUtil = require("libphonenumber-js");
 const Coupon = require("../../models/couponModel");
 const Banner = require("../../models/bannerModel");

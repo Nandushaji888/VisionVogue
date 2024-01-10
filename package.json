@@ -33,8 +33,7 @@
     "path": "^0.12.7",
     "pdfkit": "^0.13.0",
     "razorpay": "^2.9.2",
-    "sweetalert2": "^11.7.31",
-    "twilio": "^4.16.0"
+    "sweetalert2": "^11.7.31"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
