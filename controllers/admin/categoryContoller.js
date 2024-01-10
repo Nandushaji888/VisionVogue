@@ -35,10 +35,9 @@ const addCategory = async (req, res) => {
             return res.render('category', { message: 'Category added Successfully', category: categoryList });
         } 
     } catch (error) {
-        console.log(error.name); // Log the name property of the error
+        console.log(error.name); 
         console.log(error.code);
         if (error.name === 'MongoServerError' && error.code === 11000) {
-            // Duplicate key error, handle it by sending an appropriate message
             const categoryList = await Category.find({});
             return res.render('category', { message: 'Category name is already taken. Please try a different name.', category: categoryList });
         } else {
